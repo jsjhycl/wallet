@@ -1,0 +1,10 @@
+.userImg{
+    width: 45px;
+    height: 42px;
+    margin-right: 10px;
+    align-self: center;
+    border-radius: 50%;
+}
+.btnGroupSm{
+  padding-right: 10px;
+}

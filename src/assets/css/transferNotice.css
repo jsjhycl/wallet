@@ -1,0 +1,50 @@
+/*.noticeList{*/
+    /*background: #fff;*/
+/*}*/
+/*.noticeLi{*/
+    /*display: flex;*/
+    /*padding: 10px 0;*/
+    /*border-bottom: 1px solid #f1f1f1;*/
+/*}*/
+/*.noticeLi.active .sel:after{*/
+    /*display: block;*/
+/*}*/
+/*.labelSelect{*/
+    /*width: 50px;*/
+    /*text-align: center;*/
+/*}*/
+/*.labelSelect  span.spanSel{*/
+    /*width: 20px;*/
+    /*height: 20px;*/
+/*}*/
+/*span.spanSel:after{*/
+    /*content: "";*/
+    /*left: 19px;*/
+    /*top: 5px;*/
+    /*width: 12px;*/
+    /*height: 12px;*/
+    /*background: #A7C6E6;*/
+/*}*/
+
+/*.noticeLiText{*/
+    /*font-size: 16px;*/
+    /*color: #354551;*/
+/*}*/
+/*.noticeLiAcceptor{*/
+    /*margin-top: 7px;*/
+    /*font-size: 13px;*/
+    /*color: #CCD0D6;*/
+/*}*/
+/*.noticeLiTime{*/
+    /*margin-left: 20px;*/
+    /*align-self: center;*/
+    /*color: #ccc;*/
+/*}*/
+/*.btnGroup{*/
+    /*position: absolute;*/
+    /*bottom: 0;*/
+    /*width: 100%;*/
+    /*padding: 15px 0;*/
+    /*text-align: right;*/
+    /*border-top: 1px solid #f1f1f1;*/
+/*}*/

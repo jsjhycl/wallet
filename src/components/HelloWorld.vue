@@ -80,6 +80,7 @@
         </a>
       </li>
     </ul>
+    <p>all success!</p>
   </div>
 </template>
 

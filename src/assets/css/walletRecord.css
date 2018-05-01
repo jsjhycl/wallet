@@ -1,0 +1,10 @@
+.noticeLiText{
+    display: flex;
+}
+.outInImg{
+    width: 32px;
+    height: 32px;
+    margin-right: 13px;
+    align-self: center;
+    border-radius: 50%;
+}

@@ -1,0 +1,55 @@
+body{
+    background: #F8F9FD;
+}
+.agreementWrap{
+    width: 1060px;
+    margin: 65px auto;
+}
+.agreementCenterWrap{
+    padding: 50px 20px;
+    color: #696969;
+    border: 1px solid #F4F4F4;
+    background: #fff;
+}
+.agreementCenTitle{
+    margin: 20px 0 18px 0;
+}
+.agreementTime{
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+.agreementCenterTitle{
+    margin: 10px 0;
+}
+.agreementCenter p,
+.agreementCenter li{
+    line-height: 30px;
+    font-size: 15px;
+}
+/*.chk_1{*/
+    /*display: none;*/
+/*}*/
+.selectCheck{
+    position: relative;
+    font-weight: normal;
+    color: #58AADF;
+    cursor: pointer;
+    user-select: none;
+}
+.selectCheck .selChek{
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    vertical-align: sub;
+    border: 1px solid #58AADF;
+}
+.selChek:after{
+    content: "\2714";
+    position: absolute;
+    left: 2px;
+    top: 1px;
+    color: #58AADF;
+}
+/*.chk_1:checked+.selChek:after {*/
+    /*content: "\2714";*/
+/*}*/

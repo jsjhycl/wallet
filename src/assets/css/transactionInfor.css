@@ -1,0 +1,49 @@
+.walletRightCenter{
+    padding: 75px 0 0 30px;
+    background: #fff;
+}
+.transactionInforWrap{
+    position: relative;
+    width: 400px;
+}
+.transactionTips{
+    margin-bottom: 16px;
+}
+.tipsImg{
+    width: 38px;
+    height: 38px;
+    vertical-align: sub;
+}
+.tipsTitle{
+    font-size: 34px;
+    color: #6C6C6C;
+    margin: 0 6px 0 12px;
+}
+.transactionLiTitle{
+    margin: 6px 0;
+    color: #CCCCCC;
+}
+.transactionInput{
+    width: 100%;
+    margin-bottom: 17px;
+    border: none;
+    border-bottom: 1px solid #F9F9F9;
+}
+.ewmWrap{
+    position: absolute;
+    left: 250px;
+    bottom: 4px;
+    text-align: center;
+}
+.transactionImg{
+    width: 90px;
+    height: 90px;
+}
+.btnUrl{
+    width: 90px;
+    line-height: 18px;
+    margin-top: 14px;
+    color: #777;
+    border: none;
+    background: #ECECEC;
+}

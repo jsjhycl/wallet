@@ -1,0 +1,35 @@
+.walletRightCenter{
+    padding: 50px 0 0;
+}
+/*.nav-tabs > li > a{*/
+    /*padding: 10px 25px;*/
+    /*font-size: 16px;*/
+    /*color: #C0C0C0;*/
+/*}*/
+/*.nav > li > a:hover, .nav > li > a:focus{*/
+    /*border: 1px solid transparent;*/
+    /*background: transparent;*/
+/*}*/
+.nav{
+    padding-left: 60px;
+}
+/*.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{*/
+    /*color: #78C4FE;*/
+    /*border: none;*/
+    /*border-bottom: 3px solid #71C1FF;*/
+    /*background: transparent;*/
+/*}*/
+.tab-content{
+    width: 520px;
+    margin: 20px 0 0 36px;
+}
+.tabTipsStyle{
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #5B6CB2;
+    line-height: 26px;
+}
+.tipsStyle{
+    padding: 20px 15px;
+    background: #D2EBFF;
+}

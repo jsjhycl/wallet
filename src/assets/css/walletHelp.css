@@ -1,0 +1,59 @@
+.walletRightCenter{
+    background: #fff;
+}
+.helpTopWrap{
+    padding: 50px 0 50px 25px;
+    color: #fff;
+    letter-spacing: 2px;
+    background: #9EC2F3;
+}
+.helpTopText{
+    margin-top: 10px;
+    color: #E2EDFC;
+    font-size: 26px;
+}
+.speakWrap{
+    width: 630px;
+    padding: 20px 0 0 25px;
+}
+.speakWrap h3{
+    padding-bottom: 15px;
+    font-weight: 700;
+}
+.speakList li a{
+    display: inline-block;
+    width: 300px;
+    font-size: 17px;
+    margin-top: 10px;
+}
+.speakList li a:hover{
+    color: #999;
+    text-decoration: underline;
+}
+.btnGroupSm{
+    display: flex;
+    background: #fff;
+}
+.helpSpeak{
+    flex: 1;
+    padding: 9px 9px 6px;
+    margin-left: 15px;
+    border: 1px solid #F3F3F3;
+}
+.SpeakInput{
+    width: calc(100% - 46px);
+    font-size: 16px;
+    border: none;
+}
+.SpeakInput,
+.SpeakInput::placeholder{
+    color: #C2C2C2;
+}
+.SpeakInputImg{
+    width: 40px;
+    height: 30px;
+}
+.btnStyle{
+    height: 40px;
+    align-self: center;
+}

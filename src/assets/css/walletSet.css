@@ -1,0 +1,11 @@
+.walletSetList{
+    display: flex;
+    justify-content: space-around;
+    font-size: 16px;
+    text-align: center;
+}
+.walletSetImg{
+    width: 45px;
+    height: 50px;
+    margin-bottom: 15px;
+}
