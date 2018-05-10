@@ -2,7 +2,7 @@ import common from './common'
 
 export default {
   /*1 创建钱包*/
-  createWallet(password, coinType) {
+  createWallet(coinType,password) {
     return common.excute("bcb_createWallet",
       {
         "coinType": coinType,

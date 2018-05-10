@@ -22,7 +22,7 @@ import BuildUser from '@/components/BuildUser'
 Vue.use(Router)
 
 export default new Router({
-  mode:'history',
+  // mode:'history',
   // base:'/src/',
   routes: [
     {
@@ -101,7 +101,8 @@ export default new Router({
       component: AddAssets
     },
     {
-      path: '/details/:id',
+      // path: '/details/:id/:assetName',
+      path: '/details',
       name: 'details',
       component: WalletDetails
     },
@@ -112,6 +113,10 @@ export default new Router({
     },
     {
       path:'/',
+      redirect:'/index'
+    },
+    {
+      path:'*',
       redirect:'/index'
     }
   ]

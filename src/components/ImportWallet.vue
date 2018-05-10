@@ -2,38 +2,40 @@
   <div class="walletRightCenter">
     <ul id="myTab" class="nav nav-tabs">
       <li class="active">
-        <a href="#Memorizingords" data-toggle="tab">助记词</a>
+        <a id="one" href="#Memorizingords" data-toggle="tab">助记词</a>
       </li>
-      <li><a href="#OfficialWallet" data-toggle="tab">官方钱包</a></li>
-      <li><a href="#privateKey" data-toggle="tab">私钥</a></li>
-      <li><a @click="$message('暂不实现')"  href="#observation" >观察</a></li>
+      <li><a id="two" href="#OfficialWallet" data-toggle="tab">官方钱包</a></li>
+      <li><a id="three" href="#privateKey" data-toggle="tab">私钥</a></li>
+      <li><a id="four" @click="$message('暂不实现')"  href="#observation" >观察</a></li>
     </ul>
     <div id="myTabContent" class="tab-content">
       <div class="tab-pane fade in active" id="Memorizingords">
         <ul class="list-unstyled">
           <li>
-            <select v-model="info.type" class="foundLiInput">
+            <select v-model="params.type" class="foundLiInput">
               <option v-for="item in walletTypes" :value="item.value">{{item.name}}</option>
             </select>
           </li>
           <li>
-            <textarea v-model="info.helpWords" class="foundLiInput foundTextArea" placeholder="助记词,按空格分隔"></textarea>
+            <textarea v-model="params.encMnemonicWords" class="foundLiInput foundTextArea" placeholder="助记词,按空格分隔"></textarea>
           </li>
           <li>
-            <input v-model="info.path" class="foundLiInput" type="text" placeholder="m/44/60/0/0">
+            <select v-model="params.path"  class="foundLiInput">
+              <option v-for="p in paths">{{p}}</option>
+            </select>
           </li>
           <li>
-            <input v-model="info.password" class="foundLiInput" type="password" placeholder="密码">
+            <input v-model="params.password" class="foundLiInput" type="password" placeholder="密码">
           </li>
           <li>
-            <input v-model="info.repeatPassword" class="foundLiInput" type="password" placeholder="重复密码">
+            <input v-model="params.repeatPassword" class="foundLiInput" type="password" placeholder="重复密码">
           </li>
           <li>
-            <input v-model="info.passwordInfo" class="foundLiInput" type="text" placeholder="密码提示信息（可不填）">
+            <input v-model="params.passwordInfo" class="foundLiInput" type="text" placeholder="密码提示信息（可不填）">
           </li>
         </ul>
         <label class="select">
-          <input v-model="info.isRead" type="checkbox" class="chk_1">
+          <input v-model="params.isRead" type="checkbox" class="chk_1">
           <span class="sel"></span>
           我已仔细阅读并同意
           <span class="color80D3FE">服务及隐私条款</span>
@@ -48,19 +50,19 @@
           或者通过生成keystore内容的二维码，扫描录入。</p>
         <ul class="list-unstyled">
           <li>
-            <select v-model="keyStoreInfo.type" class="foundLiInput">
+            <select v-model="params.type" class="foundLiInput">
               <option v-for="item in  walletTypes" :value="item.value">{{item.name}}</option>
             </select>
           </li>
           <li>
-            <textarea v-model="keyStoreInfo.keystore" class="foundLiInput foundTextArea" placeholder="keystore 文本内容"></textarea>
+            <textarea v-model="params.keystore" class="foundLiInput foundTextArea" placeholder="keystore 文本内容"></textarea>
           </li>
           <li>
-            <input v-model="keyStoreInfo.password" class="foundLiInput" type="password" placeholder="keystore 密码">
+            <input v-model="params.password" class="foundLiInput" type="password" placeholder="keystore 密码">
           </li>
         </ul>
         <label class="select">
-          <input v-model="keyStoreInfo.isRead" type="checkbox" class="chk_1">
+          <input v-model="params.isRead" type="checkbox" class="chk_1">
           <span class="sel"></span>
           我已仔细阅读并同意
           <span class="color80D3FE">服务及隐私条款</span>
@@ -73,25 +75,25 @@
       <div class="tab-pane fade" id="privateKey">
         <ul class="list-unstyled">
           <li>
-            <select v-model="privateKeyInfo.type" class="foundLiInput">
+            <select v-model="params.type" class="foundLiInput">
               <option v-for="item in walletTypes" :value="item.value">{{item.name}}</option>
             </select>
           </li>
           <li>
-            <textarea v-model="privateKeyInfo.key" class="foundLiInput foundTextArea" placeholder="明文私钥"></textarea>
+            <textarea v-model="params.privateKey" class="foundLiInput foundTextArea" placeholder="明文私钥"></textarea>
           </li>
           <li>
-            <input v-model="privateKeyInfo.password" class="foundLiInput" type="text" placeholder="密码">
+            <input v-model="params.password" class="foundLiInput" type="password" placeholder="密码">
           </li>
           <li>
-            <input v-model="privateKeyInfo.repeatPassword" class="foundLiInput" type="text" placeholder="重复密码">
+            <input v-model="params.repeatPassword" class="foundLiInput" type="password" placeholder="重复密码">
           </li>
           <li>
-            <input v-model="privateKeyInfo.passwordInfo" class="foundLiInput" type="text" placeholder="密码提示信息（可不填）">
+            <input v-model="params.passwordInfo" class="foundLiInput" type="text" placeholder="密码提示信息（可不填）">
           </li>
         </ul>
         <label class="select">
-          <input v-model="privateKeyInfo.isRead" type="checkbox" class="chk_1">
+          <input v-model="params.isRead" type="checkbox" class="chk_1">
           <span class="sel"></span>
           我已仔细阅读并同意
           <span class="color80D3FE">服务及隐私条款</span>
@@ -133,67 +135,143 @@
 </template>
 
 <script>
+  import uuid from 'uuid/v1'
+  import {Wallet} from '../utils/models'
+  //初始化导入参数
+  function initParams(index) {
+    index = index || 0;
+    let params = {
+      one:{
+        encMnemonicWords: '',
+        path: `m/44'/60'/0'/0/0`,
+        password: '',
+        repeatPassword: '',
+        passwordInfo: '',
+        check:function () {
+          if(!this.type||!this.encMnemonicWords||!this.password){
+            throw '请填写必要信息';
+          }
+          if(this.password!=this.repeatPassword){
+            throw '密码不一致';
+          }
+          if(!this.isRead){
+            throw '请仔细阅读并同意服务条款';
+          }
+        }
+      },
+      two:{
+        keystore: '',
+        password: '',
+        check:function () {
+          if (!this.keystore || !this.password) throw '请填写必要信息';
+          if (!this.isRead) throw '请仔细阅读并同意服务条款';
+        }
+      },
+      three:{
+        privateKey: '',
+        password: '',
+        repeatPassword: '',
+        passwordInfo: '',
+        check:function () {
+          if(!this.type||!this.privateKey||!this.password){
+            throw '请填写必要信息';
+          }
+          if(this.password!=this.repeatPassword){
+            throw '密码不一致';
+          }
+          if(!this.isRead){
+            throw '请仔细阅读并同意服务条款';
+          }
+        }
+      }
+    }
+    return Object.assign({
+      type: '0x3',
+      isRead: false
+    },params[index]);
+  }
     export default {
       name: "ImportWallet",
       data: () => ({
-        walletTypes: [],
-        info: {},
-        keyStoreInfo:{},
-        privateKeyInfo:{},
-        isRead: false,
-        repeatPassword: ''
+        walletTypes: {},
+        paths:[`m/44'/60'/0'/0/0`,`m/44'/60'/0'/0/0`,`m/44'/60'/0'/0/0`],
+        params:initParams('one'),
       }),
       created: function () {
         this.walletTypes = this.$storage.getWalletTypes();
-        this.info = {type: 'ETH', password: '', repeatPassword:'',passwordInfo: '',helpWords:'',path:'',isRead:false};
-        this.keyStoreInfo ={type:'ETH',keystore:'',password:'',isRead:false};
-        this.privateKeyInfo ={type:'',key:'',password:'',repeatPassword:'',passwordInfo:'',isRead:false};
+      },
+      mounted:function(){
+        let that  =this;
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+          let $this =$(this);
+          that.params =initParams($this.attr('id'));
+          console.log(that.params)
+        })
       },
       methods:{
+        //根据助记词导入
         doneImportByHelpWord:function () {
-          if(!this.info.type||!this.info.helpWords||!this.info.password){
-            this.$message({message:"录入信息不完整.",type:"error"});
-            return;
+          try {
+            this.params.check();
+            let ret= this.$lpc__.importMnemonicSentence(this.params.type,this.params.encMnemonicWords,this.params.path,this.params.password);
+            let wallet =new Wallet({});
+            wallet.id=uuid();
+            wallet.type=this.params.type;
+            wallet.name='导入钱包-助记词';
+            wallet.address=ret.walletAddr;
+            wallet.isBackup=true;
+            wallet.passwordInfo=this.params.passwordInfo;
+            wallet.privateKey=ret.encPrivateKey;
+            this.$storage.insertWallet(wallet);
+            this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+              .then(result=>this.$emit('added', wallet.id))
+            //创建新钱包
+          } catch (e) {
+            this.$message({message: e, type: 'error'});
+            console.log(e);
           }
-          if(this.info.password!=this.info.repeatPassword){
-            this.$message({message:"密码不一致.",type:"error"});
-            return;
-          }
-          if(!this.info.isRead){
-            this.$message({message:"请仔细阅读并同意服务条款！.",type:"error"});
-            return;
-          }
-          console.log(this.info);
-          this.$alert('不知道怎么导入，需要确认算法流程.数据见console')
         },
+        // 根据keystore导入
         doneImportByKeystore:function () {
-          if(!this.keyStoreInfo.type||!this.keyStoreInfo.keystore||!this.keyStoreInfo.password){
-            this.$message({message:'请填写必要信息.',type:'error'});
-            return;
+          try{
+            this.params.check();
+            let ret =this.$lpc__.importKeystore(this.params.type,this.params.keystore,this.params.password);
+            let wallet =new Wallet({});
+            wallet.id=uuid();
+            wallet.type=this.params.type;
+            wallet.name='导入钱包-Keystore';
+            wallet.address=ret.walletAddr;
+            wallet.isBackup=true;
+            wallet.privateKey=ret.encPrivateKey;
+            this.$storage.insertWallet(wallet);
+            this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+              .then(result=>this.$emit('added', wallet.id))
+            // this.$emit('added', wallet.id);
+          }catch (e) {
+            console.log(e);
+            this.$message({message: e, type: 'error'});
           }
-          if(!this.keyStoreInfo.isRead){
-            this.$message({message:"请仔细阅读并同意服务条款！.",type:"error"});
-            return;
-          }
-          //执行导入
-          console.log(this.keyStoreInfo);
-          this.$alert('不知道怎么执行.');
         },
+        //根据私钥导入
         doneImportByPrivatekey:function () {
-          if(!this.privateKeyInfo.type||!this.privateKeyInfo.key||!this.privateKeyInfo.password){
-            this.$message({message:'请填写必要信息.',type:'error'});
-            return;
+          try{
+            this.params.check();
+            let ret =this.$lpc__.importPrivatekey(this.params.type,this.params.privateKey,this.params.password);
+            let wallet =new Wallet({});
+            wallet.id=uuid();
+            wallet.type=this.params.type;
+            wallet.name='导入钱包-PrivateKey';
+            wallet.address=ret.walletAddr;
+            wallet.isBackup=true;
+            wallet.privateKey=ret.encPrivateKey;
+            this.$storage.insertWallet(wallet);
+            this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+              .then(result=>this.$emit('added', wallet.id))
+            // this.$emit('added', wallet.id);
+          }catch (e) {
+            console.log(e);
+            this.$message({message: e, type: 'error'});
           }
-          if(this.privateKeyInfo.password!=this.privateKeyInfo.repeatPassword){
-            this.$message({message:'密码不一致.',type:'error'});
-            return;
-          }
-          if(!this.privateKeyInfo.isRead){
-            this.$message({message:'请仔细阅读并同意服务条款！',type:'error'});
-            return;
-          }
-          console.log(this.privateKeyInfo);
-          this.$alert('不知道怎么处理，需确认.');
         }
       }
     }

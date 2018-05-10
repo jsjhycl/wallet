@@ -16,12 +16,13 @@
           <ul v-else class="list-unstyled">
             <li @click="setSelectHandler(item)" v-for="item in wallets" class="searchLi" :class="{active:item===selectWallet}">
               <router-link class="searchLiA" :to="'/wallet/'+item.id">
-                <img class="headImg" :src="'/static/'+item.head">
+                <img class="headImg" :src="'./static/'+item.head">
                 <div class="searchLiInfo">
                   <h5>{{item.name}}</h5>
-                  <p class="color4AC390">{{item.type}}<button class="btn btn-link text-danger " style="margin-left: 50px" v-if="!item.isBackup">请备份</button>
+                  <p class="color4AC390">{{$storage.getWalletTypes().find(m=>m.value===item.type).name}}
                   </p>
                 </div>
+                <button class="btn-link" style="color: red;align-self: flex-end;padding-right: 16px" v-if="!item.isBackup" @click="doneBack">请备份</button>
               </router-link>
             </li>
           </ul>
@@ -42,9 +43,10 @@
           <button @click="doneRefresh" class="btn-link"><span class="glyphicon glyphicon-repeat"></span></button>
         </div>
         <div class="pull-right">
-          <router-link @click.native="setToolbarSelect('trend')" to="/trend"><img class="trendImg" :src="'/static/'+(currentTool=='trend'?'trendImg.png':'out-trendImg.png')"></router-link>
-          <router-link @click.native="setToolbarSelect('notice')" to="/notice"><span class="glyphicon glyphicon-envelope" :class="{'active-tool':currentTool=='notice'}"></span></router-link>
+          <router-link @click.native="setToolbarSelect('trend')" to="/trend"><img class="trendImg" :src="'./static/'+(currentTool=='trend'?'trendImg.png':'out-trendImg.png')"></router-link>
+          <!--<router-link @click.native="setToolbarSelect('notice')" to="/notice"><span class="glyphicon glyphicon-envelope" :class="{'active-tool':currentTool=='notice'}"></span></router-link>-->
           <router-link @click.native="setToolbarSelect('setting')" to="/setting"><span class="glyphicon glyphicon-cog" :class="{'active-tool':currentTool=='setting'}"></span></router-link>
+          <!--<a @click="closeWin"><span class="glyphicon glyphicon-remove text-danger" ></span></a>-->
         </div>
       </div>
       <!--工作区-->
@@ -66,6 +68,9 @@ export default {
     this.wallets = this.$storage.getWallets();
   },
   methods:{
+    doneBack:function(){
+      this.$alert('请执行备份操作，备份Keystore/助记词！');
+    },
     //增加完钱包时回调
     addWalletHandler:function (arg) {
       this.wallets = this.$storage.getWallets();
@@ -107,8 +112,20 @@ export default {
     },
     //刷新
     doneRefresh:function (e) {
-      this.$message({message:'暂不支持',type:'info'});
-    }
+      this.$root.$emit('refresh','123')
+      // this.$message({message:'暂不支持',type:'info'});
+    },
+  //  关闭窗口
+  //   closeWin:function () {
+  //     try{
+  //       let localStrData=JSON.stringify(this.$storage.getLocalData());
+  //       console.log(localStrData,'localStrData');
+  //       bindObject.SaveJson(localStrData);
+  //       bindObject.CloseWindow();
+  //     }catch(e){
+  //       this.$alert('此环境不支持关闭.')
+  //     }
+  //   }
   }
 }
 </script>

@@ -2,7 +2,7 @@
   <div class="walletRightCenter padT">
     <div class="walletUsInfoWrap">
         <div>
-          <img class="walletUserImg" :src="'/static/'+wallet.head">
+          <img class="walletUserImg" :src="'./static/'+wallet.head">
           <template v-if="!onEdit">
             <span class="walletUserName">{{wallet.name}}</span>
             <img @click="onEdit=true" class="walletUserEdit" src="../assets/img/edit.png">
@@ -10,11 +10,11 @@
           <input class="user-edit" v-else @keyup.enter="editHandler" @blur="editHandler"  v-focus type="text" v-model="wallet.name" />
         </div>
         <div class="userAssetsWrap">
-          <div>
-            <div>总资产(￥)<i class="aboutSymbol">≈</i><span class="totalAssets">500,376,200.00</span></div>
+          <div v-loading="isLoading">
+            <div>总资产(￥)<i class="aboutSymbol">≈</i><span class="totalAssets">{{totalMoney}}</span></div>
             <div class="marT">
               <span>收款码</span>
-              <span>0x540f2cc6…0e16bbb41d</span>
+              <span>{{wallet.address}}</span>
               <img @click="showGatherInfo" class="userEwm" src="../assets/img/ewm.png">
             </div>
           </div>
@@ -22,23 +22,25 @@
             <button class="btn operationBtn" @click="dialogs.one=true">修改密码</button>
             <button @click="outputPassword" class="btn operationBtn">导出私钥</button>
             <button @click="outputKeyStore" class="btn operationBtn">导出keystore</button>
+            <button v-if="!!wallet.encMnemonicWords" class="btn operationBtn" @click="backupWords" >备份助记词</button>
             <button @click="deleteWallet" class="btn operationBtn delWallet">删除钱包</button>
           </div>
         </div>
       </div>
     <!--资产区域-->
       <div class="clearfix">
-        <ul class="list-unstyled pull-left">
-          <li v-for="item in wallet.resources||[]" class="pull-left">
-            <router-link class="assetsLi" :to="'/details/'+wallet.id">
+        <ul class="resource-list list-unstyled pull-left">
+          <li v-for="item in wallet.resources||[]" class="pull-left" v-loading="isLoading">
+            <!--<router-link class="assetsLi" :to="'/details/'+wallet.id+'/'+item.name">-->
+            <router-link class="assetsLi" :to="{name:'details',params:{wallet:wallet,currentAsset:item}}">
               <div>
-                <img class="assetsLiImg" :src="'/static/'+item.img">
+                <img class="assetsLiImg" :src="item.img">
                 <span class="assetsLiTitle">{{item.name}}</span>
               </div>
               <div class="assetsInfor">
-                <p style="text-align: left">{{item.contractAddr}}</p>
-                <p class="colorFFF">≈<span>￥0</span></p>
-                <p class="assetsMoney">0</p>
+                <p style="text-align: left;overflow: hidden;text-overflow: ellipsis;white-space: nowrap">{{item.contractAddr}}</p>
+                <p class="colorFFF">≈<span>￥{{item.money}}</span></p>
+                <p class="assetsMoney">{{item.balance}}</p>
               </div>
             </router-link>
           </li>
@@ -49,20 +51,20 @@
         </router-link>
       </div>
     <!--修改密码-->
-    <el-dialog title="修改密码" width="33%" :visible.sync="dialogs.one">
+    <el-dialog title="修改密码" width="33%" :visible.sync="dialogs.one" :close-on-click-modal="false">
       <div class="modal-body">
         <ul class="modalList list-unstyled">
           <li>
             <p>当前密码</p>
-            <input v-model="mods.oldPassword" class="modalInput" type="text">
+            <input v-model="mods.oldPassword" class="modalInput" type="password">
           </li>
           <li>
             <p>新密码</p>
-            <input v-model="mods.newPassword" class="modalInput" type="text">
+            <input v-model="mods.newPassword" class="modalInput" type="password">
           </li>
           <li class="resetPsw">
             <p>重置密码</p>
-            <input v-model="mods.resetPassword" class="modalInput" type="text">
+            <input v-model="mods.resetPassword" class="modalInput" type="password">
           </li>
         </ul>
         <p class="modalTips">忘记密码？导入助记词或私钥可重置密码。
@@ -75,17 +77,17 @@
     </el-dialog>
     <!--导出私钥-->
     <el-dialog title="导出私钥"   width="33%"
-               :visible.sync="dialogs.two">
+               :visible.sync="dialogs.two" :close-on-click-modal="false">
       <p class="privateKeyTips">安全警告：私钥未经加密，导出存在风险，建议使用助记词和Keystore进行备份</p>
       <p class="privateKeyText">
-        {{walletPrivateKey}}
+        {{outPrivateKey}}
       </p>
       <div class="modalFooter" slot="footer">
-        <button v-clipboard:copy="walletPrivateKey" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制</button>
+        <button v-clipboard:copy="outPrivateKey" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制</button>
       </div>
     </el-dialog>
     <!--导出keystore-->
-    <el-dialog title="导出keystore" width="40%" :visible.sync="dialogs.three">
+    <el-dialog title="导出keystore" width="40%" :visible.sync="dialogs.three" :close-on-click-modal="false">
       <div class="modal-body">
         <ul id="myTab" class="nav nav-tabs modalNav">
           <li class="active">
@@ -97,17 +99,17 @@
           <div class="tab-pane fade in active" id="outkeyTab">
             <div>
               <h5 class="color555">离线保存</h5>
-              <p class="tabText">请复制黏贴Keystore文件到安全、离线的地方保存。切勿保存至邮箱、记事本、网盘、聊天工具等，非常危险</p>
+              <p class="tabText">请复制粘贴Keystore文件到安全、离线的地方保存。切勿保存至邮箱、记事本、网盘、聊天工具等，非常危险</p>
               <h5 class="color555">请勿使用网络传输</h5>
-              <p class="tabText">请复制黏贴Keystore文件到安全、离线的地方保存。切勿保存至邮箱、记事本、网盘、聊天工具等，非常危险请复制黏贴Keystore文件到安全、离线的地方保存。切勿保存至邮箱、记事本、网盘、聊天工具等，非常危险</p>
-              <h5 class="color555">请勿使用网络传输</h5>
-              <p class="tabText">请复制黏贴Keystore文件到安全、离线的地方保存。切勿保存至邮箱、记事本、网盘、聊天工具等，非常危险请复制黏贴Keystore文件到安全、离线的地方保存。切勿保存至邮箱store文件到安全、离线的地方保存。切勿保存至邮、记事本、网盘、聊天工具等，非常危险</p>
+              <p class="tabText">请勿通过网络工具传输Keystore,一旦被黑客获取将造成不可挽回的资产损失。建议离线设备通过二维码方式传输。</p>
+              <h5 class="color555">密码保险箱保存</h5>
+              <p class="tabText">如需在线保存，则建议使用安全等级更高的1Password等密码保管软件保存Keystore</p>
             </div>
             <p class="outkeyTabText">
-              {{keyStore}}
+              {{outkeyStore}}
             </p>
             <div class="modalFooter">
-              <button  v-clipboard:copy="keyStore" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制</button>
+              <button  v-clipboard:copy="outkeyStore" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制</button>
             </div>
           </div>
           <div class="tab-pane fade" id="ewmTab">
@@ -116,23 +118,22 @@
             <p class="marT2 color555">在安全环境下使用<br>
               请在确保四周无人及无摄像头的情况下使用。二维码一旦被他人获取将造成不可挽回的资产损失</p>
             <div class="outKeyEwm">
-              <qriously class="outKeyEwmImg"  :value="keyStore" :size="187" />
-              <!--<img class="outKeyEwmImg" :src="'/static/'+qrCode">-->
+              <qriously class="outKeyEwmImg"  :value="outkeyStore" :size="187" />
             </div>
           </div>
         </div>
       </div>
     </el-dialog>
     <!--收款-->
-    <el-dialog title="收款码" width="33%" :visible.sync="dialogs.four">
+    <el-dialog title="收款码" width="33%" :visible.sync="dialogs.four" :close-on-click-modal="false">
       <div class="modal-body marT2 text-center">
-        <p>{{gather.code}}</p>
+        <p>{{wallet.address}}</p>
         <div class="padT">
-          <qriously :value="gather.code" :size="187" />
+          <qriously :value="wallet.address" :size="187" />
         </div>
       </div>
       <div class="modalFooter">
-        <button  v-clipboard:copy="gather.code" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制收款地址</button>
+        <button  v-clipboard:copy="wallet.address" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制收款地址</button>
       </div>
     </el-dialog>
     </div>
@@ -142,31 +143,39 @@
     export default {
       name: "Wallet",
       data: () => ({
+        isLoading:false,
         wallet: {},
         mods: {
           oldPassword: '',
           newPassword: '',
-          resetPassword: ''
+          resetPassword: '',
+          reset: function () {
+            this.oldPassword = '';
+            this.newPassword = '';
+            this.resetPassword = '';
+          }
         },
-        walletPrivateKey: '23132fgdfgd',
-        keyStore: '',
-        qrCode: '',
-        gather: {
-          code: '123123213313',
-          qrcode: ''
-        },
+        outPrivateKey: '',//导出的明文私钥
+        outkeyStore: '',//导出的keystore
         onEdit: false,
         dialogs: {one: false, two: false, three: false, four: false}
       }),
       beforeRouteUpdate(to, from, next) {
         console.log('beforeRouteUpdate:', to, from);
         this.wallet = this.$storage.getWalletById(to.params.id);
-        //  调用后台接口获取数据，进行显示
+        this.getServerDatas();
         next();
       },
       created: function () {
         this.wallet = this.$storage.getWalletById(this.$route.params.id);
         //  调用后台接口获取数据，进行显示
+        this.getServerDatas();
+        this.$bindRefresh('getServerDatas');
+      },
+      computed: {
+        totalMoney: function () {
+          return this.wallet.resources.reduce((total, item) => total = total + item.money, 0);
+        }
       },
       directives: {
         focus: {
@@ -176,20 +185,35 @@
         }
       },
       methods: {
+        /*备份助记词*/
+        backupWords: function () {
+          this.$router.push({name: "helpwords", params: {id: this.wallet.id}});
+        },
+        openModifyWin:function(){
+          this.dialogs.one=true;
+          this.mods.reset();
+        },
         /*修改密码*/
         modifyPassword: function () {
-          //todo
+          if (!this.mods.newPassword || this.mods.newPassword != this.mods.resetPassword) {
+            this.$message({message: '密码未输入/两次密码输入不一致', type: 'error'});
+            return;
+          }
+          let ret = this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '');
+          this.$storage.updateWallet(this.wallet.id, {
+            privateKey: ret.encPrivateKey,
+            encMnemonicWords: ret.encMnemonicWords
+          })
+          this.wallet = this.$storage.getWalletById(this.wallet.id);
           //重置输入域
-          this.mods.resetPassword = '';
-          this.mods.newPassword = '';
-          this.mods.oldPassword = '';
           this.dialogs.one = false;
         },
         /*导出密钥*/
         outputPassword: function () {
-          this.$checkPassword().then(result => {
+          this.$checkPassword(this.wallet.id).then(result => {
+            console.log('password result =>', result)
             this.dialogs.two = true;
-            this.walletPrivateKey = new Date().toString();
+            this.outPrivateKey = this.$lpc__.outputPrivateKey(this.wallet.type, this.wallet.privateKey, result).privateKey;
           }).catch((err) => {
             console.log(err)
           });
@@ -200,11 +224,9 @@
         },
         /*导出keystore*/
         outputKeyStore: function () {
-          this.$checkPassword().then((reuslt => {
-            // $('#outkey').modal('show');
+          this.$checkPassword(this.wallet.id).then((result => {
             this.dialogs.three = true;
-            this.keyStore = '0x:\'\'-dddsfsf';
-            this.qrCode = 'outKeyEwm.png'
+            this.outkeyStore = this.$lpc__.outputKeyStore(this.wallet.type, this.wallet.privateKey, result).keystore;
           }))
             .catch((err) => {
               console.log(err)
@@ -212,7 +234,7 @@
         },
         /*删除钱包*/
         deleteWallet: function () {
-          this.$checkPassword().then((result => {
+          this.$checkPassword(this.wallet.id).then((result => {
             this.$storage.removeWalletById(this.wallet.id);
             this.$emit('remove');
           }))
@@ -222,9 +244,7 @@
         },
         /*显示收款信息*/
         showGatherInfo: function () {
-          this.gather.qrcode = 'transactionEwm.jpg',
-            this.gather.code = '0x141212123231323',
-            this.dialogs.four = true;
+          this.dialogs.four = true;
         },
         /*修改*/
         editHandler: function () {
@@ -232,6 +252,21 @@
           this.$storage.updateWallet(this.$route.params.id, {name: this.wallet.name});
           this.$emit('modify', this.$route.params.id, {name: this.wallet.name});
           this.onEdit = false;
+        },
+        /*获取服务端资产相关数据*/
+        getServerDatas: function () {
+          this.isLoading = true;
+          this.$storage.getServerMultiResourceInfo(this.wallet.type, this.wallet.resources, this.wallet.address)
+            .then(results => {
+              for (let i = 0; i < results.length; i++) {
+                this.wallet.resources[i].balance = results[i].balance;
+                this.wallet.resources[i].money = results[i].money;
+              }
+              this.isLoading = false;
+            }).catch(err => {
+              this.$alert(err,'错误');
+              this.isLoading=false;
+          });
         }
       }
     }

@@ -1,4 +1,19 @@
+import rpc from './rpchelper'
+import {transaction,TransferItem} from "./models";
 export  default Storage= {
+  initData:function(data){
+    Object.keys(data).forEach(key=>{
+      localStorage.setItem(key,JSON.stringify(data[key]));
+    })
+  },
+  getLocalData:function(){
+    let obj ={
+      "bcb_wallets":this.getWallets(),
+      "bcb_users":this.getUsers(),
+      "bcb_transfers":this.getLocalTransfers()
+    }
+    return obj;
+  },
   /*获取用户的本地钱包*/
   getWallets: function () {
     let strWallets = localStorage.getItem('bcb_wallets') || '[]';
@@ -40,16 +55,47 @@ export  default Storage= {
     return words;
   },
   getWalletById: function (id) {
-    return this.getWallets().find(m => m.id === id);
+    let wallet = this.getWallets().find(m => m.id === id);
+    wallet.resources=wallet.resources||[];
+    wallet.resources.forEach(item=>{
+      item.balance=0;
+      item.money=0;
+    })
+    return wallet;
+  },
+  /*获取指定资产的服务端数据*/
+  getServerResourceInfo:function(coinType,contractAddr,symbol,address){
+    return rpc.getBalanceInfo(coinType,contractAddr,address)
+      .then(balance=>{
+        return rpc.getExchangesObj(coinType)
+          .then(exchangeObj=>{
+            return {
+              contractAddr:contractAddr,
+              balance:balance,
+              money:balance*exchangeObj[symbol]
+            }
+          })
+      })
+  },
+  /*获取资产列表的服务端数据*/
+  getServerMultiResourceInfo:function(coinType,resources=[],address){
+    return Promise.all([...resources.map(item=>rpc.getBalanceInfo(coinType,item.contractAddr,address)),
+    rpc.getExchangesObj(coinType)])
+      .then(datas=>{
+        let exchangeObj =datas[datas.length -1];
+        return resources.map((item,index)=>{
+          return {
+            contractAddr:item.contractAddr,
+            balance:datas[index],
+            money:datas[index]*exchangeObj[item.name]
+          }
+        })
+      })
+    // return Promise.all(resources.map(item=>this.getServerResourceInfo(coinType,item.contractAddr,item.name,address)));
   },
   //返回资产列表
   getAssets: function () {
-    return Promise.resolve([
-      {name: 'ETH', desc: 'ETH is ETH', img: 'img1.png',contractAddr:'12314142'},
-      {name: 'EMH', desc: 'EMH is EMH', img: 'img1.png',contractAddr:'223456'},
-      {name: 'EAH', desc: 'EAH is EAH', img: 'img1.png',contractAddr:'3322321'},
-      {name: 'EDH', desc: 'EDH is EDH', img: 'img1.png',contractAddr:'4452352'},
-    ])
+    return rpc.getAssets();
   },
 //  设置资源
   setResourceForWallet: function (walletId, resources) {
@@ -99,6 +145,22 @@ export  default Storage= {
     let strTransfers= localStorage.getItem('bcb_transfers')||'[]';
     return JSON.parse(strTransfers);
   },
+  //获取交易明细(含本地和服务端);翻页时会一直显示本地交易数据
+  getAllTransactions:function(coinType,address,contractAddr,page,count) {
+    return rpc.getTransactions(coinType, address, contractAddr, page, count)
+      .then(result => {
+        let datas = [], items = result.records;
+        //获取本地数据(根据合约号过滤)
+        let localsTransactions = this.getLocalTransfers().filter(m=>m.conAddr===contractAddr);
+        localsTransactions.forEach(litem => {
+          let findItem = items.find(m => m.txHash == litem.sessionId);
+          if (!findItem) datas.unshift(new transaction().fromLocalByObj(address, litem));
+        });
+        items.forEach(item => datas.push(new transaction().fromServer(item)));
+        result.records = datas;
+        return result;
+      })
+  },
   //新增本地转账记录
   addLocalTransfer:function (obj) {
     let transfers =this.getLocalTransfers();
@@ -108,11 +170,21 @@ export  default Storage= {
   removeLocalTransfers:function (objs) {
     let transfers =this.getLocalTransfers();
     for(let item of objs){
-      let index =transfers.findIndex(m=>m.sessionId===item.sessionId);
+      console.log(item)
+      let index =transfers.findIndex(m=>m.sessionId===item.txHash);
       if(index<0) continue;
       transfers.splice(index,1);
     }
     localStorage.setItem('bcb_transfers', JSON.stringify(transfers));
     return transfers;
+  },
+//  获取交易记录
+  getTransactionFromServer:function (coinType,address,conAddr,page,count) {
+    return rpc.getTransactions(coinType,address,conAddr,page,count);
+  },
+  /*根据tx_hash查询交易状态*/
+  getTransactionByTxhash(coinType,ids){
+    let reqs =ids.map(id=>rpc.getTransactionByTxhash(coinType,id));
+    return Promise.all(reqs);
   }
 }

@@ -34,8 +34,12 @@
       data: () => ({users: [], selectedUser: {}}),
       created: function () {
         this.users = this.$storage.getUsers();
+        this.$bindRefresh('refresh');
       },
       methods: {
+        refresh:function(){
+          this.users = this.$storage.getUsers();
+        },
         deleteUser: function () {
           this.$confirm('您去顶要删除联系人吗？', '删除确认',{type:"warning"})
             .then(result => {
@@ -52,4 +56,7 @@
 
 <style scoped>
   @import "../assets/css/walletUser.css";
+  .noticeLi{
+    justify-content: space-between;
+  }
 </style>

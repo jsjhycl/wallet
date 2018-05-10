@@ -44,7 +44,7 @@
       }),
       created: function () {
         this.walletTypes = this.$storage.getWalletTypes();
-        this.wallet = {id:uuid(),type: '0x3', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',address:'',isBackup:false};
+        this.wallet = {id:uuid(),type: '0x3', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
       },
       methods: {
         createWallet: function () {
@@ -66,10 +66,18 @@
           this.wallet.privateKey=result.encPrivateKey;
           this.wallet.address=result.walletAddr;
           this.wallet.encMnemonicWords=result.encMnemonicWords;
+          //保存钱包
           this.$storage.insertWallet(this.wallet);
-          this.$emit('added', this.wallet.id);
-          //  跳转到助记词页
-          this.$router.push({name:'helpwords',params:{id:this.wallet.id}});
+          // 注册钱包
+          this.$rpc__.registerAddress(this.wallet.type,this.wallet.address,'new')
+            .then(result=>{
+              this.$emit('added', this.wallet.id);
+              this.$router.push({name:'helpwords',params:{id:this.wallet.id}});
+            })
+            .catch(err=>{
+              console.log(err);
+              this.$alert('创建钱包出现错误：'+err.toString());
+            })
         }
       }
     }

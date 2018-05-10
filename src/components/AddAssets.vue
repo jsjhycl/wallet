@@ -3,10 +3,10 @@
     <ul class="noticeList list-unstyled">
       <li v-for="item in assets" class="noticeLi">
         <div class="disFlex">
-          <img class="assetsImg" :src="'/static/'+item.img">
+          <img class="assetsImg" :src="item.coinIcon">
           <div class="noticeLiText">
-            <p>{{item.name}}</p>
-            <p class="noticeLiAcceptor">{{item.desc}}</p>
+            <p>{{item.symbol}}<span class="noticeLiAcceptor">{{item.name}}</span></p>
+            <p class="con-address">{{item.conAddr}}</p>
           </div>
         </div>
         <label class="select">
@@ -16,8 +16,7 @@
       </li>
     </ul>
     <div class="btnGroupSm">
-      <button @click="setResources" class="btn btn-primary btnStyle">选定</button>
-      <!--<button class="btn btn-danger btnStyle marRL disabled">删除</button>-->
+      <button @click="setResources" class="btn btn-primary btnStyle marRL">选定</button>
     </div>
   </div>
 </template>
@@ -29,19 +28,23 @@
         assets: []
       }),
       created: function () {
-        console.log(this.$route);
-        let currentWallet =this.$storage.getWalletById(this.$route.params.id);
-        let resources =currentWallet.resources||[];
-        this.$storage.getAssets().then(datas => {
-          this.assets = datas.map(item=>{
-            item.state=resources.some(m=>m.name===item.name);
-            return item;
-          });
-        })
+        this.init();
+        //done refresh
+        this.$bindRefresh('init');
       },
       methods:{
+        init:function(){
+          let currentWallet =this.$storage.getWalletById(this.$route.params.id);
+          let resources =currentWallet.resources||[];
+          this.$storage.getAssets().then(datas => {
+            this.assets = datas.map(item=>{
+              item.state=resources.some(m=>m.name===item.symbol);
+              return item;
+            });
+          })
+        },
         setResources:function () {
-          let resources = this.assets.filter(m=>m.state).map(m=>({name:m.name,desc:m.desc,img:m.img,contractAddr:m.contractAddr}));
+          let resources = this.assets.filter(m=>m.state).map(m=>({name:m.symbol,desc:m.name,img:m.coinIcon,contractAddr:m.conAddr}));
           this.$storage.setResourceForWallet(this.$route.params.id,resources);
           this.$router.replace({name:'wallet',params:this.$route.params.id});
         }

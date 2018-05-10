@@ -1,7 +1,7 @@
 <template>
   <div class="walletRightCenter">
-    <chart :options="assets"></chart>
-    <chart :options="polar"></chart>
+    <!--<chart :options="assets"></chart>-->
+    <!--<chart :options="polar"></chart>-->
     <!--<p >{{message}}</p>-->
     <!--<button v-clipboard:copy="message" v-clipboard:success="copySuccess">复制</button>-->
     <!--<img class="expertsImg" src="../assets/img/experts.png">-->
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     data: function () {
       let data = []
@@ -89,6 +90,14 @@
           animationDuration: 2000
         }
       }
+    },
+    mounted:function(){
+      // console.log(this,'mount');
+    },
+    created:function () {
+      // axios.get('https://www.blockwallet.pro/api/v1//assets/0x3')
+      //   .then(result=>console.log(result))
+      //   .catch(err=>console.log(err))
     }
   }
 </script>

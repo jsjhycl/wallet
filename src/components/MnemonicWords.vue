@@ -18,16 +18,19 @@
 <script>
     export default {
       name: "MnemonicWords",
-      data:()=>({keywords:[]}),
+      data:()=>({id:'',keywords:[]}),
       created:function() {
-        this.$route.params.wallet.keywords = this.keywords = this.$lpc__.getMnemonicSentence(
-          this.$route.params.wallet.password,
-          this.$route.params.wallet.privateKey
-        ).split(' ');
+        this.id=this.$route.params.id;
+        let wallet = this.$storage.getWalletById(this.id);
+        this.$checkPassword(this.id).then(result => {
+          this.keywords = this.$lpc__.decMnemonicWords(wallet.type, wallet.encMnemonicWords, result)
+            .mnemonicWords
+            .split(' ');
+        });
       },
       methods:{
         goVerfiy:function () {
-          this.$router.push({name:'confirmwords',params:this.$route.params});
+          this.$router.push({name:'confirmwords',params:{id:this.id,keywords:this.keywords}});
         }
       }
     }

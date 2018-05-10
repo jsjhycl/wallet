@@ -19,9 +19,10 @@
 <script>
     export default {
       name: "ConfirmWords",
-      data: () => ({mixWords: [], selectWords: []}),
+      data: () => ({id: '', mixWords: [], selectWords: []}),
       created: function () {
-        this.mixWords = this.$storage.generatorWords(this.$route.params.wallet.keywords);
+        this.mixWords = this.$storage.generatorWords(this.$route.params.keywords);
+        this.id = this.$route.params.id;
       },
       methods: {
         choiceWord: function (e) {
@@ -34,24 +35,19 @@
           this.mixWords.push(e);
         },
         saveWallet: function () {
-          let wallet = this.$route.params.wallet,
-            keywords = wallet.keywords;
-          console.log(wallet,'wallet...')
-
-          if (wallet.keywords.join(' ') != this.selectWords.join(' ')) {
-            this.$confirm('助记词未确认成功，需要创建钱包吗？', '询问').then((result) => {
-              wallet.isBackup = false;
-              this.$storage.insertWallet(wallet);
-              this.$emit('added', wallet.id);
-            }).catch(err => {
-              //重新选择
-              this.mixWords = this.$storage.generatorWords(keywords);
-              this.selectWords = [];
-            })
+          if (this.$route.params.keywords.join(' ') != this.selectWords.join(' ')) {
+            this.selectWords = [];
+            this.mixWords = this.$storage.generatorWords(this.$route.params.keywords);
+            this.$alert('请检查你的助记词', '备份失败');
           } else {
-            wallet.isBackup = true;
-            this.$storage.insertWallet(wallet);
-            this.$emit('added', wallet.id);
+            this.$confirm('备份成功，你确认删除你的助记词吗？', '询问').then(ret => {
+              //  备份成功
+              this.$storage.updateWallet(this.id, {isBackup: true, encMnemonicWords: ''});
+              this.$emit('added', this.id);
+            }).catch(err => {
+              this.selectWords = [];
+              this.mixWords = this.$storage.generatorWords(this.$route.params.keywords);
+            })
           }
         }
       }

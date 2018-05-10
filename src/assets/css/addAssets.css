@@ -37,3 +37,12 @@ span.sel:after{
 .chk_1:checked+.sel{
     background: #7DCAFC;
 }
+
+.noticeLiAcceptor{
+  margin-left: 15px;
+}
+
+.con-address{
+  margin-top: 6px;
+  color: #999;
+}

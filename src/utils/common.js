@@ -1,4 +1,6 @@
 import mock from './mock'
+import Vue from 'vue';
+
 export default {
   /*封装成功结果*/
   __success(obj) {
@@ -23,11 +25,23 @@ export default {
   },
   /*unwrap*/
   unwrap__(obj) {
-    console.log(obj)
-    if('error' in obj){
-      console.log(obj.code + "~" + obj.message);
-      throw obj.code + "~" + obj.message;
-    }else return obj.result;
+    if ('error' in obj) {
+      throw obj.error.code + "~" + obj.error.message;
+    } else {
+      return obj.result;
+    }
+  },
+  unwrapHttp__(obj){
+    //基本判断，正常不需要
+    if(obj.status!==200){
+      throw obj;
+    }
+    if(obj.data.code===0) return obj.data.result;
+    else{
+      let errorMsg =obj.data.code+"~"+obj.data.message;
+      console.log('http result(error):',errorMsg);
+      throw errorMsg;
+    }
   },
   excute(method, obj) {
     let opt = {
@@ -39,8 +53,17 @@ export default {
         }, obj),
       "id": ""
     };
-    console.log("excute:",opt)
+    console.log("excute:",opt);
     /*执行本地调用*/
-    return this.unwrap__({result:mock[method]});
+    try{
+      let result = this.unwrap__(JSON.parse(bindObject.JsMethod(JSON.stringify(opt))));
+      console.log('local result(success):',result)
+      return result;
+    }catch (e) {
+      console.log('local result(error):', e);
+      Vue.prototype.$message({"message":"出现错误："+e,"type":"error"});
+      throw e;
+      //return this.unwrap__({result:mock[method]});
+    }
   }
 }

@@ -1,7 +1,36 @@
 .walletRightCenter{
-    padding: 50px 0 0;
+    padding: 45px 0 0;
 }
-.trend{
-    width: 100%;
-    height: 100%;
+.table{
+  margin: 0;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+.table > tr >th,
+.table  > tr >td{
+  height: 50px;
+  line-height: 50px;
+  padding:0;
+  color: #606266;
+}
+.table  tr:not(.table-head):hover{
+  background: rgba(0,0,0,.04);
+}
+.table-head th{
+  text-align: center;
+  color: #909399;
+}
+.table  td.color4B9F5D{
+  color: #4B9F5D;
+}
+.table td.colorA03C2D{
+  color: #A03C2D;
+}
+.table td.base-price{
+  line-height: 17px;
+  padding-top: 7px
+}
+.table td  p.exchange-price{
+  color: #999;
+  padding-left: 60px
 }
