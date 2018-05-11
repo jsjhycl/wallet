@@ -96,7 +96,7 @@
       <button class="btn btn-primary btnStyle" @click="openTransferWin">转账</button>
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
     </div>
-    <el-dialog :title="wallet.name" width="40%" :visible.sync="dialogs.two">
+    <el-dialog :title="wallet.name" width="40%" :visible.sync="dialogs.two" :close-on-click-modal="false">
       <div class="modal-body">
         <ul class="modalList list-unstyled">
           <li>
@@ -107,7 +107,7 @@
           </li>
           <li>
             <p>地址</p>
-            <div class="modalInput">
+            <div class="modalInput tool-right-input">
               <input v-model="transferInfo.toAdress" class="modalInpStyle" type="text">
               <el-dropdown trigger="click" @command="addAddressHandler">
                 <span class="color64AFEA">选择地址<i class="el-icon-arrow-down el-icon--right"></i></span>
@@ -120,9 +120,9 @@
           </li>
           <li>
             <p>{{currentAsset.name}}</p>
-            <div class="modalInput">
+            <div class="modalInput tool-right-input">
               <input @input="editAmountHandler" v-model="transferInfo.amount" class="modalInpStyle" type="text" placeholder="输入转出金额">
-              <span @click="setAllHandler" class="color64AFEA">全部转出</span>
+              <span @click="setAllHandler" class="color64AFEA" style="margin-right: 5px">全部转出</span>
             </div>
             <div class="modalTF marT">
               <p>可用余额 <span>{{currentAsset.balance}}</span></p>
@@ -289,10 +289,9 @@
     margin-bottom: 0;
     width: 50%;
   }
-  .success{
-    color: green;
-  }
-  .error{
-    color: red;
+  .tool-right-input{
+    display: flex;
+    justify-content: space-between;
+    padding-right: 8px;
   }
 </style>
