@@ -36,7 +36,7 @@
                 <span>{{ props.row.blockN }}</span>
               </el-form-item>
               <el-form-item label="记录时间">
-                <span>{{ props.row.timeStamp }}</span>
+                <span>{{ props.row.timeStamp|d2s }}</span>
               </el-form-item>
               <el-form-item class="text-danger" label="摘要">
                 <span>{{ props.row.memo }}</span>
@@ -74,7 +74,11 @@
             <span>{{scope.row.fee}}{{scope.row.feeName? '('+scope.row.feeName+')':scope.row.feeName}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="timeStamp"  label="时间"></el-table-column>
+        <el-table-column label="时间">
+          <template slot-scope="scope">
+            <span>{{scope.row.timeStamp|d2s(true)}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="memo"  label="摘要"></el-table-column>
         <el-table-column  label="交易状态">
           <template slot-scope="scope">
@@ -189,14 +193,6 @@
       },
       methods: {
         init() {
-          // this.wallet = this.$storage.getWalletById(this.$route.params.id);
-          // this.currentAsset = this.wallet.resources.find(item => item.name === this.$route.params.assetName);
-          // //获取资产信息
-          // this.$storage.getServerResourceInfo(this.wallet.type, this.currentAsset.contractAddr, this.currentAsset.name, this.wallet.address)
-          //   .then(sinfo => {
-          //     this.currentAsset.balance = sinfo.balance;
-          //     this.currentAsset.money = sinfo.money;
-          //   });
           this.wallet = this.$route.params.wallet;
           this.currentAsset = this.$route.params.currentAsset;
           //获取交易记录

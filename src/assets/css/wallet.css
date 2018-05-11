@@ -44,7 +44,9 @@
     height: 30px;
     margin: 34px 0 7px 0;
 }
+.resource-list li{
+}
 .resource-list li:hover a{
-  border: 1px solid #eee;
+  /*border: 1px solid #eee;*/
   box-shadow: -5px 5px 10px steelblue;
 }

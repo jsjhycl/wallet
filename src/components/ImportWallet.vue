@@ -194,7 +194,7 @@
       name: "ImportWallet",
       data: () => ({
         walletTypes: {},
-        paths:[`m/44'/60'/0'/0/0`,`m/44'/60'/0'/0/0`,`m/44'/60'/0'/0/0`],
+        paths:[`m/44'/60'/0'/0/0`,`m/44'/60'/0'/0`,`m/44'/60'/1'/0/0`],
         params:initParams('one'),
       }),
       created: function () {

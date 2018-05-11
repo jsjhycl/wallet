@@ -85,7 +85,8 @@
             })
         },
         updown(item){
-          return ((item.latest-item.close)/item.close*100).toFixed(2);
+          let zf =((item.latest-item.close)/item.close*100)||0;
+          return zf.toFixed(2);
         }
       }
     }

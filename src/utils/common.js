@@ -63,7 +63,7 @@ export default {
       console.log('local result(error):', e);
       Vue.prototype.$message({"message":"出现错误："+e,"type":"error"});
       throw e;
-      //return this.unwrap__({result:mock[method]});
+      // return this.unwrap__({result:mock[method]});
     }
   }
 }

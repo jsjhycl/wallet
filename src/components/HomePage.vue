@@ -1,5 +1,6 @@
 <template>
   <div class="walletRightCenter">
+    <p>{{now}}</p>
     <!--<chart :options="assets"></chart>-->
     <!--<chart :options="polar"></chart>-->
     <!--<p >{{message}}</p>-->
@@ -26,70 +27,74 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import moment from 'moment'
+  // import axios from 'axios'
   export default {
     data: function () {
-      let data = []
-
-      for (let i = 0; i <= 360; i++) {
-        let t = i / 180 * Math.PI
-        let r = Math.sin(2 * t) * Math.cos(2 * t)
-        data.push([r, i])
-      }
-
       return {
-        assets:{
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['4/25', '4/26', '4/27', '4/28', '4/29', '5/1', '5/2']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: 'line',
-            areaStyle: {
-              color:'aliceblue'
-            }
-          }]
-        },
-        polar: {
-          title: {
-            text: '极坐标双数值轴'
-          },
-          legend: {
-            data: ['line']
-          },
-          polar: {
-            center: ['50%', '54%']
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross'
-            }
-          },
-          angleAxis: {
-            type: 'value',
-            startAngle: 0
-          },
-          radiusAxis: {
-            min: 0
-          },
-          series: [
-            {
-              coordinateSystem: 'polar',
-              name: 'line',
-              type: 'line',
-              showSymbol: false,
-              data: data
-            }
-          ],
-          animationDuration: 2000
-        }
+        now:undefined
       }
+      // let data = []
+      //
+      // for (let i = 0; i <= 360; i++) {
+      //   let t = i / 180 * Math.PI
+      //   let r = Math.sin(2 * t) * Math.cos(2 * t)
+      //   data.push([r, i])
+      // }
+      //
+      // return {
+      //   assets:{
+      //     xAxis: {
+      //       type: 'category',
+      //       boundaryGap: false,
+      //       data: ['4/25', '4/26', '4/27', '4/28', '4/29', '5/1', '5/2']
+      //     },
+      //     yAxis: {
+      //       type: 'value'
+      //     },
+      //     series: [{
+      //       data: [820, 932, 901, 934, 1290, 1330, 1320],
+      //       type: 'line',
+      //       areaStyle: {
+      //         color:'aliceblue'
+      //       }
+      //     }]
+      //   },
+      //   polar: {
+      //     title: {
+      //       text: '极坐标双数值轴'
+      //     },
+      //     legend: {
+      //       data: ['line']
+      //     },
+      //     polar: {
+      //       center: ['50%', '54%']
+      //     },
+      //     tooltip: {
+      //       trigger: 'axis',
+      //       axisPointer: {
+      //         type: 'cross'
+      //       }
+      //     },
+      //     angleAxis: {
+      //       type: 'value',
+      //       startAngle: 0
+      //     },
+      //     radiusAxis: {
+      //       min: 0
+      //     },
+      //     series: [
+      //       {
+      //         coordinateSystem: 'polar',
+      //         name: 'line',
+      //         type: 'line',
+      //         showSymbol: false,
+      //         data: data
+      //       }
+      //     ],
+      //     animationDuration: 2000
+      //   }
+      // }
     },
     mounted:function(){
       // console.log(this,'mount');
@@ -98,6 +103,7 @@
       // axios.get('https://www.blockwallet.pro/api/v1//assets/0x3')
       //   .then(result=>console.log(result))
       //   .catch(err=>console.log(err))
+      // this.now=moment(1521439283000).fromNow()
     }
   }
 </script>
