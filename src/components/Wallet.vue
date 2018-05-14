@@ -125,7 +125,7 @@
       </div>
     </el-dialog>
     <!--收款-->
-    <el-dialog title="收款码" width="33%" :visible.sync="dialogs.four" :close-on-click-modal="false">
+    <el-dialog title="收款码"  width="40%"  style="word-break: break-word" :visible.sync="dialogs.four" :close-on-click-modal="false">
       <div class="modal-body marT2 text-center">
         <p>{{wallet.address}}</p>
         <div class="padT">
