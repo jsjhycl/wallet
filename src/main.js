@@ -41,7 +41,6 @@ Vue.prototype.$g__ =Helper;
 Vue.prototype.$lpc__=LPCHelper;
 Vue.prototype.$rpc__=RPCHelper;
 Vue.prototype.$storage =storage;
-Bus.config=storage.getConfig();
 // Vue.prototype.$showLoading=function(){
 //
 // },
@@ -85,7 +84,7 @@ try{
   Vue.prototype.$message({'message':'无本地运行环境，无法调用本地接口.','type':'error'})
 }
 
-
+Bus.config=storage.getConfig();
 new Vue({
   el: '#app',
   router,
