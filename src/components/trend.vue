@@ -19,23 +19,23 @@
             <span>{{item.tradeCoin +'/'+item.baseCoin}}</span>
           </td>
           <td class="base-price">
-            <p>{{item.latest}}</p>
-            <p class="exchange-price">≈ {{item.latest*exchange['CNY']|tofix(2)}}</p>
+            <p>{{item.latest|tofix($root.Bus.config.coinFractionLen)}}</p>
+            <p class="exchange-price">≈ {{item.latest*exchange['CNY']|tofix($root.Bus.config.lawCoinFractionLen)}}</p>
           </td>
           <td  :class="updown(item)>0?'color4B9F5D':'colorA03C2D'">
             <span>{{updown(item)}}</span>
             <i class="glyphicon " :class="updown(item)>0?'glyphicon-arrow-up':'glyphicon-arrow-down'" style="font-size: 12px"></i>
           </td>
           <td class="base-price">
-            <p>{{item.high}}</p>
-            <p class="exchange-price">≈ {{item.high*exchange['CNY']|tofix(2)}}</p>
+            <p>{{item.high|tofix($root.Bus.config.coinFractionLen)}}</p>
+            <p class="exchange-price">≈ {{item.high*exchange['CNY']|tofix($root.Bus.config.lawCoinFractionLen)}}</p>
           </td>
           <td class="base-price">
-            <p> {{item.low}}</p>
-            <p class="exchange-price">≈ {{ item.low*exchange['CNY']|tofix(2)}}</p>
+            <p> {{item.low|tofix($root.Bus.config.coinFractionLen)}}</p>
+            <p class="exchange-price">≈ {{ item.low*exchange['CNY']|tofix($root.Bus.config.lawCoinFractionLen)}}</p>
           </td>
           <td>
-            {{item.amount}}
+            {{item.amount|tofix($root.Bus.config.coinFractionLen)}}
           </td>
           <td>
             <a href="#">

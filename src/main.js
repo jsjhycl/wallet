@@ -5,6 +5,7 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
+const Bus = new Vue()
 import ElementUI from 'element-ui'
 import VueQriously from 'vue-qriously'
 import VueClipboard from 'vue-clipboard2'
@@ -40,6 +41,7 @@ Vue.prototype.$g__ =Helper;
 Vue.prototype.$lpc__=LPCHelper;
 Vue.prototype.$rpc__=RPCHelper;
 Vue.prototype.$storage =storage;
+Bus.config=storage.getConfig();
 // Vue.prototype.$showLoading=function(){
 //
 // },
@@ -87,6 +89,9 @@ try{
 new Vue({
   el: '#app',
   router,
+  data:{
+    Bus
+  },
   components: { App },
   template: '<App/>'
 })

@@ -116,3 +116,19 @@ export class transaction {
   }
 }
 
+/*配置对象实体*/
+export class Config {
+  language='中文';//语言
+  coinFractionLen=4;//比小数位
+  lawCoinFractionLen=3;//法币小数位
+  formObj(obj){
+    Object.keys(obj).forEach(key=>{
+      if(key in this) this[key]=obj[key];
+    });
+    this.language=this.language||'中文';
+    this.coinFractionLen=this.coinFractionLen||4;
+    this.lawCoinFractionLen=this.lawCoinFractionLen||3;
+    return this;
+  }
+}
+

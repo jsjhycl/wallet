@@ -1,33 +1,45 @@
 <template>
-  <div class="walletRightCenter padT">
-    <ul class="walletInfoList list-unstyled">
+  <div class="walletRightCenter">
+    <ul class="list-unstyled">
       <li>
-        <a class="walletInfoA" href="#">
-          <span>多语言</span>
-          <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
+        <span class="list-text">选择语言：</span>
+        <select v-model="$root.Bus.config.language" class="foundLiInput">
+          <option selected>中文</option>
+        </select>
       </li>
       <li>
-        <a class="walletInfoA" href="#">
-          <span>货币单位</span>
-          <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
+        <span class="list-text">币小数位：</span>
+        <input v-model="$root.Bus.config.coinFractionLen" class="foundLiInput" type="number" min="0" placeholder="请输入币小数位"/>
       </li>
       <li>
-        <a class="walletInfoA" href="#">
-          <span>web3 设置</span>
-          <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
+        <span class="list-text">法币小数位：</span>
+        <input v-model="$root.Bus.config.lawCoinFractionLen" class="foundLiInput" type="number" min="0" placeholder="请输入法币小数位"/>
       </li>
     </ul>
+    <button @click="save" class="btn btn-success">保存</button>
   </div>
 </template>
 
 <script>
     export default {
-        name: "WalletRegion"
+      name: "WalletRegion",
+      // data: () => ({config: {}}),
+      created:function(){
+        // this.config =this.config__;// this.$storage.getConfig();
+      },
+      methods:{
+        save:function () {
+          this.$storage.saveConfig(this.$root.Bus.config);
+          this.$message({"message":'配置成功！',"type":"success"});
+        }
+      }
     }
 </script>
 
 <style scoped>
+  .list-text{
+    display: inline-block;
+    width: 100px;
+    font-size: 16px;
+  }
 </style>

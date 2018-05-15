@@ -1,5 +1,5 @@
 import rpc from './rpchelper'
-import {transaction,TransferItem} from "./models";
+import {transaction,TransferItem,Config} from "./models";
 export  default Storage= {
   initData:function(data){
     Object.keys(data).forEach(key=>{
@@ -10,7 +10,8 @@ export  default Storage= {
     let obj ={
       "bcb_wallets":this.getWallets(),
       "bcb_users":this.getUsers(),
-      "bcb_transfers":this.getLocalTransfers()
+      "bcb_transfers":this.getLocalTransfers(),
+      "bcb_config":this.getConfig()
     }
     return obj;
   },
@@ -186,5 +187,14 @@ export  default Storage= {
   getTransactionByTxhash(coinType,ids){
     let reqs =ids.map(id=>rpc.getTransactionByTxhash(coinType,id));
     return Promise.all(reqs);
+  },
+  /*获取配置列表*/
+  getConfig(){
+    let config =JSON.parse(localStorage.getItem('bcb_config')||'{}');
+    return new Config().formObj(config);
+  },
+  /*设置配置列表*/
+  saveConfig(obj){
+    localStorage.setItem('bcb_config',JSON.stringify(obj));
   }
 }

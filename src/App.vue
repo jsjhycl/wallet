@@ -66,6 +66,10 @@ export default {
   }),
   created: function () {
     this.wallets = this.$storage.getWallets();
+    if(this.wallets.length>0){
+      this.selectWallet =this.wallets[0];
+      this.$router.push('/wallet/'+this.wallets[0].id);
+    }
   },
   methods:{
     doneBack:function(){

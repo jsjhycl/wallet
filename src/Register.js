@@ -16,7 +16,7 @@ Vue.filter('state2str',function (value) {
 Vue.filter('tofix',function (value, len) {
   len=len||2;
   try{
-    return parseFloat(value).toFixed(len);
+    return parseFloat(parseFloat(value).toFixed(len));
   }catch (e) {
     return value;
   }

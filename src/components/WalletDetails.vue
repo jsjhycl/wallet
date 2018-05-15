@@ -3,8 +3,8 @@
     <div>
       <div class="trendTips">
         <div class="text-center color777">
-          <span class="detailText">{{currentAsset.balance}}</span>≈
-          <span>￥{{currentAsset.money}}</span>
+          <span class="detailText">{{currentAsset.balance|tofix($root.Bus.config.coinFractionLen)}}</span>≈
+          <span>￥{{currentAsset.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span>
         </div>
         <!--<div class="text-right">-->
           <!--<span class="trendTipsText marRL">数量</span>-->
@@ -27,10 +27,10 @@
                 <span>{{ props.row.to }}</span>
               </el-form-item>
               <el-form-item label="金额">
-                <span>{{ props.row.value +' ('+  props.row.valueName+')'}}</span>
+                <span>{{ props.row.value|tofix($root.Bus.config.coinFractionLen) +' ('+  props.row.valueName+')'}}</span>
               </el-form-item>
               <el-form-item label="交易费用">
-                <span>{{ props.row.fee +' ('+props.row.feeName+')' }}</span>
+                <span>{{ props.row.fee|tofix($root.Bus.config.coinFractionLen) +' ('+props.row.feeName+')' }}</span>
               </el-form-item>
               <el-form-item label="区块号">
                 <span>{{ props.row.blockN }}</span>
@@ -66,12 +66,12 @@
         </el-table-column>
         <el-table-column label="金额">
           <template slot-scope="scope">
-            <span>{{scope.row.value}} {{'('+scope.row.valueName+')'}}</span>
+            <span>{{scope.row.value|tofix($root.Bus.config.coinFractionLen)}} {{'('+scope.row.valueName+')'}}</span>
           </template>
         </el-table-column>
         <el-table-column label="交易费用">
           <template slot-scope="scope">
-            <span>{{scope.row.fee}}{{scope.row.feeName? '('+scope.row.feeName+')':scope.row.feeName}}</span>
+            <span>{{scope.row.fee|tofix($root.Bus.config.coinFractionLen)}}{{scope.row.feeName? '('+scope.row.feeName+')':scope.row.feeName}}</span>
           </template>
         </el-table-column>
         <el-table-column label="时间">

@@ -11,7 +11,7 @@
         </div>
         <div class="userAssetsWrap">
           <div v-loading="isLoading">
-            <div>总资产(￥)<i class="aboutSymbol">≈</i><span class="totalAssets">{{totalMoney}}</span></div>
+            <div>总资产(￥)<i class="aboutSymbol">≈</i><span class="totalAssets">{{totalMoney|tofix($root.Bus.config.lawCoinFractionLen)}}</span></div>
             <div class="marT">
               <span>收款码</span>
               <span>{{wallet.address}}</span>
@@ -39,8 +39,8 @@
               </div>
               <div class="assetsInfor">
                 <p style="text-align: left;overflow: hidden;text-overflow: ellipsis;white-space: nowrap">{{item.contractAddr}}</p>
-                <p class="colorFFF">≈<span>￥{{item.money}}</span></p>
-                <p class="assetsMoney">{{item.balance}}</p>
+                <p class="colorFFF">≈<span>￥{{item.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span></p>
+                <p class="assetsMoney">{{item.balance|tofix($root.Bus.config.coinFractionLen)}}</p>
               </div>
             </router-link>
           </li>
