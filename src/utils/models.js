@@ -9,6 +9,7 @@ export class Wallet {
   address='';
   isBackup=false;
   resources=[];
+  isVisited=false;
   constructor(opt){
   }
   prepare(opt){
@@ -121,6 +122,7 @@ export class Config {
   language='中文';//语言
   coinFractionLen=4;//比小数位
   lawCoinFractionLen=3;//法币小数位
+  currency='美元';//币种
   formObj(obj){
     Object.keys(obj).forEach(key=>{
       if(key in this) this[key]=obj[key];
@@ -130,5 +132,20 @@ export class Config {
     this.lawCoinFractionLen=this.lawCoinFractionLen||3;
     return this;
   }
+}
+
+export class Asset {
+  "id";
+  "coinType";
+  "name";
+  "name_customer";
+  "symbol";
+  "symbol_customer";
+  "decimals";
+  "conAddr";
+  "coinIcon";
+  "config";
+  "modifyTime";
+  "from";
 }
 

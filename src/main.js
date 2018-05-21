@@ -83,13 +83,15 @@ try{
   console.log('调用本地接口错误：',e);
   Vue.prototype.$message({'message':'无本地运行环境，无法调用本地接口.','type':'error'})
 }
-
 Bus.config=storage.getConfig();
 new Vue({
   el: '#app',
   router,
   data:{
     Bus
+  },
+  created(){
+    this.$storage.prepareAsset();//初始化资产列表
   },
   components: { App },
   template: '<App/>'

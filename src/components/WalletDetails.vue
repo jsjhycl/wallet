@@ -4,7 +4,7 @@
       <div class="trendTips">
         <div class="text-center color777">
           <span class="detailText">{{currentAsset.balance|tofix($root.Bus.config.coinFractionLen)}}</span>≈
-          <span>￥{{currentAsset.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span>
+          <span>{{$root.Bus.config.currency|coin-symbol}}{{currentAsset.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span>
         </div>
         <!--<div class="text-right">-->
           <!--<span class="trendTipsText marRL">数量</span>-->

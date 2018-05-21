@@ -15,6 +15,13 @@
         <span class="list-text">法币小数位：</span>
         <input v-model="$root.Bus.config.lawCoinFractionLen" class="foundLiInput" type="number" min="0" placeholder="请输入法币小数位"/>
       </li>
+      <li>
+        <span class="list-text">法币类型：</span>
+        <select v-model="$root.Bus.config.currency" class="foundLiInput">
+          <option selected>美元</option>
+          <option>人民币</option>
+        </select>
+      </li>
     </ul>
     <button @click="save" class="btn btn-success">保存</button>
   </div>
@@ -23,10 +30,6 @@
 <script>
     export default {
       name: "WalletRegion",
-      // data: () => ({config: {}}),
-      created:function(){
-        // this.config =this.config__;// this.$storage.getConfig();
-      },
       methods:{
         save:function () {
           this.$storage.saveConfig(this.$root.Bus.config);

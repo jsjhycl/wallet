@@ -11,7 +11,7 @@
         </div>
         <div class="userAssetsWrap">
           <div v-loading="isLoading">
-            <div>总资产(￥)<i class="aboutSymbol">≈</i><span class="totalAssets">{{totalMoney|tofix($root.Bus.config.lawCoinFractionLen)}}</span></div>
+            <div>总资产({{$root.Bus.config.currency|coin-symbol}})<i class="aboutSymbol">≈</i><span class="totalAssets">{{totalMoney|tofix($root.Bus.config.lawCoinFractionLen)}}</span></div>
             <div class="marT">
               <span>收款码</span>
               <span>{{wallet.address}}</span>
@@ -39,7 +39,7 @@
               </div>
               <div class="assetsInfor">
                 <p style="text-align: left;overflow: hidden;text-overflow: ellipsis;white-space: nowrap">{{item.contractAddr}}</p>
-                <p class="colorFFF">≈<span>￥{{item.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span></p>
+                <p class="colorFFF">≈<span>{{$root.Bus.config.currency|coin-symbol}}{{item.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span></p>
                 <p class="assetsMoney">{{item.balance|tofix($root.Bus.config.coinFractionLen)}}</p>
               </div>
             </router-link>
@@ -143,7 +143,7 @@
     export default {
       name: "Wallet",
       data: () => ({
-        isLoading:false,
+        isLoading: false,
         wallet: {},
         mods: {
           oldPassword: '',
@@ -162,14 +162,25 @@
       }),
       beforeRouteUpdate(to, from, next) {
         console.log('beforeRouteUpdate:', to, from);
-        this.wallet = this.$storage.getWalletById(to.params.id);
-        this.getServerDatas();
+        this.init(to.params.id);
+        // this.wallet = this.$storage.getWalletById(to.params.id);
+        // this.getServerDatas();
         next();
       },
       created: function () {
-        this.wallet = this.$storage.getWalletById(this.$route.params.id);
-        //  调用后台接口获取数据，进行显示
-        this.getServerDatas();
+        this.init(this.$route.params.id);
+        // this.wallet = this.$storage.getWalletById(this.$route.params.id);
+        // if(!this.wallet.isVisited){
+        //   //执行初始化资产
+        //   this.$storage.initAssetAndResources(this.wallet.id)
+        //     .then(wallet=>{
+        //       console.log(this.wallet,'.....................')
+        //       this.getServerDatas();
+        //     })
+        // }else{
+        //   //  调用后台接口获取数据，进行显示
+        //   this.getServerDatas();
+        // }
         this.$bindRefresh('getServerDatas');
       },
       computed: {
@@ -185,12 +196,25 @@
         }
       },
       methods: {
+        init(id){
+          this.wallet = this.$storage.getWalletById(id);
+          if(!this.wallet.isVisited){
+            //执行初始化资产
+            this.$storage.initAssetAndResources(this.wallet.id)
+              .then(wallet=>{
+                this.getServerDatas();
+              })
+          }else{
+            //  调用后台接口获取数据，进行显示
+            this.getServerDatas();
+          }
+        },
         /*备份助记词*/
         backupWords: function () {
           this.$router.push({name: "helpwords", params: {id: this.wallet.id}});
         },
-        openModifyWin:function(){
-          this.dialogs.one=true;
+        openModifyWin: function () {
+          this.dialogs.one = true;
           this.mods.reset();
         },
         /*修改密码*/
@@ -256,16 +280,19 @@
         /*获取服务端资产相关数据*/
         getServerDatas: function () {
           this.isLoading = true;
-          this.$storage.getServerMultiResourceInfo(this.wallet.type, this.wallet.resources, this.wallet.address)
+          this.$storage.getServerMultiResourceInfo(this.wallet.type, this.wallet.resources, this.wallet.address,this.$root.Bus.config.currency)
             .then(results => {
-              for (let i = 0; i < results.length; i++) {
-                this.wallet.resources[i].balance = results[i].balance;
-                this.wallet.resources[i].money = results[i].money;
-              }
+              this.wallet.resources.forEach(item => {
+                let fitem = results.find(m => m.contractAddr.toLocaleLowerCase() === item.contractAddr.toLocaleLowerCase());
+                if (fitem) {
+                  item.balance = fitem.balance;
+                  item.money = fitem.money;
+                }
+              })
               this.isLoading = false;
             }).catch(err => {
-              this.$alert(err,'错误');
-              this.isLoading=false;
+            this.$alert(err, '错误');
+            this.isLoading = false;
           });
         }
       }

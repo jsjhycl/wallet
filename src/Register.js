@@ -25,3 +25,8 @@ Vue.filter('tofix',function (value, len) {
 
 Vue.filter('mid-cut',function (value,max=20) {
 })
+
+Vue.filter('coin-symbol',function (value) {
+if(value==='美元') return '$';
+else if(value==='人民币') return '￥';
+})

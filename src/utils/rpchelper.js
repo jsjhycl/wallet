@@ -51,5 +51,22 @@ export default {
   getMarket(){
     return axios.get(getUrl(`market/price_level`))
       .then(result=>common.unwrapHttp__(result));
+  },
+  /*获取本地余额*/
+  getBasicCoin(coinType,addr){
+    return axios.get(getUrl(`addrs/balance/${coinType}/${addr}`))
+      .then(result=>common.unwrapHttp__(result));
+  },
+  /*获取所有代币余额*/
+  getAllProxyCoin(coinType,addr){
+    return axios.get(getUrl(`addrs/token_balance/all/${coinType}/${addr}`))
+      .then(result=>common.unwrapHttp__(result));
+  },
+  /*获取所有币余额*/
+  getAllCoin(coinType,addr){
+    return Promise.all([this.getBasicCoin(coinType,addr),this.getAllProxyCoin(coinType,addr)])
+      .then(datas=>{
+        return [...datas[1],datas[0]];
+      })
   }
 }
