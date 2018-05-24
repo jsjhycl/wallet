@@ -48,17 +48,19 @@
         assets: [],
         asset:{},
         dialogFormShow:false,
-        formLableWidth:'80px'
+        formLableWidth:'80px',
+        currentWallet:null
       }),
       created: function () {
+        this.currentWallet =this.$storage.getWalletById(this.$route.params.id);
         this.init();
         //done refresh
         this.$bindRefresh('init');
       },
       methods:{
         loadAssets(){
-          let currentWallet =this.$storage.getWalletById(this.$route.params.id);
-          let resources =currentWallet.resources||[];
+          // let currentWallet =this.$storage.getWalletById(this.$route.params.id);
+          let resources =this.currentWallet.resources||[];
           this.assets =this.$storage.getAssets()
             .map(item=>{
               item.state=resources.some(m=>m.name===item.symbol);
@@ -67,7 +69,7 @@
           if(this.assets.length>0) this.asset =this.assets[0];
         },
         init:function(){
-          this.$storage.prepareAsset().then(()=>{
+          this.$storage.prepareAsset(this.currentWallet.type).then(()=>{
            this.loadAssets();
           })
         },

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import common from './common'
 function getUrl(path) {
-  let stuff ='https://www.blockwallet.pro/api/v1/';
+  let stuff ='http://192.168.1.201:8443/api/v1/';
   return stuff+path;
 }
 export default {

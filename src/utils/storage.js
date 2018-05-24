@@ -109,8 +109,8 @@ export  default Storage= {
       })
   },
   //返回资产列表
-  prepareAsset: function () {
-    return rpc.getAssets().then(items => {
+  prepareAsset: function (coinType) {
+    return rpc.getAssets(coinType).then(items => {
       items.forEach(item => item.from = 1);
       this.saveAssets(items);
     })
