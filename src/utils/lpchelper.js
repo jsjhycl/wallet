@@ -98,6 +98,7 @@ export default {
     let sender= {
       coinType: obj.coinType,
       encPrivateKey: obj.encPrivateKey,
+      password:obj.password,
       coinParam: {
         name: obj.name,
         symbol: obj.symbol,
