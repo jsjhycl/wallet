@@ -1,6 +1,7 @@
 <template>
   <div class="walletRightCenter">
     <p>{{now}}</p>
+    <!--<button @click="testSave">测试保存</button>-->
     <!--<chart :options="assets"></chart>-->
     <!--<chart :options="polar"></chart>-->
     <!--<p >{{message}}</p>-->
@@ -28,6 +29,7 @@
 
 <script>
   import moment from 'moment'
+  // import FileSaver from 'file-saver'
   // import axios from 'axios'
   export default {
     data: function () {
@@ -104,6 +106,15 @@
       //   .then(result=>console.log(result))
       //   .catch(err=>console.log(err))
       // this.now=moment(1521439283000).fromNow()
+    },
+    methods:{
+      testSave(){
+        // for(let i=0;i<3;i++){
+        //   var blob = new Blob(["Hello, world!"], {type: "application/octet-stream"});
+        //   setTimeout(()=>FileSaver.saveAs(blob, `hello world-${i}.json`),10000)
+        //
+        // }
+      }
     }
   }
 </script>

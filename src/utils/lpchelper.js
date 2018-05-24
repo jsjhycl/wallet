@@ -92,5 +92,23 @@ export default {
       "encPrivateKey": securePrivatekey,
       "password": pwd
     })
+  },
+  /*11 创建代币*/
+  createCoin(obj) {
+    let sender= {
+      coinType: obj.coinType,
+      encPrivateKey: obj.encPrivateKey,
+      coinParam: {
+        name: obj.name,
+        symbol: obj.symbol,
+        initSupply: obj.initSupply,
+        addSupplyEnabled: obj.addSupplyEnabled,
+        burnEnabled: obj.burnEnabled,
+        gasPrice: obj.gasPrice,
+        gasLimit: obj.gasLimit,
+        note: obj.note
+      }
+    }
+    return common.excute('bcb_createCoin', sender);
   }
 }

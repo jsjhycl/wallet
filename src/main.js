@@ -51,7 +51,7 @@ Vue.prototype.$bindRefresh=function(method){
     if(method in this) this[method]();
   });
 },
-Vue.prototype.$checkPassword=function(walletId) {
+Vue.prototype.$checkPassword=function(walletId,needCheck=true) {
   return this.$prompt('', '请确认密码', {
     center: true,
     inputType: 'password',
@@ -60,6 +60,7 @@ Vue.prototype.$checkPassword=function(walletId) {
   })
     .then(result => {
       let wallet = this.$storage.getWalletById(walletId);
+      if(!needCheck) return result.value;
       if (this.$lpc__.verify(wallet.type, result.value || '', wallet.privateKey) === true) return result.value;
       else {
         this.$message({"message":'密码输入有误',"type":"error"});

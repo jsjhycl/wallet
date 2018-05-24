@@ -1,0 +1,16 @@
+.currency-title{
+    padding: 10px 0 10px 55px;
+    font-size: 18px;
+    color: #989898;
+    border-bottom: 1px solid #F2F3F3;
+}
+.sel:after{
+    left: 59px;
+}
+.label-style{
+    color: #80D3FE;
+    padding: 0 20px;
+}
+.label-style .sel:after{
+    left: 42px;
+}

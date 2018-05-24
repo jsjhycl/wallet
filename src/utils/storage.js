@@ -24,7 +24,7 @@ export  default Storage= {
   /*获取钱包分类*/
   getWalletTypes: function () {
     // return ['ETH', 'BCB', 'TOT'];
-    return [{"name": "ETH", "value": "0x3"}]
+    return [{"name": "ETH", "value": "0x3"},{"name": "BCBMainNet", "value": "0x10000"}]
   },
   /*保存钱包*/
   insertWallet: function (wallet) {

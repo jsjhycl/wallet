@@ -8,6 +8,7 @@
             <img @click="onEdit=true" class="walletUserEdit" src="../assets/img/edit.png">
           </template>
           <input class="user-edit" v-else @keyup.enter="editHandler" @blur="editHandler"  v-focus type="text" v-model="wallet.name" />
+          <router-link :to="`/addcurrency/${wallet.id}`" type="button" class="btn  btn-sm operationBtn pull-right add-currency-button">代币发行</router-link>
         </div>
         <div class="userAssetsWrap">
           <div v-loading="isLoading">
@@ -306,5 +307,11 @@
     border:none;
     border-bottom: 1px solid black;
     background: transparent;
+  }
+  .add-currency-button{
+    margin-right: 13px;
+    width: 120px;
+    background-color: #82ADE6;
+    color: white
   }
 </style>

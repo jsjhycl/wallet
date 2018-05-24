@@ -17,6 +17,7 @@ import trend from '@/components/trend'
 import AddAssets from '@/components/AddAssets'
 import WalletDetails from '@/components/WalletDetails'
 import BuildUser from '@/components/BuildUser'
+import ProxyCurrency from '@/components/ProxyCurrency.vue'
 
 
 Vue.use(Router)
@@ -110,6 +111,11 @@ export default new Router({
       path: '/adduser',
       name: 'adduser',
       component: BuildUser
+    },
+    {
+      path:"/addcurrency/:id",
+      name:"addcurrency",
+      component:ProxyCurrency
     },
     {
       path:'/',
