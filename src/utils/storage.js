@@ -100,6 +100,7 @@ export  default Storage= {
       .then(datas => {
         let exchangeObj = datas[datas.length - 1];
         let coins = datas[0];
+        console.log('coins=>',coins);
         return coins.filter(m => resources.findIndex(n => n.contractAddr.toLocaleLowerCase() === m.conAddr.toLocaleLowerCase()) >= 0)
           .map(item => ({
             contractAddr: item.conAddr,

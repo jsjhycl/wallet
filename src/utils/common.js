@@ -1,4 +1,5 @@
 import mock from './mock'
+import rpc from './rpchelper'
 import Vue from 'vue';
 
 export default {
@@ -43,7 +44,30 @@ export default {
       throw errorMsg;
     }
   },
-  excute(method, obj) {
+  excute(method,obj) {
+    let opt = {
+      "jsonrpc": "2.0",
+      "method": method,
+      "params": Object.assign(
+        {
+          coinType: '0x3'
+        }, obj),
+      "id": ""
+    };
+    console.log("excute:", opt);
+    rpc.excuteLocalApi(obj)
+      .then(result => {
+        return this.unwrap__(result);
+      }).catch(e => {
+      console.log('local result(error):', e);
+      Vue.prototype.$message({"message": "出现错误：" + e, "type": "error"});
+      throw e;
+    })
+  },
+
+
+
+  excute_local(method, obj) {
     let opt = {
       "jsonrpc": "2.0",
       "method": method,

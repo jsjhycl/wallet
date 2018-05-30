@@ -64,9 +64,16 @@ export default {
   },
   /*获取所有币余额*/
   getAllCoin(coinType,addr){
-    return Promise.all([this.getBasicCoin(coinType,addr),this.getAllProxyCoin(coinType,addr)])
+    let gets =coinType!='0x10000'?[this.getAllProxyCoin(coinType,addr),this.getBasicCoin(coinType,addr)]:[this.getAllProxyCoin(coinType,addr)];
+    return Promise.all(gets)
       .then(datas=>{
-        return [...datas[1],datas[0]];
+        return datas.length>1? datas[0].push(datas[1]):datas[0];
+        // return [...datas[1],datas[0]];
       })
+  },
+  /*获取本地接口数据*/
+  excuteLocalApi(obj){
+    return axios.post(getUrl('api/v1/proxy-local-rpc'),obj)
+      .then(result=>common.unwrapHttp__(result));
   }
 }

@@ -62,6 +62,7 @@
           // let currentWallet =this.$storage.getWalletById(this.$route.params.id);
           let resources =this.currentWallet.resources||[];
           this.assets =this.$storage.getAssets()
+            .filter(m=>m.coinType===this.currentWallet.type)
             .map(item=>{
               item.state=resources.some(m=>m.name===item.symbol);
               return item;
@@ -81,7 +82,8 @@
         /*新增资产*/
         add:function () {
           this.asset =new Asset();
-          this.asset.coinType ='0x3';
+          // this.asset.coinType ='0x3';
+          this.asset.coinType =this.currentWallet.type;
           this.asset.coinIcon ='./static/defaultcoin.png';
           this.asset.from=0;
           this.dialogFormShow=true;

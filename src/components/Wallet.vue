@@ -170,18 +170,6 @@
       },
       created: function () {
         this.init(this.$route.params.id);
-        // this.wallet = this.$storage.getWalletById(this.$route.params.id);
-        // if(!this.wallet.isVisited){
-        //   //执行初始化资产
-        //   this.$storage.initAssetAndResources(this.wallet.id)
-        //     .then(wallet=>{
-        //       console.log(this.wallet,'.....................')
-        //       this.getServerDatas();
-        //     })
-        // }else{
-        //   //  调用后台接口获取数据，进行显示
-        //   this.getServerDatas();
-        // }
         this.$bindRefresh('getServerDatas');
       },
       computed: {
@@ -292,7 +280,8 @@
               })
               this.isLoading = false;
             }).catch(err => {
-            this.$alert(err, '错误');
+              console.log(err,'getServerDatas:');
+            this.$alert(err.toString(), '错误');
             this.isLoading = false;
           });
         }
