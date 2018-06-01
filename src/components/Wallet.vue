@@ -164,8 +164,6 @@
       beforeRouteUpdate(to, from, next) {
         console.log('beforeRouteUpdate:', to, from);
         this.init(to.params.id);
-        // this.wallet = this.$storage.getWalletById(to.params.id);
-        // this.getServerDatas();
         next();
       },
       created: function () {
@@ -212,21 +210,37 @@
             this.$message({message: '密码未输入/两次密码输入不一致', type: 'error'});
             return;
           }
-          let ret = this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '');
-          this.$storage.updateWallet(this.wallet.id, {
-            privateKey: ret.encPrivateKey,
-            encMnemonicWords: ret.encMnemonicWords
-          })
-          this.wallet = this.$storage.getWalletById(this.wallet.id);
+          this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '')
+            .then(ret=>{
+              this.$storage.updateWallet(this.wallet.id, {
+                privateKey: ret.encPrivateKey,
+                encMnemonicWords: ret.encMnemonicWords
+              })
+              this.wallet = this.$storage.getWalletById(this.wallet.id);
+              //重置输入域
+              this.mods.reset();
+              this.dialogs.one = false;
+            })
+          // todo 需删除
+          // let ret = this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '');
+          // this.$storage.updateWallet(this.wallet.id, {
+          //   privateKey: ret.encPrivateKey,
+          //   encMnemonicWords: ret.encMnemonicWords
+          // })
+          // this.wallet = this.$storage.getWalletById(this.wallet.id);
           //重置输入域
-          this.dialogs.one = false;
+          // this.dialogs.one = false;
         },
         /*导出密钥*/
         outputPassword: function () {
           this.$checkPassword(this.wallet.id).then(result => {
-            console.log('password result =>', result)
             this.dialogs.two = true;
-            this.outPrivateKey = this.$lpc__.outputPrivateKey(this.wallet.type, this.wallet.privateKey, result).privateKey;
+            this.$lpc__.outputPrivateKey(this.wallet.type, this.wallet.privateKey, result)
+              .then(ret=>{
+                this.outPrivateKey =ret.privateKey;
+              })
+            // todo 需删除
+            // this.outPrivateKey = this.$lpc__.outputPrivateKey(this.wallet.type, this.wallet.privateKey, result).privateKey;
           }).catch((err) => {
             console.log(err)
           });
@@ -239,7 +253,12 @@
         outputKeyStore: function () {
           this.$checkPassword(this.wallet.id).then((result => {
             this.dialogs.three = true;
-            this.outkeyStore = this.$lpc__.outputKeyStore(this.wallet.type, this.wallet.privateKey, result).keystore;
+            this.$lpc__.outputKeyStore(this.wallet.type, this.wallet.privateKey, result)
+              .then(ret=>{
+                this.outkeyStore =ret.keystore;
+              })
+            // todo 需删除
+            // this.outkeyStore = this.$lpc__.outputKeyStore(this.wallet.type, this.wallet.privateKey, result).keystore;
           }))
             .catch((err) => {
               console.log(err)

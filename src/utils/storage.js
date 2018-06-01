@@ -266,11 +266,11 @@ export  default Storage= {
         coinIcon: './static/defaultcoin.png',
         from: 0
       }));
-      assets = this.saveAssets(myAssets.filter(m => !assets.find(asset => asset.conAddr.toLocaleLowerCase() === m.conAddr.toLocaleLowerCase())));
+      assets = this.saveAssets(myAssets.filter(m =>m.name && m.symbol && !assets.find(asset => asset.conAddr.toLocaleLowerCase() === m.conAddr.toLocaleLowerCase())));
       //  设置钱包资产
       myAssets= myAssets.map(item=>assets.find(m=>m.conAddr.toLocaleLowerCase()===item.conAddr.toLocaleLowerCase()));
       let useMapAssets =myAssets.map(m=>({name:m.symbol,desc:m.name,img:m.coinIcon,contractAddr:m.conAddr}))
-      return this.updateWallet(wallet.id,{resources:useMapAssets,isVisited:true});
+      return this.updateWallet(wallet.id,{resources:useMapAssets,isVisited:false});
     })
   }
 }

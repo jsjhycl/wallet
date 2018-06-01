@@ -90,6 +90,10 @@
         },
         /*保存资产*/
         save:function () {
+          if(!this.asset.name||!this.asset.symbol||!this.asset.conAddr){
+            this.$message({message:"请填入名称,符号,合约地址",type:"error"})
+            return;
+          }
           this.$storage.saveAssets([this.asset]);
           this.loadAssets();
           this.dialogFormShow=false;

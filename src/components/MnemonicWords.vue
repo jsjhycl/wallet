@@ -23,9 +23,14 @@
         this.id=this.$route.params.id;
         let wallet = this.$storage.getWalletById(this.id);
         this.$checkPassword(this.id).then(result => {
-          this.keywords = this.$lpc__.decMnemonicWords(wallet.type, wallet.encMnemonicWords, result)
-            .mnemonicWords
-            .split(' ');
+          this.$lpc__.decMnemonicWords(wallet.type, wallet.encMnemonicWords, result)
+            .then(result=>{
+              this.keywords=result.mnemonicWords.split(' ')
+            });
+          // todo 需删除
+          // this.keywords = this.$lpc__.decMnemonicWords(wallet.type, wallet.encMnemonicWords, result)
+          //   .mnemonicWords
+          //   .split(' ');
         });
       },
       methods:{

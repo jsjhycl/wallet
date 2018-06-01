@@ -213,18 +213,33 @@
         doneImportByHelpWord:function () {
           try {
             this.params.check();
-            let ret= this.$lpc__.importMnemonicSentence(this.params.type,this.params.encMnemonicWords,this.params.path,this.params.password);
-            let wallet =new Wallet({});
-            wallet.id=uuid();
-            wallet.type=this.params.type;
-            wallet.name='导入钱包-助记词';
-            wallet.address=ret.walletAddr;
-            wallet.isBackup=true;
-            wallet.passwordInfo=this.params.passwordInfo;
-            wallet.privateKey=ret.encPrivateKey;
-            this.$storage.insertWallet(wallet);
-            this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
-              .then(result=>this.$emit('added', wallet.id))
+            this.$lpc__.importMnemonicSentence(this.params.type,this.params.encMnemonicWords,this.params.path,this.params.password)
+              .then(ret=>{
+                let wallet =new Wallet({});
+                wallet.id=uuid();
+                wallet.type=this.params.type;
+                wallet.name='导入钱包-助记词';
+                wallet.address=ret.walletAddr;
+                wallet.isBackup=true;
+                wallet.passwordInfo=this.params.passwordInfo;
+                wallet.privateKey=ret.encPrivateKey;
+                this.$storage.insertWallet(wallet);
+                this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+                  .then(result=>this.$emit('added', wallet.id))
+              })
+            // todo 需删除
+            // let ret= this.$lpc__.importMnemonicSentence(this.params.type,this.params.encMnemonicWords,this.params.path,this.params.password);
+            // let wallet =new Wallet({});
+            // wallet.id=uuid();
+            // wallet.type=this.params.type;
+            // wallet.name='导入钱包-助记词';
+            // wallet.address=ret.walletAddr;
+            // wallet.isBackup=true;
+            // wallet.passwordInfo=this.params.passwordInfo;
+            // wallet.privateKey=ret.encPrivateKey;
+            // this.$storage.insertWallet(wallet);
+            // this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+            //   .then(result=>this.$emit('added', wallet.id))
             //创建新钱包
           } catch (e) {
             this.$message({message: e, type: 'error'});
@@ -235,18 +250,31 @@
         doneImportByKeystore:function () {
           try{
             this.params.check();
-            let ret =this.$lpc__.importKeystore(this.params.type,this.params.keystore,this.params.password);
-            let wallet =new Wallet({});
-            wallet.id=uuid();
-            wallet.type=this.params.type;
-            wallet.name='导入钱包-Keystore';
-            wallet.address=ret.walletAddr;
-            wallet.isBackup=true;
-            wallet.privateKey=ret.encPrivateKey;
-            this.$storage.insertWallet(wallet);
-            this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
-              .then(result=>this.$emit('added', wallet.id))
-            // this.$emit('added', wallet.id);
+            this.$lpc__.importKeystore(this.params.type,this.params.keystore,this.params.password)
+              .then(ret=>{
+                let wallet =new Wallet({});
+                wallet.id=uuid();
+                wallet.type=this.params.type;
+                wallet.name='导入钱包-Keystore';
+                wallet.address=ret.walletAddr;
+                wallet.isBackup=true;
+                wallet.privateKey=ret.encPrivateKey;
+                this.$storage.insertWallet(wallet);
+                this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+                  .then(result=>this.$emit('added', wallet.id))
+              })
+            // todo 需删除
+            // let ret =this.$lpc__.importKeystore(this.params.type,this.params.keystore,this.params.password);
+            // let wallet =new Wallet({});
+            // wallet.id=uuid();
+            // wallet.type=this.params.type;
+            // wallet.name='导入钱包-Keystore';
+            // wallet.address=ret.walletAddr;
+            // wallet.isBackup=true;
+            // wallet.privateKey=ret.encPrivateKey;
+            // this.$storage.insertWallet(wallet);
+            // this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+            //   .then(result=>this.$emit('added', wallet.id))
           }catch (e) {
             console.log(e);
             this.$message({message: e, type: 'error'});
@@ -256,18 +284,33 @@
         doneImportByPrivatekey:function () {
           try{
             this.params.check();
-            let ret =this.$lpc__.importPrivatekey(this.params.type,this.params.privateKey,this.params.password);
-            let wallet =new Wallet({});
-            wallet.id=uuid();
-            wallet.type=this.params.type;
-            wallet.name='导入钱包-PrivateKey';
-            wallet.address=ret.walletAddr;
-            wallet.isBackup=true;
-            wallet.privateKey=ret.encPrivateKey;
-            this.$storage.insertWallet(wallet);
-            this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
-              .then(result=>this.$emit('added', wallet.id))
-            // this.$emit('added', wallet.id);
+            this.$lpc__.importPrivatekey(this.params.type,this.params.privateKey,this.params.password)
+              .then(ret=>{
+                console.log(ret,'import.......')
+                let wallet =new Wallet({});
+                wallet.id=uuid();
+                wallet.type=this.params.type;
+                wallet.name='导入钱包-PrivateKey';
+                wallet.address=ret.walletAddr;
+                wallet.isBackup=true;
+                wallet.privateKey=ret.encPrivateKey;
+                this.$storage.insertWallet(wallet);
+                this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+                  .then(result=>this.$emit('added', wallet.id))
+              })
+            // todo 需删除
+            // let ret =this.$lpc__.importPrivatekey(this.params.type,this.params.privateKey,this.params.password);
+            // let wallet =new Wallet({});
+            // wallet.id=uuid();
+            // wallet.type=this.params.type;
+            // wallet.name='导入钱包-PrivateKey';
+            // wallet.address=ret.walletAddr;
+            // wallet.isBackup=true;
+            // wallet.privateKey=ret.encPrivateKey;
+            // this.$storage.insertWallet(wallet);
+            // this.$rpc__.registerAddress(wallet.type,wallet.address,'import')
+            //   .then(result=>this.$emit('added', wallet.id))
+            // // this.$emit('added', wallet.id);
           }catch (e) {
             console.log(e);
             this.$message({message: e, type: 'error'});

@@ -89,10 +89,18 @@
           if (!this.isRead) return this.$message({message: '请认真阅读并同意协议!', type: 'error'});
           this.$checkPassword(this.wallet.id,false).then(password => {
             this.currencyItem.password = password;
-            if (this.$lpc__.createCoin(this.currencyItem)) this.$router.push({
-              name: 'wallet',
-              params: {id: this.wallet.id}
-            });
+            this.$lpc__.createCoin(this.currencyItem)
+              .then(ret=>{
+                if(ret) this.$router.push({
+                  name: 'wallet',
+                  params: {id: this.wallet.id}
+                });
+              })
+            // todo 需删除
+            // if (this.$lpc__.createCoin(this.currencyItem)) this.$router.push({
+            //   name: 'wallet',
+            //   params: {id: this.wallet.id}
+            // });
           })
             .catch(err => {
               console.log(err);

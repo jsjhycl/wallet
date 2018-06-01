@@ -61,11 +61,21 @@ Vue.prototype.$checkPassword=function(walletId,needCheck=true) {
     .then(result => {
       let wallet = this.$storage.getWalletById(walletId);
       if(!needCheck) return result.value;
-      if (this.$lpc__.verify(wallet.type, result.value || '', wallet.privateKey) === true) return result.value;
-      else {
-        this.$message({"message":'密码输入有误',"type":"error"});
-        throw '密码输入有误';
-      }
+      return this.$lpc__.verify(wallet.type, result.value || '', wallet.privateKey)
+        .then(ret=>{
+          if(ret) return result.value;
+          throw '密码输入有误'
+        })
+        .catch(err=> {
+          this.$message({"message": err, "type": "error"});
+          throw err;
+        })
+      // todo 需删除
+      // if (this.$lpc__.verify(wallet.type, result.value || '', wallet.privateKey) === true) return result.value;
+      // else {
+      //   this.$message({"message":'密码输入有误',"type":"error"});
+      //   throw '密码输入有误';
+      // }
     })
 }
 
@@ -80,10 +90,13 @@ try{
   CefSharp.BindObjectAsync("bindObject", "bindObject");
   let data =JSON.parse(bindObject.LoadJson()||'{}');
   Vue.prototype.$storage.initData(data);
+  Vue.$isLocal=true;
 }catch (e) {
-  console.log('调用本地接口错误：',e);
-  Vue.prototype.$message({'message':'无本地运行环境，无法调用本地接口.','type':'error'})
+  Vue.$isLocal=false;
+  // console.log('调用本地接口错误：',e);
+  // Vue.prototype.$message({'message':'无本地运行环境，无法调用本地接口.','type':'error'})
 }
+console.log('is local :',Vue.$isLocal);
 Bus.config=storage.getConfig();
 new Vue({
   el: '#app',

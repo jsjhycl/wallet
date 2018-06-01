@@ -1,7 +1,8 @@
 import axios from 'axios'
 import common from './common'
 function getUrl(path) {
-  let stuff ='http://192.168.1.201:8443/api/v1/';
+  let stuff ='http://114.242.31.175:8443/api/v1/';
+  // let stuff ='https://www.blockwallet.pro/api/v1/';
   return stuff+path;
 }
 export default {
@@ -67,13 +68,12 @@ export default {
     let gets =coinType!='0x10000'?[this.getAllProxyCoin(coinType,addr),this.getBasicCoin(coinType,addr)]:[this.getAllProxyCoin(coinType,addr)];
     return Promise.all(gets)
       .then(datas=>{
-        return datas.length>1? datas[0].push(datas[1]):datas[0];
-        // return [...datas[1],datas[0]];
+        return datas.length>1? [...datas[0],datas[1]]:datas[0];
       })
   },
   /*获取本地接口数据*/
   excuteLocalApi(obj){
-    return axios.post(getUrl('api/v1/proxy-local-rpc'),obj)
-      .then(result=>common.unwrapHttp__(result));
+    return axios.post(getUrl('proxy-local-rpc'),JSON.stringify(obj))
+      .then(result=>result.data);
   }
 }

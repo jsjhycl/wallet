@@ -214,17 +214,32 @@
             //验证密码
             this.$checkPassword(this.wallet.id)
               .then(result => {
-                this.transferInfo.sessionId = this.$lpc__.transferCoin(this.wallet.type,//注意修改 todo
+                this.$lpc__.transferCoin(this.wallet.type,//注意修改 todo
                   result,
                   this.wallet.privateKey,
                   this.transferInfo.toAdress,
                   this.transferInfo.amount,
-                  this.currentAsset.contractAddr).txHash;// todo 应该需要修改
-                console.log(this.transferInfo,'........................');
-                this.transferInfo.conAddr = this.currentAsset.contractAddr;
-                this.$storage.addLocalTransfer(this.transferInfo);
-                this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
-                this.dialogs.two = false;
+                  this.currentAsset.contractAddr)
+                  .then(ret=>{
+                    this.transferInfo.sessionId =ret.txHash;
+                    console.log(this.transferInfo,'........................');
+                    this.transferInfo.conAddr = this.currentAsset.contractAddr;
+                    this.$storage.addLocalTransfer(this.transferInfo);
+                    this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
+                    this.dialogs.two = false;
+                  })
+                // todo 需删除
+                // this.transferInfo.sessionId = this.$lpc__.transferCoin(this.wallet.type,//注意修改 todo
+                //   result,
+                //   this.wallet.privateKey,
+                //   this.transferInfo.toAdress,
+                //   this.transferInfo.amount,
+                //   this.currentAsset.contractAddr).txHash;// todo 应该需要修改
+                // console.log(this.transferInfo,'........................');
+                // this.transferInfo.conAddr = this.currentAsset.contractAddr;
+                // this.$storage.addLocalTransfer(this.transferInfo);
+                // this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
+                // this.dialogs.two = false;
               })
           } catch (e) {
             console.log(e);

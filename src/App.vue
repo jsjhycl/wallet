@@ -4,7 +4,7 @@
     <div class="walletLeftWrap">
       <div class="walletLeftLogo">
         <img class="logoImg" src="./assets/img/logo.png">
-        <p class="walletLeftTitle">BCB Wallet</p>
+        <p class="walletLeftTitle">BCB Wallet<span class="small">(v1.0.0)</span></p>
       </div>
       <div>
         <div class="searchFrame">

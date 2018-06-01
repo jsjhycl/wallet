@@ -61,23 +61,42 @@
             this.$message({message: "请仔细阅读并同意服务条款！", type: 'error'});
             return;
           }
-          // 调用本地库获取相关数据
-          let result = this.$lpc__.createWallet(this.wallet.type,this.wallet.password);
-          this.wallet.privateKey=result.encPrivateKey;
-          this.wallet.address=result.walletAddr;
-          this.wallet.encMnemonicWords=result.encMnemonicWords;
-          //保存钱包
-          this.$storage.insertWallet(this.wallet);
-          // 注册钱包
-          this.$rpc__.registerAddress(this.wallet.type,this.wallet.address,'new')
-            .then(result=>{
-              this.$emit('added', this.wallet.id);
-              this.$router.push({name:'helpwords',params:{id:this.wallet.id}});
+          //创建钱包异步调用
+          this.$lpc__.createWallet(this.wallet.type,this.wallet.password)
+            .then(result=> {
+              this.wallet.privateKey = result.encPrivateKey;
+              this.wallet.address = result.walletAddr;
+              this.wallet.encMnemonicWords = result.encMnemonicWords;
+              //保存钱包
+              this.$storage.insertWallet(this.wallet);
+              // 注册钱包
+              this.$rpc__.registerAddress(this.wallet.type, this.wallet.address, 'new')
+                .then(result => {
+                  this.$emit('added', this.wallet.id);
+                  this.$router.push({name: 'helpwords', params: {id: this.wallet.id}});
+                })
+                .catch(err => {
+                  console.log(err);
+                  this.$alert('创建钱包出现错误：' + err.toString());
+                })
             })
-            .catch(err=>{
-              console.log(err);
-              this.$alert('创建钱包出现错误：'+err.toString());
-            })
+          // // 调用本地库获取相关数据 todo 需删除
+          // let result = this.$lpc__.createWallet(this.wallet.type,this.wallet.password);
+          // this.wallet.privateKey=result.encPrivateKey;
+          // this.wallet.address=result.walletAddr;
+          // this.wallet.encMnemonicWords=result.encMnemonicWords;
+          // //保存钱包
+          // this.$storage.insertWallet(this.wallet);
+          // // 注册钱包
+          // this.$rpc__.registerAddress(this.wallet.type,this.wallet.address,'new')
+          //   .then(result=>{
+          //     this.$emit('added', this.wallet.id);
+          //     this.$router.push({name:'helpwords',params:{id:this.wallet.id}});
+          //   })
+          //   .catch(err=>{
+          //     console.log(err);
+          //     this.$alert('创建钱包出现错误：'+err.toString());
+          //   })
         }
       }
     }

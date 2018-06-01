@@ -44,7 +44,11 @@ export default {
       throw errorMsg;
     }
   },
-  excute(method,obj) {
+  excute(method,obj){
+    if(Vue.$isLocal) return this.excute_local(method,obj);
+    else return this.excute_web(method,obj);
+  },
+  excute_web(method,obj) {
     let opt = {
       "jsonrpc": "2.0",
       "method": method,
@@ -55,17 +59,17 @@ export default {
       "id": ""
     };
     console.log("excute:", opt);
-    rpc.excuteLocalApi(obj)
+    return rpc.excuteLocalApi(opt)
       .then(result => {
-        return this.unwrap__(result);
+        result= this.unwrap__(result);
+        console.log('local result-remote(success):',result);
+        return result;
       }).catch(e => {
-      console.log('local result(error):', e);
-      Vue.prototype.$message({"message": "出现错误：" + e, "type": "error"});
-      throw e;
-    })
+        console.log('local result(error):', e);
+        Vue.prototype.$message({"message": "出现错误：" + e, "type": "error"});
+        throw e;
+      })
   },
-
-
 
   excute_local(method, obj) {
     let opt = {
