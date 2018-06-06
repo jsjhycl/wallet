@@ -6,7 +6,7 @@
         <p>助记词用于恢复钱包和充值钱包密码，将它准确的抄写到纸上，并存放在只有你知道的安全的地方。</p>
         <div class="wordsWrap">
           <p>
-            <span style="margin: 10px" v-for="kw in keywords">{{kw}}</span>
+            <span style="margin: 10px" v-for="kw in keywords">{{kw+' '}}</span>
           </p>
         </div>
       </div>

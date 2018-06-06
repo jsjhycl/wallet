@@ -32,7 +32,6 @@
       <div class="clearfix">
         <ul class="resource-list list-unstyled pull-left">
           <li v-for="item in wallet.resources||[]" class="pull-left" v-loading="isLoading">
-            <!--<router-link class="assetsLi" :to="'/details/'+wallet.id+'/'+item.name">-->
             <router-link class="assetsLi" :to="{name:'details',params:{wallet:wallet,currentAsset:item}}">
               <div>
                 <img class="assetsLiImg" :src="item.img">
@@ -40,8 +39,8 @@
               </div>
               <div class="assetsInfor">
                 <p style="text-align: left;overflow: hidden;text-overflow: ellipsis;white-space: nowrap">{{item.contractAddr}}</p>
-                <p class="colorFFF">≈<span>{{$root.Bus.config.currency|coin-symbol}}{{item.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span></p>
                 <p class="assetsMoney">{{item.balance|tofix($root.Bus.config.coinFractionLen)}}</p>
+                <p class="colorFFF"><span style="letter-spacing: 4px">≈{{$root.Bus.config.currency|coin-symbol}}</span><span style="letter-spacing: 1px">{{item.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span></p>
               </div>
             </router-link>
           </li>
@@ -52,8 +51,8 @@
         </router-link>
       </div>
     <!--修改密码-->
-    <el-dialog title="修改密码" width="33%" :visible.sync="dialogs.one" :close-on-click-modal="false">
-      <div class="modal-body">
+    <el-dialog title="修改密码" width="400px" :visible.sync="dialogs.one" :close-on-click-modal="false">
+      <div >
         <ul class="modalList list-unstyled">
           <li>
             <p>当前密码</p>
@@ -77,7 +76,7 @@
       </div>
     </el-dialog>
     <!--导出私钥-->
-    <el-dialog title="导出私钥"   width="33%"
+    <el-dialog title="导出私钥"   width="420px"
                :visible.sync="dialogs.two" :close-on-click-modal="false">
       <p class="privateKeyTips">安全警告：私钥未经加密，导出存在风险，建议使用助记词和Keystore进行备份</p>
       <p class="privateKeyText">
@@ -88,7 +87,7 @@
       </div>
     </el-dialog>
     <!--导出keystore-->
-    <el-dialog title="导出keystore" width="40%" :visible.sync="dialogs.three" :close-on-click-modal="false">
+    <el-dialog title="导出keystore" width="600px" :visible.sync="dialogs.three" :close-on-click-modal="false">
       <div class="modal-body">
         <ul id="myTab" class="nav nav-tabs modalNav">
           <li class="active">
@@ -109,7 +108,7 @@
             <p class="outkeyTabText">
               {{outkeyStore}}
             </p>
-            <div class="modalFooter">
+            <div class="modalFooter" style="margin-top: 20px">
               <button  v-clipboard:copy="outkeyStore" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制</button>
             </div>
           </div>
@@ -126,7 +125,7 @@
       </div>
     </el-dialog>
     <!--收款-->
-    <el-dialog title="收款码"  width="40%"  style="word-break: break-word" :visible.sync="dialogs.four" :close-on-click-modal="false">
+    <el-dialog title="收款码"  width="440px"  style="word-break: break-word" :visible.sync="dialogs.four" :close-on-click-modal="false">
       <div class="modal-body marT2 text-center">
         <p>{{wallet.address}}</p>
         <div class="padT">
@@ -163,12 +162,14 @@
       }),
       beforeRouteUpdate(to, from, next) {
         console.log('beforeRouteUpdate:', to, from);
-        this.init(to.params.id);
+        this.wallet = this.$storage.getWalletById(to.params.id);
+        this.init();
         next();
       },
       created: function () {
-        this.init(this.$route.params.id);
-        this.$bindRefresh('getServerDatas');
+        this.wallet = this.$storage.getWalletById(this.$route.params.id);
+        this.init();
+        this.$bindRefresh('init');
       },
       computed: {
         totalMoney: function () {
@@ -183,18 +184,14 @@
         }
       },
       methods: {
-        init(id){
-          this.wallet = this.$storage.getWalletById(id);
-          if(!this.wallet.isVisited){
-            //执行初始化资产
-            this.$storage.initAssetAndResources(this.wallet.id)
-              .then(wallet=>{
-                this.getServerDatas();
-              })
-          }else{
-            //  调用后台接口获取数据，进行显示
-            this.getServerDatas();
-          }
+        init() {
+          //执行初始化资产
+          this.$storage.initAssetAndResources(this.wallet.id)
+            .then(wallet => {
+              //重新获取钱包明细
+              this.wallet = this.$storage.getWalletById(this.wallet.id);
+              this.getServerDatas();
+            })
         },
         /*备份助记词*/
         backupWords: function () {
@@ -221,15 +218,6 @@
               this.mods.reset();
               this.dialogs.one = false;
             })
-          // todo 需删除
-          // let ret = this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '');
-          // this.$storage.updateWallet(this.wallet.id, {
-          //   privateKey: ret.encPrivateKey,
-          //   encMnemonicWords: ret.encMnemonicWords
-          // })
-          // this.wallet = this.$storage.getWalletById(this.wallet.id);
-          //重置输入域
-          // this.dialogs.one = false;
         },
         /*导出密钥*/
         outputPassword: function () {
@@ -239,8 +227,6 @@
               .then(ret=>{
                 this.outPrivateKey =ret.privateKey;
               })
-            // todo 需删除
-            // this.outPrivateKey = this.$lpc__.outputPrivateKey(this.wallet.type, this.wallet.privateKey, result).privateKey;
           }).catch((err) => {
             console.log(err)
           });
@@ -257,8 +243,6 @@
               .then(ret=>{
                 this.outkeyStore =ret.keystore;
               })
-            // todo 需删除
-            // this.outkeyStore = this.$lpc__.outputKeyStore(this.wallet.type, this.wallet.privateKey, result).keystore;
           }))
             .catch((err) => {
               console.log(err)
@@ -280,6 +264,9 @@
         },
         /*修改*/
         editHandler: function () {
+          if(this.wallet.name.length>20){
+            return this.$message({message: "钱包名称不能超过20字符！", type: 'error'});
+          }
           //执行保存
           this.$storage.updateWallet(this.$route.params.id, {name: this.wallet.name});
           this.$emit('modify', this.$route.params.id, {name: this.wallet.name});

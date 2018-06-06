@@ -102,10 +102,10 @@ export default {
       coinParam: {
         name: obj.name,
         symbol: obj.symbol,
-        initSupply: obj.initSupply,
+        initSupply: obj.initSupply*Math.pow(10,9),
         addSupplyEnabled: obj.addSupplyEnabled,
         burnEnabled: obj.burnEnabled,
-        gasPrice: obj.gasPrice,
+        gasPrice: obj.gasPrice*Math.pow(10,3),
         gasLimit: obj.gasLimit,
         note: obj.note
       }

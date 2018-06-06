@@ -110,9 +110,11 @@ div.padT{
     color: #8F9092;
     background: transparent;
 }
-.searchCenter{
-    margin-top: 15px;
-    border-top: 1px solid #f1f1f1;
+.searchCenter {
+  margin-top: 15px;
+  border-top: 1px solid #f1f1f1;
+  height: calc(100vh - 320px);
+  overflow-y: auto;
 }
 
 /*无用户时*/
@@ -126,9 +128,10 @@ div.padT{
 .searchLi:hover .searchLiA{
     background: #E7F2FF;
 }
-.searchLiA{
-    display: flex;
-    padding: 10px 0 10px 30px;
+.searchLiA {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0 10px 30px;
 }
 .headImg{
     width: 45px;
@@ -464,7 +467,8 @@ span.spanSel:after{
     cursor: pointer;
 }
 .modalFooter{
-    margin: 40px auto 30px;
+    /*margin: 40px auto 30px;*/
+    margin: 0px auto 10px;
     text-align: center;
 }
 .modalFooter button{
@@ -473,7 +477,7 @@ span.spanSel:after{
     font-size: 16px;
 }
 .privateKeyTips{
-    margin: 60px 0 52px 0;
+    margin: 40px 0 52px 0;
     line-height: 27px;
     font-size: 16px;
     color: #CB6056;

@@ -37,7 +37,7 @@
       },
       methods:{
         init:function(){
-          this.orders =this.$storage.getLocalTransfers().map(item=>new transaction().fromLocalByObj('??????',item));
+          this.orders =this.$storage.getLocalTransfers().map(item=>new transaction().fromLocalByObj(item.address,item));
           this.doneRefresh();
         },
         doneSelect:function (item) {
@@ -51,19 +51,20 @@
           if(removeItems.length<=0) return;
           this.$confirm("您确定要删除选中记录吗？","确认")
             .then(result=>{
-              this.orders = this.$storage.removeLocalTransfers(removeItems).map(item=>new transaction().fromLocalByObj('??????',item));
+              this.orders = this.$storage.removeLocalTransfers(removeItems).map(item=>new transaction().fromLocalByObj(item.address,item));
             })
             .catch(err=>console.log(err))
         },
         /*刷新 todo 需测试*/
         doneRefresh:function () {
           this.isLoading=true;
-          this.$storage.getTransactionByTxhash('0x3', this.orders.map(item =>item.txHash))//todo
+          // this.$storage.getTransactionByTxhash('0x3', this.orders.map(item =>item.txHash))//todo
+          this.$storage.getTransactionsByOrders(this.orders)
             .then(trans => {
               trans.forEach(tran=>{
-                let findItem =this.orders.find(m=>m.txHash===tran.txHash);
+                let findItem =this.orders.find(m=>m.txHash===tran.hash);
                 if(findItem){
-                  findItem.complexByHashData(trans);
+                  findItem.complexByHashData(tran);
                 }
               })
               this.isLoading=false;

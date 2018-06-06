@@ -4,7 +4,7 @@
     <div class="walletLeftWrap">
       <div class="walletLeftLogo">
         <img class="logoImg" src="./assets/img/logo.png">
-        <p class="walletLeftTitle">BCB Wallet<span class="small">(v1.0.0)</span></p>
+        <p class="walletLeftTitle">BCB Wallet<span class="small">(v1.0.1)</span></p>
       </div>
       <div>
         <div class="searchFrame">
@@ -16,13 +16,15 @@
           <ul v-else class="list-unstyled">
             <li @click="setSelectHandler(item)" v-for="item in wallets" class="searchLi" :class="{active:item===selectWallet}">
               <router-link class="searchLiA" :to="'/wallet/'+item.id">
-                <img class="headImg" :src="'./static/'+item.head">
-                <div class="searchLiInfo">
-                  <h5>{{item.name}}</h5>
-                  <p class="color4AC390">{{$storage.getWalletTypes().find(m=>m.value===item.type).name}}
-                  </p>
+                <div class="disFlex">
+                  <img class="headImg" :src="'./static/'+item.head">
+                  <div class="searchLiInfo">
+                    <h5>{{item.name}}</h5>
+                    <p class="color4AC390">{{$storage.getWalletTypes().find(m=>m.value===item.type).name}}
+                    </p>
+                  </div>
                 </div>
-                <button class="btn-link" style="color: red;align-self: flex-end;padding-right: 16px" v-if="!item.isBackup" @click="doneBack">请备份</button>
+                <button class="btn-link" style="color: red;padding-right: 16px" v-if="!item.isBackup" @click="doneBack">请备份</button>
               </router-link>
             </li>
           </ul>

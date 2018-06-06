@@ -19,12 +19,18 @@ export  default Storage= {
   /*获取用户的本地钱包*/
   getWallets: function () {
     let strWallets = localStorage.getItem('bcb_wallets') || '[]';
-    return JSON.parse(strWallets);
+    let wallets= JSON.parse(strWallets);
+    wallets.forEach(w=>{
+      w.resources=w.resources||[];
+      if(w.resources.length>0 && (typeof w.resources[0])!="string") w.resources=[];
+    })
+    return wallets;
   },
   /*获取钱包分类*/
   getWalletTypes: function () {
     // return ['ETH', 'BCB', 'TOT'];
-    return [{"name": "ETH", "value": "0x3"},{"name": "BCBMainNet", "value": "0x10000"}]
+    return [{"name": "BCBMainNet", "value": "0x10000"}]
+    // return [{"name": "ETH", "value": "0x3"},{"name": "BCBMainNet", "value": "0x10000"}]
   },
   /*保存钱包*/
   insertWallet: function (wallet) {
@@ -42,13 +48,11 @@ export  default Storage= {
         localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
       })
     }
+    return item;
   },
   generatorWords: function (_words, len) {
     let words = [].concat(_words);
     len = len || words.length;
-    // let allWords = ["中国", "花朵", "friend", "老师", "同性恋", "girl", "比特币", "好基友", "1314"].concat(words);
-    // let results = Array.from(new Set(allWords)).sort();
-    // return results.slice(0, len < results.length ? len : results.length - 1);
     for (let i = 0; i < 50; i++) {
       let index = Math.floor(Math.random() * len);
       let temp = words[0];
@@ -60,9 +64,10 @@ export  default Storage= {
   getWalletById: function (id) {
     let wallet = this.getWallets().find(m => m.id === id);
     wallet.resources = wallet.resources || [];
-    wallet.resources.forEach(item => {
-      item.balance = 0;
-      item.money = 0;
+    //返回wallet里面的资产试图
+    wallet.resources =wallet.resources.map(conAddr=>{
+      let assetItem=this.getAssetByConAddr(conAddr);
+      return {name:assetItem.symbol,desc:assetItem.name,img:assetItem.coinIcon,contractAddr:assetItem.conAddr,balance:0,money:0};
     })
     return wallet;
   },
@@ -100,12 +105,11 @@ export  default Storage= {
       .then(datas => {
         let exchangeObj = datas[datas.length - 1];
         let coins = datas[0];
-        console.log('coins=>',coins);
         return coins.filter(m => resources.findIndex(n => n.contractAddr.toLocaleLowerCase() === m.conAddr.toLocaleLowerCase()) >= 0)
           .map(item => ({
             contractAddr: item.conAddr,
             balance: item.balance,
-            money: currency != '美元' ? item.balance * exchangeObj[item.symbol] * exchangeObj['CNY'] : item.balance * exchangeObj[item.symbol]
+            money: currency != '美元' ? item.balance * exchangeObj[item.symbol]||0 * exchangeObj['CNY']||0 : item.balance * exchangeObj[item.symbol]||0
           }));
       })
   },
@@ -116,10 +120,24 @@ export  default Storage= {
       this.saveAssets(items);
     })
   },
+  prepareAllAssets: function (coinTypes=['0x3','0x10000']) {
+    Promise.all(coinTypes.map(c=>rpc.getAssets(c)))
+      .then(datas=>{
+        let items=[];
+        datas.forEach(item=>items.push(...item));
+        items.forEach(item => item.from = 1);
+        this.saveAssets(items);
+      })
+  },
   //get assets
   getAssets() {
     let strAssets = localStorage.getItem("bcb_assets") || '[]';
     return JSON.parse(strAssets);
+  },
+  //根据合约地址获取指定资产
+  getAssetByConAddr(conAddr){
+    let asset =this.getAssets().find(m=>m.conAddr===conAddr);
+    return asset;
   },
   //保存资产
   saveAssets(items) {
@@ -224,7 +242,6 @@ export  default Storage= {
   removeLocalTransfers: function (objs) {
     let transfers = this.getLocalTransfers();
     for (let item of objs) {
-      console.log(item)
       let index = transfers.findIndex(m => m.sessionId === item.txHash);
       if (index < 0) continue;
       transfers.splice(index, 1);
@@ -239,6 +256,11 @@ export  default Storage= {
   /*根据tx_hash查询交易状态*/
   getTransactionByTxhash(coinType, ids) {
     let reqs = ids.map(id => rpc.getTransactionByTxhash(coinType, id));
+    return Promise.all(reqs);
+  },
+  /*根据交易对象获取交易状态{type:'':txHash:''}*/
+  getTransactionsByOrders(trans){
+    let reqs =trans.map(item=>rpc.getTransactionByTxhash(item.type||'0x10000',item.txHash));
     return Promise.all(reqs);
   },
   /*获取配置列表*/
@@ -258,7 +280,7 @@ export  default Storage= {
     //  获取所有资产明细
     return rpc.getAllCoin(wallet.type, wallet.address).then(datas => {
       //初始化资产库
-      let myAssets =datas.map(n => ({
+      let myAssets = datas.map(n => ({
         coinType: wallet.type,
         name: n.name,
         symbol: n.symbol,
@@ -266,11 +288,21 @@ export  default Storage= {
         coinIcon: './static/defaultcoin.png',
         from: 0
       }));
-      assets = this.saveAssets(myAssets.filter(m =>m.name && m.symbol && !assets.find(asset => asset.conAddr.toLocaleLowerCase() === m.conAddr.toLocaleLowerCase())));
-      //  设置钱包资产
-      myAssets= myAssets.map(item=>assets.find(m=>m.conAddr.toLocaleLowerCase()===item.conAddr.toLocaleLowerCase()));
-      let useMapAssets =myAssets.map(m=>({name:m.symbol,desc:m.name,img:m.coinIcon,contractAddr:m.conAddr}))
-      return this.updateWallet(wallet.id,{resources:useMapAssets,isVisited:false});
+      let newAssets = myAssets.filter(m => m.name && m.symbol && !assets.find(asset => asset.conAddr.toLocaleLowerCase() === m.conAddr.toLocaleLowerCase()));
+      if (newAssets.length > 0) {
+        this.saveAssets(newAssets);
+        console.log('save new.............')
+        let updates =Array.from(new Set([...wallet.resources || [], ...newAssets.map(item => item.conAddr)]));
+        //  增量更新钱包资产
+        this.updateWallet(wallet.id, {resources:updates });
+      }
+      if (!wallet.isVisited) {
+        //  设置钱包资产(如果是首次添加所有资产)
+        console.log('init all......')
+        let updates = Array.from(new Set([...wallet.resources || [], ...myAssets.map(item => item.conAddr)]));
+        this.updateWallet(wallet.id, {resources: updates, isVisited: true});
+      }
+      return;
     })
   }
 }

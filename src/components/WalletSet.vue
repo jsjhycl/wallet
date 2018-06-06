@@ -31,13 +31,29 @@
           <p>帮助中心</p>
         </router-link>
       </li>
+      <li @click="doneInit">
+        <a class="walletSetA" >
+          <img class="walletSetImg" src="../assets/img/helpCenter.png">
+          <p>初始化</p>
+        </a>
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
     export default {
-        name: "WalletSet"
+        name: "WalletSet",
+      methods:{
+          doneInit(){
+            this.$confirm("您确定要清除本地数据吗？",'询问')
+              .then(()=>{
+                localStorage.clear();
+                // this.$router.push('/');
+                window.location='/';
+              })
+          }
+      }
     }
 </script>
 

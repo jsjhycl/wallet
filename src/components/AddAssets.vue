@@ -18,7 +18,7 @@
     <div class="btnGroupSm">
       <button v-show="asset.from===0" @click="doneDelete" class="btn btn-danger btnStyle">删除</button>
       <button @click="add" class="btn btn-success btnStyle">新增</button>
-      <button @click="setResources" class="btn btn-primary btnStyle marRL">选定</button>
+      <button @click="setResources" class="btn btn-primary btnStyle marRL">确定</button>
     </div>
     <el-dialog title="新增代币资产" :visible.sync="dialogFormShow" :close-on-click-modal="false" >
       <el-form :model="asset">
@@ -46,7 +46,7 @@
       name: "AddAssets",
       data: () => ({
         assets: [],
-        asset:{},
+        asset:{},//当前选中的资产
         dialogFormShow:false,
         formLableWidth:'80px',
         currentWallet:null
@@ -59,14 +59,14 @@
       },
       methods:{
         loadAssets(){
-          // let currentWallet =this.$storage.getWalletById(this.$route.params.id);
           let resources =this.currentWallet.resources||[];
           this.assets =this.$storage.getAssets()
             .filter(m=>m.coinType===this.currentWallet.type)
             .map(item=>{
-              item.state=resources.some(m=>m.name===item.symbol);
+              item.state=resources.some(m=>m.contractAddr===item.conAddr);
               return item;
             });
+          console.log('this.assets:',this.assets);
           if(this.assets.length>0) this.asset =this.assets[0];
         },
         init:function(){
@@ -75,14 +75,15 @@
           })
         },
         setResources:function () {
-          let resources = this.assets.filter(m=>m.state).map(m=>({name:m.symbol,desc:m.name,img:m.coinIcon,contractAddr:m.conAddr}));
+          // let resources = this.assets.filter(m=>m.state).map(m=>({name:m.symbol,desc:m.name,img:m.coinIcon,contractAddr:m.conAddr}));
+          let resources = this.assets.filter(m=>m.state).map(m=>m.conAddr);//字符串数组
+          console.log(resources,'.....save resource');
           this.$storage.setResourceForWallet(this.$route.params.id,resources);
           this.$router.replace({name:'wallet',params:this.$route.params.id});
         },
         /*新增资产*/
         add:function () {
           this.asset =new Asset();
-          // this.asset.coinType ='0x3';
           this.asset.coinType =this.currentWallet.type;
           this.asset.coinIcon ='./static/defaultcoin.png';
           this.asset.from=0;

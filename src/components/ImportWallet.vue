@@ -186,7 +186,7 @@
       }
     }
     return Object.assign({
-      type: '0x3',
+      type: '0x10000',
       isRead: false
     },params[index]);
   }

@@ -66,7 +66,7 @@ export default {
         return result;
       }).catch(e => {
         console.log('local result(error):', e);
-        Vue.prototype.$message({"message": "出现错误：" + e, "type": "error"});
+        Vue.prototype.$message({"message": "出现错误：" + e, "type": "error",'showClose':true,'duration':0});
         throw e;
       })
   },
@@ -89,7 +89,7 @@ export default {
       return result;
     }catch (e) {
       console.log('local result(error):', e);
-      Vue.prototype.$message({"message":"出现错误："+e,"type":"error"});
+      Vue.prototype.$message({"message":"出现错误："+e,"type":"error",'showClose':true,'duration':0});
       throw e;
       // return this.unwrap__({result:mock[method]});
     }

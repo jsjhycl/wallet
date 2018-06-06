@@ -67,7 +67,7 @@ Vue.prototype.$checkPassword=function(walletId,needCheck=true) {
           throw '密码输入有误'
         })
         .catch(err=> {
-          this.$message({"message": err, "type": "error"});
+          this.$message({"message": err, "type": "error",'showClose':true,'duration':0});
           throw err;
         })
       // todo 需删除
@@ -105,7 +105,7 @@ new Vue({
     Bus
   },
   created(){
-    this.$storage.prepareAsset();//初始化资产列表
+    this.$storage.prepareAllAssets();//初始化资产列表[0x3,0x10000]
   },
   components: { App },
   template: '<App/>'

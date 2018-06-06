@@ -26,7 +26,7 @@
         <span class="color80D3FE">服务及隐私条款</span>
       </label>
       <div class="btnGroup">
-        <button @click="createWallet" class="btn btn-success btnStyle" to="/helpwords">创建钱包</button>
+        <button @click="createWallet" :disabled="isSaveing" v-loading="isSaveing" class="btn btn-success btnStyle" to="/helpwords">创建钱包</button>
         <!--<a class="btn btn-success btnStyle disabled marRL" href="#">导入钱包</a>-->
       </div>
     </div>
@@ -37,6 +37,7 @@
     export default {
       name: "FoundWallet",
       data: () => ({
+        isSaveing:false,
         walletTypes: [],
         wallet: {},
         isRead: false,
@@ -44,13 +45,17 @@
       }),
       created: function () {
         this.walletTypes = this.$storage.getWalletTypes();
-        this.wallet = {id:uuid(),type: '0x3', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
+        this.wallet = {id:uuid(),type: '0x10000', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
       },
       methods: {
         createWallet: function () {
           //校验
           if (!this.wallet.type || !this.wallet.name || !this.wallet.password) {
             this.$message({message: "请填写必要的数据！", type: 'error'});
+            return;
+          }
+          if(this.wallet.name.length>20){
+            this.$message({message: "名称不能超过20字符！", type: 'error'});
             return;
           }
           if (this.wallet.password != this.repeatPassword) {
@@ -61,6 +66,7 @@
             this.$message({message: "请仔细阅读并同意服务条款！", type: 'error'});
             return;
           }
+          this.isSaveing=true;
           //创建钱包异步调用
           this.$lpc__.createWallet(this.wallet.type,this.wallet.password)
             .then(result=> {
@@ -74,29 +80,14 @@
                 .then(result => {
                   this.$emit('added', this.wallet.id);
                   this.$router.push({name: 'helpwords', params: {id: this.wallet.id}});
+                  this.isSaveing=false;
                 })
                 .catch(err => {
                   console.log(err);
                   this.$alert('创建钱包出现错误：' + err.toString());
+                  this.isSaveing=false;
                 })
             })
-          // // 调用本地库获取相关数据 todo 需删除
-          // let result = this.$lpc__.createWallet(this.wallet.type,this.wallet.password);
-          // this.wallet.privateKey=result.encPrivateKey;
-          // this.wallet.address=result.walletAddr;
-          // this.wallet.encMnemonicWords=result.encMnemonicWords;
-          // //保存钱包
-          // this.$storage.insertWallet(this.wallet);
-          // // 注册钱包
-          // this.$rpc__.registerAddress(this.wallet.type,this.wallet.address,'new')
-          //   .then(result=>{
-          //     this.$emit('added', this.wallet.id);
-          //     this.$router.push({name:'helpwords',params:{id:this.wallet.id}});
-          //   })
-          //   .catch(err=>{
-          //     console.log(err);
-          //     this.$alert('创建钱包出现错误：'+err.toString());
-          //   })
         }
       }
     }

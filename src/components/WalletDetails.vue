@@ -136,11 +136,11 @@
         </ul>
       </div>
       <div class="modalFooter">
-      <button @click="transferHandler" type="button" class="btn btn-primary">转账</button>
+      <button @click="transferHandler" :disabled="isPaying" v-loading="isPaying" type="button" class="btn btn-primary">转账</button>
       </div>
     </el-dialog>
     <!--收款-->
-    <el-dialog title="收款码" width="40%"  style="word-break: break-word"  :visible.sync="dialogs.one">
+    <el-dialog title="收款码" width="440px"  style="word-break: break-word"  :visible.sync="dialogs.one">
       <div class="modal-body marT2 text-center">
         <p>{{wallet.address}}</p>
         <div class="padT">
@@ -160,6 +160,7 @@
       name: "WalletDetails",
       data: () => ({
         isLoading:false,
+        isPaying:false,
         wallet: {},
         currentAsset: {},
         users: [],
@@ -212,6 +213,7 @@
           try {
             this.transferInfo.check();
             //验证密码
+            this.isPaying=true;
             this.$checkPassword(this.wallet.id)
               .then(result => {
                 this.$lpc__.transferCoin(this.wallet.type,//注意修改 todo
@@ -224,26 +226,18 @@
                     this.transferInfo.sessionId =ret.txHash;
                     console.log(this.transferInfo,'........................');
                     this.transferInfo.conAddr = this.currentAsset.contractAddr;
+                    this.transferInfo.type=this.wallet.type;//主类型
+                    this.transferInfo.from=this.wallet.address;//我的钱包地址
                     this.$storage.addLocalTransfer(this.transferInfo);
                     this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
                     this.dialogs.two = false;
-                  })
-                // todo 需删除
-                // this.transferInfo.sessionId = this.$lpc__.transferCoin(this.wallet.type,//注意修改 todo
-                //   result,
-                //   this.wallet.privateKey,
-                //   this.transferInfo.toAdress,
-                //   this.transferInfo.amount,
-                //   this.currentAsset.contractAddr).txHash;// todo 应该需要修改
-                // console.log(this.transferInfo,'........................');
-                // this.transferInfo.conAddr = this.currentAsset.contractAddr;
-                // this.$storage.addLocalTransfer(this.transferInfo);
-                // this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
-                // this.dialogs.two = false;
+                  });
+                this.isPaying=false;
               })
           } catch (e) {
             console.log(e);
-            this.$message({message: e, type: 'error'});
+            this.$message({message: e, type: 'error','showClose':true,'duration':0});
+            this.isPaying=false;
           }
         },
         //选择地址
@@ -260,7 +254,7 @@
           let val = parseFloat(this.transferInfo.amount);
           if (val > this.currentAsset.balance) this.transferInfo.amount = this.currentAsset.balance;
         },
-        //转账成功回调
+        //拷贝成功回调
         copySuccess: function (e) {
           this.$message({message: '已拷贝到剪切板.', type: 'success'});
         },

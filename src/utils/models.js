@@ -21,6 +21,8 @@ export class Wallet {
 
 /*创建交易是实体表*/
 export class TransferItem {
+  type='0x3';
+  form='';
   sessionId='';
   coinType='';
   toAdress='';
@@ -97,7 +99,7 @@ export class transaction {
     return this;
   };
   fromLocalByObj(address,obj){
-    this.from=address;
+    this.from=address||obj.address;
     this.to=obj.toAdress;
     this.value=obj.amount;
     this.valueName=obj.coinType;
@@ -108,7 +110,6 @@ export class transaction {
     return this;
   };
   complexByHashData(obj){//直接修改源对象
-    console.log('in hash ...',obj)
     this.from=obj.from;
     this.to=obj.to;
     this.blockN=obj.blockNumber;
