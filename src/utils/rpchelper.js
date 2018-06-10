@@ -1,6 +1,7 @@
 import axios from 'axios'
 import common from './common'
 function getUrl(path) {
+  // let stuff ='http://114.242.31.175:8443/api/v1/';
   let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='https://www.blockwallet.pro/api/v1/';
   return stuff+path;
@@ -65,7 +66,7 @@ export default {
   },
   /*获取所有币余额*/
   getAllCoin(coinType,addr){
-    let gets =coinType!='0x10000'?[this.getAllProxyCoin(coinType,addr),this.getBasicCoin(coinType,addr)]:[this.getAllProxyCoin(coinType,addr)];
+    let gets =coinType!='0x1000'?[this.getAllProxyCoin(coinType,addr),this.getBasicCoin(coinType,addr)]:[this.getAllProxyCoin(coinType,addr)];
     return Promise.all(gets)
       .then(datas=>{
         return datas.length>1? [...datas[0],datas[1]]:datas[0];

@@ -45,7 +45,7 @@
       }),
       created: function () {
         this.walletTypes = this.$storage.getWalletTypes();
-        this.wallet = {id:uuid(),type: '0x10000', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
+        this.wallet = {id:uuid(),type: '0x1000', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
       },
       methods: {
         createWallet: function () {

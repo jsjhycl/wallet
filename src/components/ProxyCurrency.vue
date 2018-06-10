@@ -81,7 +81,8 @@
       created() {
         this.wallet = this.$storage.getWalletById(this.$route.params.id);
         this.currencyItem.encPrivateKey = this.wallet.privateKey;
-        this.currencyItem.coinType = '0x10000';
+        // this.currencyItem.coinType = '0x10000';
+        this.currencyItem.coinType = this.wallet.type;
       },
       methods: {
         createCoin() {
@@ -96,6 +97,7 @@
             return this.$message({message:'名称/符号必须是英文，并在1-20字符之间！',type:'error'});
           }
           if (!this.isRead) return this.$message({message: '请认真阅读并同意协议!', type: 'error'});
+          console.log('curencyItem:',this.currencyItem);
           this.$checkPassword(this.wallet.id,false).then(password => {
             this.currencyItem.password = password;
             this.$lpc__.createCoin(this.currencyItem)

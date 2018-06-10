@@ -6,10 +6,9 @@
           <span class="detailText">{{currentAsset.balance|tofix($root.Bus.config.coinFractionLen)}}</span>≈
           <span>{{$root.Bus.config.currency|coin-symbol}}{{currentAsset.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span>
         </div>
-        <!--<div class="text-right">-->
-          <!--<span class="trendTipsText marRL">数量</span>-->
-          <!--<span class="trendTipsText assetsBg">资产</span>-->
-        <!--</div>-->
+        <div class="text-right">
+          <button class="btn btn-sm add-currency-button" @click="dialogs.six=true">转移代币拥有者</button>
+        </div>
       </div>
       <!--<chart class="tranImg"  :options="assets"></chart>-->
       <p class="recordTips">最近交易记录</p>
@@ -93,9 +92,13 @@
       </el-table>
     </div>
     <div class="btnGroupSm">
-      <button class="btn btn-primary btnStyle" @click="openTransferWin">转账</button>
+      <button class="btn btn-success btnStyle" @click="dialogs.three=true">燃料价格</button>
+      <button class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃料</button>
+      <button class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>
+      <button class="btn btn-primary btnStyle marRL" @click="openTransferWin">转账</button>
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
     </div>
+    <!--转账-->
     <el-dialog :title="wallet.name" width="40%" :visible.sync="dialogs.two" :close-on-click-modal="false">
       <div class="modal-body">
         <ul class="modalList list-unstyled">
@@ -151,23 +154,50 @@
         <button v-clipboard:copy="wallet.address" v-clipboard:success="copySuccess" type="button" class="btn btn-primary">复制收款地址</button>
       </div>
     </el-dialog>
+    <!--设置燃料价格-->
+    <el-dialog title="设置燃料价格" width="440px" :visible.sync="dialogs.three">
+      <gas-price-set :wallet="wallet" :asset="currentAsset"></gas-price-set>
+    </el-dialog>
+    <!--设置代币燃料-->
+    <el-dialog title="代币燃料" width="440px" :visible.sync="dialogs.four">
+      <supply-set :wallet="wallet" :asset="currentAsset"></supply-set>
+    </el-dialog>
+    <!--代币增发-->
+    <el-dialog title="代币增发" width="440px" :visible.sync="dialogs.five">
+      <burn-set :wallet="wallet" :asset="currentAsset"></burn-set>
+    </el-dialog>
+    <!--转移代币拥有者-->
+    <el-dialog title="转移代币拥有着" width="550px"  :visible.sync="dialogs.six">
+      <set-owner :wallet="wallet" :asset="currentAsset" :users="users"></set-owner>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import {transaction, TransferItem} from '../utils/models';
+  import GasPriceSet from './common/GasPriceSet';
+  import SupplySet from './common/SupplySet';
+  import BurnSet from './common/BurnSet';
+  import SetOwner from './common/SetOwner';
     export default {
+      components:{
+        GasPriceSet,
+        SupplySet,
+        BurnSet,
+        SetOwner
+      },
       name: "WalletDetails",
       data: () => ({
-        isLoading:false,
-        isPaying:false,
+        isLoading: false,
+        isPaying: false,
         wallet: {},
         currentAsset: {},
         users: [],
         serviceCharge: 0.01,//需配置
         transferInfo: {},
         transactions: [],
-        dialogs: {one: false, two: false}
+        dialogs: {one: false, two: false, three: false,four:false,five:false,six:false},
+        labelWidth: '140px'
       }),
       computed: {
         assets: () => ({
@@ -213,7 +243,7 @@
           try {
             this.transferInfo.check();
             //验证密码
-            this.isPaying=true;
+            this.isPaying = true;
             this.$checkPassword(this.wallet.id)
               .then(result => {
                 this.$lpc__.transferCoin(this.wallet.type,//注意修改 todo
@@ -222,22 +252,22 @@
                   this.transferInfo.toAdress,
                   this.transferInfo.amount,
                   this.currentAsset.contractAddr)
-                  .then(ret=>{
-                    this.transferInfo.sessionId =ret.txHash;
-                    console.log(this.transferInfo,'........................');
+                  .then(ret => {
+                    this.transferInfo.sessionId = ret.txHash;
+                    console.log(this.transferInfo, '........................');
                     this.transferInfo.conAddr = this.currentAsset.contractAddr;
-                    this.transferInfo.type=this.wallet.type;//主类型
-                    this.transferInfo.from=this.wallet.address;//我的钱包地址
+                    this.transferInfo.type = this.wallet.type;//主类型
+                    this.transferInfo.from = this.wallet.address;//我的钱包地址
                     this.$storage.addLocalTransfer(this.transferInfo);
                     this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
                     this.dialogs.two = false;
                   });
-                this.isPaying=false;
+                this.isPaying = false;
               })
           } catch (e) {
             console.log(e);
-            this.$message({message: e, type: 'error','showClose':true,'duration':0});
-            this.isPaying=false;
+            this.$message({message: e, type: 'error', 'showClose': true, 'duration': 0});
+            this.isPaying = false;
           }
         },
         //选择地址
@@ -266,17 +296,17 @@
         },
         //  刷新
         refreshHandler: function (transItem) {
-          this.isLoading=true;
+          this.isLoading = true;
           this.$storage.getTransactionByTxhash(this.wallet.type, [transItem.txHash])
             .then(results => {
               if (results.length > 0) {
                 transItem.complexByHashData(results[0]);
               }
-              this.isLoading=false;
+              this.isLoading = false;
             })
-            .catch(err=>{
-              this.$alert('出现错误：'+err,'错误');
-              this.isLoading=false;
+            .catch(err => {
+              this.$alert('出现错误：' + err, '错误');
+              this.isLoading = false;
             })
         }
       }
@@ -302,5 +332,11 @@
     display: flex;
     justify-content: space-between;
     padding-right: 8px;
+  }
+  .add-currency-button{
+    margin-right: 13px;
+    width: 120px;
+    background-color: #82ADE6;
+    color: white
   }
 </style>

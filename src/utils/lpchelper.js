@@ -102,14 +102,74 @@ export default {
       coinParam: {
         name: obj.name,
         symbol: obj.symbol,
-        initSupply: obj.initSupply*Math.pow(10,9),
+        initSupply: (obj.initSupply*Math.pow(10,9)).toString(),
         addSupplyEnabled: obj.addSupplyEnabled,
         burnEnabled: obj.burnEnabled,
-        gasPrice: obj.gasPrice*Math.pow(10,3),
+        gasPrice: (obj.gasPrice*Math.pow(10,3)).toString(),
         gasLimit: obj.gasLimit,
         note: obj.note
       }
     }
     return common.excute('bcb_createCoin', sender);
+  },
+  /* 12 setGasPrice*/
+  bcb_setGasprice(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,gasPrice){
+    return common.excute('bcb_setGasprice', {
+      "coinType": cointype,
+      "encPrivateKey": securePrivatekey,
+      "password": pwd,
+      "coinParam":
+        {
+          "contractAddr": contractAddr,
+          "note":"hello_for_newcoin",
+          "gasLimit": gasLimit.toString(),
+          "gasPrice": gasPrice.toString()
+        }
+    })
+  },
+  /* 13 bcb_addSupply*/
+  bcb_addSupply(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,value){
+    return common.excute('bcb_addSupply', {
+      "coinType": cointype,
+      "encPrivateKey": securePrivatekey,
+      "password": pwd,
+      "coinParam":
+        {
+          "contractAddr": contractAddr,
+          "note":"hello_for_newcoin",
+          "gasLimit": gasLimit.toString(),
+          "value": value.toString()
+        }
+    })
+  },
+  /* 14 bcb_burn*/
+  bcb_burn(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,value){
+    return common.excute('bcb_burn', {
+      "coinType": cointype,
+      "encPrivateKey": securePrivatekey,
+      "password": pwd,
+      "coinParam":
+        {
+          "contractAddr": contractAddr,
+          "note":"hello_for_newcoin",
+          "gasLimit": gasLimit.toString(),
+          "value": value.toString()
+        }
+    })
+  },
+  /* 15 bcb_setOwer*/
+  bcb_setOwer(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,address){
+    return common.excute('bcb_setOwer', {
+      "coinType": cointype,
+      "encPrivateKey": securePrivatekey,
+      "password": pwd,
+      "coinParam":
+        {
+          "contractAddr": contractAddr,
+          "note":"hello_for_newcoin",
+          "gasLimit": gasLimit.toString(),
+          "toAddr": address
+        }
+    })
   }
 }

@@ -29,7 +29,7 @@ export  default Storage= {
   /*获取钱包分类*/
   getWalletTypes: function () {
     // return ['ETH', 'BCB', 'TOT'];
-    return [{"name": "BCBMainNet", "value": "0x10000"}]
+    return [{"name": "BCBMainNet", "value": "0x1000"}]
     // return [{"name": "ETH", "value": "0x3"},{"name": "BCBMainNet", "value": "0x10000"}]
   },
   /*保存钱包*/
@@ -120,7 +120,7 @@ export  default Storage= {
       this.saveAssets(items);
     })
   },
-  prepareAllAssets: function (coinTypes=['0x3','0x10000']) {
+  prepareAllAssets: function (coinTypes=['0x3','0x1000']) {
     Promise.all(coinTypes.map(c=>rpc.getAssets(c)))
       .then(datas=>{
         let items=[];
@@ -260,7 +260,7 @@ export  default Storage= {
   },
   /*根据交易对象获取交易状态{type:'':txHash:''}*/
   getTransactionsByOrders(trans){
-    let reqs =trans.map(item=>rpc.getTransactionByTxhash(item.type||'0x10000',item.txHash));
+    let reqs =trans.map(item=>rpc.getTransactionByTxhash(item.type||'0x1000',item.txHash));
     return Promise.all(reqs);
   },
   /*获取配置列表*/
