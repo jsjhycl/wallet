@@ -7,7 +7,7 @@
       <span>当前代币数量：</span><span></span>
     </p>
     <el-form>
-      <el-form-item label="燃料代币数量">
+      <el-form-item label="增发代币数量">
         <el-input v-model="value" type="number"></el-input>
       </el-form-item>
     </el-form>
@@ -36,6 +36,8 @@
                 this.value)
                 .then(ret => {
                   //返回txhash不需要处理
+                  this.$message({message:'设置成功！',type:'success'});
+                  this.$emit('close');
                 })
             })
         }

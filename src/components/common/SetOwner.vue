@@ -55,6 +55,8 @@
                 this.toAdress)
                 .then(ret => {
                   //返回txhash不需要处理
+                  this.$message({message:'设置成功！',type:'success'});
+                  this.$emit('close');
                 })
             })
         },

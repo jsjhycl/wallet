@@ -55,8 +55,8 @@ export default {
           "to": address,
           "value": amount,
           "contractAddr": contractAddr,
-          "gasLimit": gasLimit,
-          "gasPrice": gasPrice
+          "gasLimit": gasLimit.toString(),
+          "gasPrice": gasPrice.toString()
         }
     })
   },
@@ -113,7 +113,7 @@ export default {
     return common.excute('bcb_createCoin', sender);
   },
   /* 12 setGasPrice*/
-  bcb_setGasprice(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,gasPrice){
+  bcb_setGasprice(cointype,securePrivatekey,pwd,contractAddr,gasLimit=100000,gasPrice){
     return common.excute('bcb_setGasprice', {
       "coinType": cointype,
       "encPrivateKey": securePrivatekey,
@@ -128,7 +128,7 @@ export default {
     })
   },
   /* 13 bcb_addSupply*/
-  bcb_addSupply(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,value){
+  bcb_addSupply(cointype,securePrivatekey,pwd,contractAddr,gasLimit=100000,value){
     return common.excute('bcb_addSupply', {
       "coinType": cointype,
       "encPrivateKey": securePrivatekey,
@@ -143,7 +143,7 @@ export default {
     })
   },
   /* 14 bcb_burn*/
-  bcb_burn(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,value){
+  bcb_burn(cointype,securePrivatekey,pwd,contractAddr,gasLimit=100000,value){
     return common.excute('bcb_burn', {
       "coinType": cointype,
       "encPrivateKey": securePrivatekey,
@@ -158,7 +158,7 @@ export default {
     })
   },
   /* 15 bcb_setOwer*/
-  bcb_setOwer(cointype,securePrivatekey,pwd,contractAddr,gasLimit=10000,address){
+  bcb_setOwer(cointype,securePrivatekey,pwd,contractAddr,gasLimit=100000,address){
     return common.excute('bcb_setOwer', {
       "coinType": cointype,
       "encPrivateKey": securePrivatekey,

@@ -93,7 +93,7 @@
     </div>
     <div class="btnGroupSm">
       <button class="btn btn-success btnStyle" @click="dialogs.three=true">燃料价格</button>
-      <button class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃料</button>
+      <button class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃烧</button>
       <button class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>
       <button class="btn btn-primary btnStyle marRL" @click="openTransferWin">转账</button>
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
@@ -156,19 +156,19 @@
     </el-dialog>
     <!--设置燃料价格-->
     <el-dialog title="设置燃料价格" width="440px" :visible.sync="dialogs.three">
-      <gas-price-set :wallet="wallet" :asset="currentAsset"></gas-price-set>
+      <gas-price-set @close="dialogs.three=false" :wallet="wallet" :asset="currentAsset"></gas-price-set>
     </el-dialog>
     <!--设置代币燃料-->
-    <el-dialog title="代币燃料" width="440px" :visible.sync="dialogs.four">
-      <supply-set :wallet="wallet" :asset="currentAsset"></supply-set>
+    <el-dialog title="代币燃烧" width="440px" :visible.sync="dialogs.four">
+      <burn-set @close="dialogs.four=false" :wallet="wallet" :asset="currentAsset"></burn-set>
     </el-dialog>
     <!--代币增发-->
     <el-dialog title="代币增发" width="440px" :visible.sync="dialogs.five">
-      <burn-set :wallet="wallet" :asset="currentAsset"></burn-set>
+      <supply-set @close="dialogs.five=false" :wallet="wallet" :asset="currentAsset"></supply-set>
     </el-dialog>
     <!--转移代币拥有者-->
     <el-dialog title="转移代币拥有着" width="550px"  :visible.sync="dialogs.six">
-      <set-owner :wallet="wallet" :asset="currentAsset" :users="users"></set-owner>
+      <set-owner @close="dialogs.six=false" :wallet="wallet" :asset="currentAsset" :users="users"></set-owner>
     </el-dialog>
   </div>
 </template>
