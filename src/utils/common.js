@@ -86,7 +86,7 @@ export default {
     try{
       let result = this.unwrap__(JSON.parse(bindObject.JsMethod(JSON.stringify(opt))));
       console.log('local result(success):',result)
-      return result;
+      return Promise.resolve(result);
     }catch (e) {
       console.log('local result(error):', e);
       Vue.prototype.$message({"message":"出现错误："+e,"type":"error",'showClose':true,'duration':0});
