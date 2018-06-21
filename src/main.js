@@ -36,6 +36,8 @@ import LPCHelper from  '@/utils/lpchelper.js'
 import RPCHelper from  '@/utils/rpchelper.js'
 import storage from '@/utils/storage.js'
 
+import Agreement from './components/docs/Agreement'
+
 Vue.config.productionTip = false;
 Vue.prototype.$g__ =Helper;
 Vue.prototype.$lpc__=LPCHelper;
@@ -85,6 +87,7 @@ import './../src/Register';
 Vue.use(ElementUI);
 Vue.use(VueClipboard);
 Vue.use(VueQriously);
+Vue.component("agreement",Agreement);
 // Vue.component("chart",ECharts);
 try{
   CefSharp.BindObjectAsync("bindObject", "bindObject");
@@ -105,7 +108,7 @@ new Vue({
     Bus
   },
   created(){
-    this.$storage.prepareAllAssets();//初始化资产列表[0x3,0x10000]
+    this.$storage.prepareAllAssets(['0x1001']);//初始化资产列表[0x3,0x10000]
   },
   components: { App },
   template: '<App/>'

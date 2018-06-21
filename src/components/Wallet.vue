@@ -125,7 +125,7 @@
       </div>
     </el-dialog>
     <!--收款-->
-    <el-dialog title="收款码"  width="440px"  style="word-break: break-word" :visible.sync="dialogs.four" :close-on-click-modal="false">
+    <el-dialog title="收款码"  width="450px"  style="word-break: break-word" :visible.sync="dialogs.four" :close-on-click-modal="false">
       <div class="modal-body marT2 text-center">
         <p>{{wallet.address}}</p>
         <div class="padT">
@@ -205,6 +205,14 @@
         modifyPassword: function () {
           if (!this.mods.newPassword || this.mods.newPassword != this.mods.resetPassword) {
             this.$message({message: '密码未输入/两次密码输入不一致', type: 'error'});
+            return;
+          }
+          if(this.mods.newPassword===this.mods.oldPassword){
+            this.$message({message: '新密码不能和老密码相同！', type: 'error'});
+            return;
+          }
+          if(this.mods.newPassword.length<8){
+            this.$message({message: '密码位数不能小于8', type: 'error'});
             return;
           }
           this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '')

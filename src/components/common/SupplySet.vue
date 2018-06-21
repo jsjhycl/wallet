@@ -7,7 +7,7 @@
       <span>当前代币数量：</span><span></span>
     </p>
     <el-form>
-      <el-form-item label="增发代币数量">
+      <el-form-item label="增发代币数量(单位：Cong)">
         <el-input v-model="value" type="number"></el-input>
       </el-form-item>
     </el-form>

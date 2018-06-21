@@ -8,35 +8,35 @@
     </div>
     <ul class="walletInfoList list-unstyled">
       <li>
-        <a class="walletInfoA" href="http://www.baidu.com">
+        <router-link to="/doc?name=使用协议" class="walletInfoA">
           <span>使用协议</span>
           <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
+        </router-link>
       </li>
       <li>
-        <a class="walletInfoA" href="#">
+        <router-link to="/doc?name=隐私条款" class="walletInfoA" href="#">
           <span>隐私条款</span>
           <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
+        </router-link>
       </li>
-      <li>
-        <a class="walletInfoA" href="#">
-          <span>版本日志</span>
-          <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
-      </li>
-      <li>
-        <a class="walletInfoA" href="#">
-          <span>产品向导</span>
-          <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
-      </li>
-      <li>
-        <a class="walletInfoA" href="#">
-          <span>检测新版</span>
-          <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
-        </a>
-      </li>
+      <!--<li>-->
+        <!--<a class="walletInfoA" href="#">-->
+          <!--<span>版本日志</span>-->
+          <!--<span class="arrowRIcon glyphicon glyphicon-menu-right"></span>-->
+        <!--</a>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<a class="walletInfoA" href="#">-->
+          <!--<span>产品向导</span>-->
+          <!--<span class="arrowRIcon glyphicon glyphicon-menu-right"></span>-->
+        <!--</a>-->
+      <!--</li>-->
+      <!--<li>-->
+        <!--<a class="walletInfoA" href="#">-->
+          <!--<span>检测新版</span>-->
+          <!--<span class="arrowRIcon glyphicon glyphicon-menu-right"></span>-->
+        <!--</a>-->
+      <!--</li>-->
     </ul>
     <div class="walletCopy">
       <p>Copyright 2016 ConsonLabs</p>

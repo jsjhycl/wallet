@@ -10,7 +10,10 @@ a,a:hover,a:active,a:focus{
 input,button{
     outline: none;
 }
-h1,h2,h3,h4,h5,h6,p,ul{
+ul,ol{
+    list-style: none;
+}
+h1,h2,h3,h4,h5,h6,p,ul,ol{
     margin: 0;
 }
 .disFlex{
@@ -46,11 +49,12 @@ h1,h2,h3,h4,h5,h6,p,ul{
 .color4AC390{
     color: #4AC390;
 }
+
 .marRL{
     margin: 0 20px;
 }
-div.padT{
-    padding: 45px 0 0 0;
+.padT{
+    padding: 45px 0 0 0 !important;
 }
 .padding-l{
     padding-left: 55px;
@@ -63,6 +67,12 @@ div.padT{
 }
 .marT2{
     margin-top: 20px;
+}
+.text-right{
+    text-align: right;
+}
+.indexWrap{
+  min-width: 1048px;
 }
 /*首页*/
 .walletLeftWrap{
@@ -110,6 +120,7 @@ div.padT{
     color: #8F9092;
     background: transparent;
 }
+/*test 0621*/
 .searchCenter {
   margin-top: 15px;
   border-top: 1px solid #f1f1f1;
@@ -128,7 +139,9 @@ div.padT{
 .searchLi:hover .searchLiA{
     background: #E7F2FF;
 }
-.searchLiA {
+.searchLiA{
+    /*display: flex;*/
+    /*padding: 10px 0 10px 30px;*/
   display: flex;
   justify-content: space-between;
   padding: 10px 0 10px 30px;
@@ -467,8 +480,7 @@ span.spanSel:after{
     cursor: pointer;
 }
 .modalFooter{
-    /*margin: 40px auto 30px;*/
-    margin: 0px auto 10px;
+    margin: 40px auto 30px;
     text-align: center;
 }
 .modalFooter button{
@@ -477,7 +489,7 @@ span.spanSel:after{
     font-size: 16px;
 }
 .privateKeyTips{
-    margin: 40px 0 52px 0;
+    margin: 60px 0 52px 0;
     line-height: 27px;
     font-size: 16px;
     color: #CB6056;
@@ -534,4 +546,57 @@ span.spanSel:after{
 .table-head th{
     text-align: center;
     color: #909399;
+}
+/*秘钥介绍*/
+.what{
+    padding-right: 55px;
+    background: #fff !important;
+}
+.title-wrap:after{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 16px;
+    margin: 1em 0 2em 0;
+    background-size: contain;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-image: url(http://upyun-assets.ethfans.org/assets/divider-top-99e8c9c9d0b4e40bbdcceb87c7d5430ea3e40e6f699706915449c6c6db6a2641.png);
+}
+.content-title{
+    font-size: 24px;
+    color: #222;
+    text-align: center;
+}
+.content-main{
+    font-size: 15px;
+    color: #555;
+}
+.content-main p,
+.content-main li{
+    line-height: 24px;
+    margin-bottom: 15px;
+}
+/*协议*/
+.sed-title{
+    margin: 5px 0 20px 0;
+    font-size: 22px;
+}
+.sed-main > li{
+    text-indent: 28px !important;
+}
+.sed-main li,
+.sed-main p,
+.sed-main h3{
+    margin-bottom: 10px;
+}
+.sed-main li{
+    text-indent: 48px;
+    line-height: 24px;
+}
+.four-list li{
+    text-indent: 65px;
+}
+.sed-main h3{
+    font-size: 19px;
 }

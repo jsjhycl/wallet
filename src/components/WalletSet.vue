@@ -1,12 +1,12 @@
 <template>
   <div class="walletRightCenter">
     <ul class="walletSetList list-unstyled">
-      <li>
-        <router-link class="disBlock" to="/records">
-          <img class="walletSetImg" src="../assets/img/transactionRecord.png">
-          <p>交易记录</p>
-        </router-link>
-      </li>
+      <!--<li>-->
+        <!--<router-link class="disBlock" to="/records">-->
+          <!--<img class="walletSetImg" src="../assets/img/transactionRecord.png">-->
+          <!--<p>交易记录</p>-->
+        <!--</router-link>-->
+      <!--</li>-->
       <li>
         <router-link class="disBlock" to="/users">
           <img class="walletSetImg" src="../assets/img/contacts.png">
@@ -25,18 +25,18 @@
           <p>关于我们</p>
         </router-link>
       </li>
-      <li>
-        <router-link class="walletSetA" to="/help">
-          <img class="walletSetImg" src="../assets/img/helpCenter.png">
-          <p>帮助中心</p>
-        </router-link>
-      </li>
-      <li @click="doneInit">
-        <a class="walletSetA" >
-          <img class="walletSetImg" src="../assets/img/helpCenter.png">
-          <p>初始化</p>
-        </a>
-      </li>
+      <!--<li>-->
+        <!--<router-link class="walletSetA" to="/help">-->
+          <!--<img class="walletSetImg" src="../assets/img/helpCenter.png">-->
+          <!--<p>帮助中心</p>-->
+        <!--</router-link>-->
+      <!--</li>-->
+      <!--<li @click="doneInit">-->
+        <!--<a class="walletSetA" >-->
+          <!--<img class="walletSetImg" src="../assets/img/helpCenter.png">-->
+          <!--<p>初始化</p>-->
+        <!--</a>-->
+      <!--</li>-->
     </ul>
   </div>
 </template>

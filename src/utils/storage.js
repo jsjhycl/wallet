@@ -20,21 +20,25 @@ export  default Storage= {
   getWallets: function () {
     let strWallets = localStorage.getItem('bcb_wallets') || '[]';
     let wallets= JSON.parse(strWallets);
-    wallets.forEach(w=>{
+    wallets.forEach((w,index)=>{
       w.resources=w.resources||[];
       if(w.resources.length>0 && (typeof w.resources[0])!="string") w.resources=[];
+      w.head='head_'+index+'.png';
     })
     return wallets;
   },
   /*获取钱包分类*/
   getWalletTypes: function () {
     // return ['ETH', 'BCB', 'TOT'];
-    return [{"name": "BCBMainNet", "value": "0x1000"}]
+    // return [{"name": "BCBMainNet", "value": "0x1000"}]
+    // return [{"name": "BCB", "value": "0x1002"}]
+    return [{"name": "bcbtest", "value": "0x1001"}]
     // return [{"name": "ETH", "value": "0x3"},{"name": "BCBMainNet", "value": "0x10000"}]
   },
   /*保存钱包*/
   insertWallet: function (wallet) {
     let wallets = this.getWallets();
+    if(wallets.find(m=>m.address===wallet.address)) throw '不能重复创建钱包';
     wallets.push(wallet);
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
   },
@@ -120,7 +124,7 @@ export  default Storage= {
       this.saveAssets(items);
     })
   },
-  prepareAllAssets: function (coinTypes=['0x3','0x1000']) {
+  prepareAllAssets: function (coinTypes=['0x3','0x1001']) {
     Promise.all(coinTypes.map(c=>rpc.getAssets(c)))
       .then(datas=>{
         let items=[];
@@ -260,7 +264,7 @@ export  default Storage= {
   },
   /*根据交易对象获取交易状态{type:'':txHash:''}*/
   getTransactionsByOrders(trans){
-    let reqs =trans.map(item=>rpc.getTransactionByTxhash(item.type||'0x1000',item.txHash));
+    let reqs =trans.map(item=>rpc.getTransactionByTxhash(item.type||'0x1001',item.txHash));
     return Promise.all(reqs);
   },
   /*获取配置列表*/

@@ -7,7 +7,8 @@
           <span>{{$root.Bus.config.currency|coin-symbol}}{{currentAsset.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span>
         </div>
         <div class="text-right">
-          <button class="btn btn-sm add-currency-button" @click="dialogs.six=true">转移代币拥有者</button>
+          <!--<button class="btn btn-sm add-currency-button" @click="dialogs.six=true">转移代币拥有者</button>-->
+          <button v-if="!isBasicCoin" class="btn btn-success" @click="dialogs.six=true">转移代币拥有者</button>
         </div>
       </div>
       <!--<chart class="tranImg"  :options="assets"></chart>-->
@@ -46,9 +47,9 @@
               <el-form-item label="交易状态">
                 <span :class="props.row.isSuccess?'success':'error'">{{ props.row.strStatus }}</span>
               </el-form-item>
-              <el-form-item label="交易源">
-                <span>{{ props.row.source }}</span>
-              </el-form-item>
+              <!--<el-form-item label="交易源">-->
+                <!--<span>{{ props.row.source }}</span>-->
+              <!--</el-form-item>-->
             </el-form>
           </template>
         </el-table-column>
@@ -91,7 +92,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="btnGroupSm">
+    <div class="btnGroupSm" style="min-width: 765px">
       <button class="btn btn-success btnStyle" @click="dialogs.three=true">燃料价格</button>
       <button class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃烧</button>
       <button class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>
@@ -99,7 +100,7 @@
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
     </div>
     <!--转账-->
-    <el-dialog :title="wallet.name" width="40%" :visible.sync="dialogs.two" :close-on-click-modal="false">
+    <el-dialog :title="wallet.name" width="560px" :visible.sync="dialogs.two" :close-on-click-modal="false">
       <div class="modal-body">
         <ul class="modalList list-unstyled">
           <li>
@@ -129,7 +130,7 @@
             </div>
             <div class="modalTF marT">
               <p>可用余额 <span>{{currentAsset.balance}}</span></p>
-              <p>网络手续费 <span class="colorFF9191">{{serviceCharge}}</span></p>
+              <!--<p>网络手续费 <span class="colorFF9191">{{serviceCharge}}</span></p>-->
             </div>
           </li>
           <li>
@@ -143,7 +144,7 @@
       </div>
     </el-dialog>
     <!--收款-->
-    <el-dialog title="收款码" width="440px"  style="word-break: break-word"  :visible.sync="dialogs.one">
+    <el-dialog title="收款码" width="450px"  style="word-break: break-word"  :visible.sync="dialogs.one">
       <div class="modal-body marT2 text-center">
         <p>{{wallet.address}}</p>
         <div class="padT">
@@ -197,7 +198,8 @@
         transferInfo: {},
         transactions: [],
         dialogs: {one: false, two: false, three: false,four:false,five:false,six:false},
-        labelWidth: '140px'
+        labelWidth: '140px',
+        isBasicCoin:false
       }),
       computed: {
         assets: () => ({
@@ -226,6 +228,7 @@
         init() {
           this.wallet = this.$route.params.wallet;
           this.currentAsset = this.$route.params.currentAsset;
+          this.isBasicCoin =this.currentAsset.name.toLowerCase()==="bcb"||this.currentAsset.name.toLowerCase()==="bcbt";
           //获取交易记录
           this.isLoading = true;
           this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20)
@@ -260,10 +263,11 @@
                     this.transferInfo.from = this.wallet.address;//我的钱包地址
                     this.$storage.addLocalTransfer(this.transferInfo);
                     this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
+                    setTimeout(this.refreshHandler,1000,this.transactions[0])
                     this.dialogs.two = false;
-                  });
-                this.isPaying = false;
-              })
+                    this.isPaying = false;
+                  }).catch(err=>this.isPaying=false);
+              }).catch(err=>this.isPaying=false)
           } catch (e) {
             console.log(e);
             this.$message({message: e, type: 'error', 'showClose': true, 'duration': 0});
@@ -301,6 +305,7 @@
             .then(results => {
               if (results.length > 0) {
                 transItem.complexByHashData(results[0]);
+                if(!transItem.isSuccess) setTimeout(this.refreshHandler,1000,transItem);
               }
               this.isLoading = false;
             })
@@ -308,6 +313,10 @@
               this.$alert('出现错误：' + err, '错误');
               this.isLoading = false;
             })
+        },
+        //自动刷新
+        autoRefresh:function (tranItem) {
+
         }
       }
     }

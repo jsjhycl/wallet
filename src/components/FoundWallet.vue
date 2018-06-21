@@ -23,12 +23,15 @@
         <input v-model="isRead" type="checkbox" class="chk_1">
         <span class="sel"></span>
         我已仔细阅读并同意
-        <span class="color80D3FE">服务及隐私条款</span>
+        <span @click="dialogs.arguments=true" class="color80D3FE">服务及隐私条款</span>
       </label>
       <div class="btnGroup">
         <button @click="createWallet" :disabled="isSaveing" v-loading="isSaveing" class="btn btn-success btnStyle" to="/helpwords">创建钱包</button>
         <!--<a class="btn btn-success btnStyle disabled marRL" href="#">导入钱包</a>-->
       </div>
+      <el-dialog :visible.sync="dialogs.arguments">
+        <agreement></agreement>
+      </el-dialog>
     </div>
 </template>
 
@@ -41,11 +44,12 @@
         walletTypes: [],
         wallet: {},
         isRead: false,
-        repeatPassword: ''
+        repeatPassword: '',
+        dialogs:{arguments:false}
       }),
       created: function () {
         this.walletTypes = this.$storage.getWalletTypes();
-        this.wallet = {id:uuid(),type: '0x1000', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
+        this.wallet = {id:uuid(),type: '0x1001', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
       },
       methods: {
         createWallet: function () {

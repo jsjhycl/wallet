@@ -9,7 +9,7 @@
           <th>最高价</th>
           <th>最低价</th>
           <th>24H量</th>
-          <th>K线</th>
+          <!--<th>K线</th>-->
         </tr>
         </thead>
         <tbody>
@@ -37,11 +37,11 @@
           <td>
             {{item.amount|tofix($root.Bus.config.coinFractionLen)}}
           </td>
-          <td>
-            <a href="#">
-              <img style="width: 20px; height: 20px;" :src="'./static/k-line.png'">
-            </a>
-          </td>
+          <!--<td>-->
+            <!--<a href="#">-->
+              <!--<img style="width: 20px; height: 20px;" :src="'./static/k-line.png'">-->
+            <!--</a>-->
+          <!--</td>-->
         </tr>
         </tbody>
       </table>
