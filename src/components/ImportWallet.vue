@@ -152,6 +152,7 @@
   import Keystore from './docs/keystore'
   import zhuJiChi from './docs/zhujichi'
   import PrivateKey from './docs/PrivateKey'
+  import validator from '../utils/validator'
   //初始化导入参数
   function initParams(index) {
     index = index || 0;
@@ -169,6 +170,8 @@
           if(this.password!=this.repeatPassword){
             throw '密码不一致';
           }
+          let ret=validator.checkPassword(this.password);
+          if(ret!==true) throw ret;
           if(!this.isRead){
             throw '请仔细阅读并同意服务条款';
           }
@@ -194,6 +197,8 @@
           if(this.password!=this.repeatPassword){
             throw '密码不一致';
           }
+          let ret=validator.checkPassword(this.password);
+          if(ret!==true) throw ret;
           if(!this.isRead){
             throw '请仔细阅读并同意服务条款';
           }

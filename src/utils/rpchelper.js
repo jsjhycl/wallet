@@ -32,6 +32,8 @@ export default {
       .then(result => {
         return result.reduce((obj, item) => {
           obj[item.symbol] = item.price;
+          if (item.conAddr)
+            obj[item.conAddr] = item.price;
           return obj;
         }, {})
       });
@@ -78,5 +80,10 @@ export default {
   excuteLocalApi(obj){
     return axios.post(getUrl('proxy-local-rpc'),JSON.stringify(obj))
       .then(result=>result.data);
+  },
+  /*获取代币当前量*/
+  getContract(coinType,contractAddr){
+    return axios.get(getUrl(`contract/${coinType}/${contractAddr}`))
+      .then(result=>common.unwrapHttp__(result));
   }
 }

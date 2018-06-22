@@ -35,6 +35,7 @@ import Helper from  '@/utils/common.js'
 import LPCHelper from  '@/utils/lpchelper.js'
 import RPCHelper from  '@/utils/rpchelper.js'
 import storage from '@/utils/storage.js'
+import validator from '@/utils/validator.js'
 
 import Agreement from './components/docs/Agreement'
 
@@ -43,6 +44,7 @@ Vue.prototype.$g__ =Helper;
 Vue.prototype.$lpc__=LPCHelper;
 Vue.prototype.$rpc__=RPCHelper;
 Vue.prototype.$storage =storage;
+Vue.prototype.$validator__=validator;
 // Vue.prototype.$showLoading=function(){
 //
 // },
@@ -72,12 +74,6 @@ Vue.prototype.$checkPassword=function(walletId,needCheck=true) {
           this.$message({"message": err, "type": "error",'showClose':true,'duration':0});
           throw err;
         })
-      // todo 需删除
-      // if (this.$lpc__.verify(wallet.type, result.value || '', wallet.privateKey) === true) return result.value;
-      // else {
-      //   this.$message({"message":'密码输入有误',"type":"error"});
-      //   throw '密码输入有误';
-      // }
     })
 }
 

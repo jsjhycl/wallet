@@ -1,10 +1,10 @@
 <template>
   <div>
+    <!--<p>-->
+      <!--<span>代币初始供应量：</span><span></span>-->
+    <!--</p>-->
     <p>
-      <span>代币初始供应量：</span><span></span>
-    </p>
-    <p>
-      <span>当前代币数量：</span><span></span>
+      <span>当前代币数量：</span><span>{{contract.totalSupply}}</span>
     </p>
     <el-form>
       <el-form-item label="增发代币数量(单位：Cong)">
@@ -23,7 +23,7 @@
       data: () => ({
         value: 0
       }),
-      props:['wallet','asset'],
+      props:['wallet','asset','contract'],
       methods:{
         submit(){
           this.$checkPassword(this.wallet.id, false)

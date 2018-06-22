@@ -114,6 +114,10 @@ export class transaction {
     this.to=obj.to;
     this.blockN=obj.blockNumber;
     this.status=obj.status;
+    this.fee=obj.fee;
+    this.timeStamp=obj.txtime;
+    this.feeName=obj.feeName||'BCB';
+    this.valueName=obj.valueName||'BCB';
     return this;
   }
 }

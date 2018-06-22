@@ -58,8 +58,8 @@
             this.$message({message: "请填写必要的数据！", type: 'error'});
             return;
           }
-          if(this.wallet.name.length>20){
-            this.$message({message: "名称不能超过20字符！", type: 'error'});
+          if(this.wallet.name.length<1 || this.wallet.name.length>20){
+            this.$message({message: "钱包名称需1-20字符！", type: 'error'});
             return;
           }
           if (this.wallet.password != this.repeatPassword) {

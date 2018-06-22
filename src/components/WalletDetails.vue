@@ -161,11 +161,11 @@
     </el-dialog>
     <!--设置代币燃料-->
     <el-dialog title="代币燃烧" width="440px" :visible.sync="dialogs.four">
-      <burn-set @close="dialogs.four=false" :wallet="wallet" :asset="currentAsset"></burn-set>
+      <burn-set @close="dialogs.four=false" :contract="contract" :wallet="wallet" :asset="currentAsset"></burn-set>
     </el-dialog>
     <!--代币增发-->
     <el-dialog title="代币增发" width="440px" :visible.sync="dialogs.five">
-      <supply-set @close="dialogs.five=false" :wallet="wallet" :asset="currentAsset"></supply-set>
+      <supply-set @close="dialogs.five=false" :contract="contract" :wallet="wallet" :asset="currentAsset"></supply-set>
     </el-dialog>
     <!--转移代币拥有者-->
     <el-dialog title="转移代币拥有着" width="550px"  :visible.sync="dialogs.six">
@@ -199,7 +199,8 @@
         transactions: [],
         dialogs: {one: false, two: false, three: false,four:false,five:false,six:false},
         labelWidth: '140px',
-        isBasicCoin:false
+        isBasicCoin:false,
+        contract:{}
       }),
       computed: {
         assets: () => ({
@@ -240,6 +241,13 @@
             this.isLoading = false;
           });
           this.users = this.$storage.getUsers();
+          // 获取合约信息
+          this.$rpc__.getContract(this.wallet.type,this.currentAsset.contractAddr)
+            .then(result=>{
+              this.contract =result;
+            }).catch(err=>{
+              console.log('获取合约信息出错：',err);
+          })
         },
         //转账
         transferHandler: function () {
@@ -263,7 +271,7 @@
                     this.transferInfo.from = this.wallet.address;//我的钱包地址
                     this.$storage.addLocalTransfer(this.transferInfo);
                     this.transactions.unshift(new transaction().fromLocalByObj(this.wallet.address, this.transferInfo));
-                    setTimeout(this.refreshHandler,1000,this.transactions[0])
+                    setTimeout(this.refreshHandler,500,this.transactions[0])
                     this.dialogs.two = false;
                     this.isPaying = false;
                   }).catch(err=>this.isPaying=false);
@@ -310,7 +318,9 @@
               this.isLoading = false;
             })
             .catch(err => {
-              this.$alert('出现错误：' + err, '错误');
+              console.log('出现错误：',err);
+              setTimeout(this.refreshHandler,1000,transItem);
+              //this.$alert('出现错误：' + err, '错误');
               this.isLoading = false;
             })
         },

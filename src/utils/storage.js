@@ -113,7 +113,7 @@ export  default Storage= {
           .map(item => ({
             contractAddr: item.conAddr,
             balance: item.balance,
-            money: currency != '美元' ? item.balance * exchangeObj[item.symbol]||0 * exchangeObj['CNY']||0 : item.balance * exchangeObj[item.symbol]||0
+            money: currency != '美元' ? (item.balance * exchangeObj[item.conAddr||item.symbol]||0) * exchangeObj['CNY']||0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0
           }));
       })
   },

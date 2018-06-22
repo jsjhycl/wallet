@@ -211,10 +211,14 @@
             this.$message({message: '新密码不能和老密码相同！', type: 'error'});
             return;
           }
-          if(this.mods.newPassword.length<8){
-            this.$message({message: '密码位数不能小于8', type: 'error'});
-            return;
+          let ret=this.$validator__.checkPassword(this.mods.newPassword);
+          if(ret!==true){
+            return this.$message({message: ret, type: 'error'});
           }
+          // if(this.mods.newPassword.length<8){
+          //   this.$message({message: '密码位数不能小于8', type: 'error'});
+          //   return;
+          // }
           this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '')
             .then(ret=>{
               this.$storage.updateWallet(this.wallet.id, {
@@ -272,8 +276,8 @@
         },
         /*修改*/
         editHandler: function () {
-          if(this.wallet.name.length>20){
-            return this.$message({message: "钱包名称不能超过20字符！", type: 'error'});
+          if(this.wallet.name.length<1 || this.wallet.name.length>20){
+            return this.$message({message: "钱包名称需1-20字符！", type: 'error'});
           }
           //执行保存
           this.$storage.updateWallet(this.$route.params.id, {name: this.wallet.name});
