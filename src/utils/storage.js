@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import rpc from './rpchelper'
 import {transaction,TransferItem,Config} from "./models";
 export  default Storage= {
@@ -23,7 +24,7 @@ export  default Storage= {
     wallets.forEach((w,index)=>{
       w.resources=w.resources||[];
       if(w.resources.length>0 && (typeof w.resources[0])!="string") w.resources=[];
-      w.head='head_'+index+'.png';
+      w.head='head_'+index%12+'.png';
     })
     return wallets;
   },
@@ -41,6 +42,7 @@ export  default Storage= {
     if(wallets.find(m=>m.address===wallet.address)) throw '不能重复创建钱包';
     wallets.push(wallet);
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
+    this._Save();
   },
   updateWallet: function (id, obj,checkKey=true) {
     let wallets = this.getWallets();
@@ -50,6 +52,7 @@ export  default Storage= {
         if (checkKey && key in item) item[key] = obj[key];
         else item[key] =obj[key];
         localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
+        this._Save();
       })
     }
     return item;
@@ -168,12 +171,14 @@ export  default Storage= {
     let current = wallets.find(m => m.id === walletId);
     current.resources = resources || [];
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
+    this._Save();
   },
   //删除钱包
   removeWalletById: function (id) {
     let wallets = this.getWallets();
     wallets.splice(wallets.findIndex(m => m.id === id), 1);
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
+    this._Save();
   },
   //删除钱包中的特定资产
   removeAssetInWallet(conAddr) {
@@ -185,6 +190,7 @@ export  default Storage= {
         resources.splice(findIndex, 1)
     }
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
+    this._Save();
   },
   /*获取联系人*/
   getUsers: function () {
@@ -202,6 +208,7 @@ export  default Storage= {
     let users = this.getUsers();
     users.splice(users.findIndex(m => m.id === user.id), 1);
     localStorage.setItem('bcb_users', JSON.stringify(users));
+    this._Save();
     return users;
   },
   getUserById: function (id) {
@@ -215,6 +222,7 @@ export  default Storage= {
       if (key in current) current[key] = user[key];
     })
     localStorage.setItem('bcb_users', JSON.stringify(users));
+    this._Save();
   },
   //获取本地交易明细
   getLocalTransfers: function () {
@@ -275,6 +283,7 @@ export  default Storage= {
   /*设置配置列表*/
   saveConfig(obj) {
     localStorage.setItem('bcb_config', JSON.stringify(obj));
+    this._Save();
   },
   /*初始化钱包资产，以及资产配置*/
   initAssetAndResources(walletId) {
@@ -308,5 +317,12 @@ export  default Storage= {
       }
       return;
     })
+  },
+  //保存数据到本地
+  _Save(){
+    if(Vue.$isLocal){
+      let obj= this.getLocalData();
+      bindObject.Save('data.json',JSON.stringify(obj));
+    }
   }
 }

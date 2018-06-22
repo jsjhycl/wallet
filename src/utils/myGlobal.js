@@ -3,3 +3,4 @@ import storage from './storage'
 global.csharptojs=function() {
   return JSON.stringify(storage.getLocalData());
 }
+

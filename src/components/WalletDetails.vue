@@ -13,7 +13,7 @@
       </div>
       <!--<chart class="tranImg"  :options="assets"></chart>-->
       <p class="recordTips">最近交易记录</p>
-      <el-table :data="transactions" style="width: 100%;margin: auto" row-class-name="transaction-row" v-loading="isLoading" >
+      <el-table :data="transactions" style="width: 100%;margin: auto;margin-bottom: 71px;" row-class-name="transaction-row" v-loading="isLoading" >
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">

@@ -47,11 +47,14 @@
       <input v-model="isRead" type="checkbox" class="chk_1">
       <span class="sel"></span>
       我已仔细阅读并同意
-      <span class="color80D3FE">服务及隐私条款</span>
+      <span @click="showAgreement=true" class="color80D3FE">服务及隐私条款</span>
     </label>
     <div class="btnGroup padding-l">
       <button @click="createCoin" class="btn btn-success btnStyle">确认发币</button>
     </div>
+    <el-dialog :visible.sync="showAgreement">
+      <agreement></agreement>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,7 +79,8 @@
           }
         },
         isRead: false,
-        wallet: null
+        wallet: null,
+        showAgreement:false
       }),
       created() {
         this.wallet = this.$storage.getWalletById(this.$route.params.id);
