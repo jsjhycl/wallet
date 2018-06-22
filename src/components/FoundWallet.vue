@@ -66,6 +66,10 @@
             this.$message({message: "输入的密码不一致！", type: 'error'});
             return;
           }
+          let ret=this.$validator__.checkPassword(this.wallet.password);
+          if(ret!==true){
+            return this.$message({message: ret, type: 'error'});
+          }
           if (!this.isRead) {
             this.$message({message: "请仔细阅读并同意服务条款！", type: 'error'});
             return;
