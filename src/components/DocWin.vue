@@ -1,7 +1,9 @@
 <!--显示所有文档相关的host-->
 <template>
-<Agreement v-if="this.currentCom===objs['使用协议']"></Agreement>
-<policy v-else="this.currentCom===objs['隐私条款']"></policy>
+  <div class="walletRightCenter">
+    <Agreement v-if="this.currentCom===objs['使用协议']"></Agreement>
+    <policy v-else="this.currentCom===objs['隐私条款']"></policy>
+  </div>
 </template>
 
 <script>

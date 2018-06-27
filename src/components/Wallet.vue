@@ -20,7 +20,7 @@
             </div>
           </div>
           <div class="operationBtnGroup">
-            <button class="btn operationBtn" @click="dialogs.one=true">修改密码</button>
+            <button class="btn operationBtn" @click="openModpassword">修改密码</button>
             <button @click="outputPassword" class="btn operationBtn">导出私钥</button>
             <button @click="outputKeyStore" class="btn operationBtn">导出keystore</button>
             <button v-if="!!wallet.encMnemonicWords" class="btn operationBtn" @click="backupWords" >备份助记词</button>
@@ -215,10 +215,6 @@
           if(ret!==true){
             return this.$message({message: ret, type: 'error'});
           }
-          // if(this.mods.newPassword.length<8){
-          //   this.$message({message: '密码位数不能小于8', type: 'error'});
-          //   return;
-          // }
           this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '')
             .then(ret=>{
               this.$storage.updateWallet(this.wallet.id, {
@@ -302,6 +298,11 @@
             this.$alert(err.toString(), '错误');
             this.isLoading = false;
           });
+        },
+        /* 打开修改密码*/
+        openModpassword:function () {
+          this.mods.reset();
+          this.dialogs.one=true;
         }
       }
     }

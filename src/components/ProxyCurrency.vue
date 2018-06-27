@@ -94,7 +94,7 @@
           if (!this.currencyItem.check()) {
             return this.$message({message: '请填写必要的数据！', type: 'error'});
           }
-          if(Math.pow(10,9)*this.currencyItem.initSupply<1||Math.pow(10*3)*this.currencyItem.gasPrice<1){
+          if(Math.pow(10,9)*this.currencyItem.initSupply<1||Math.pow(10,3)*this.currencyItem.gasPrice<1){
             return this.$message({message:'代币发行值/燃料值不能小于1！',type:'error'});
           }
           if(!(pattern.test(this.currencyItem.name)&&pattern.test(this.currencyItem.symbol))){

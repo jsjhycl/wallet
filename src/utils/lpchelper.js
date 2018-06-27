@@ -123,7 +123,7 @@ export default {
           "contractAddr": contractAddr,
           "note":"hello_for_newcoin",
           "gasLimit": gasLimit.toString(),
-          "gasPrice": gasPrice.toString()
+          "gasPrice": (gasPrice*1000).toString()
         }
     })
   },

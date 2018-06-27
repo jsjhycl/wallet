@@ -1,10 +1,10 @@
 import axios from 'axios'
 import common from './common'
-function getUrl(path) {
+function getUrl(path,isApi=true) {
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='https://wallet.bcbchain.io/api/v1/';
-  let stuff ='https://testwallet.bcbchain.io/api/v1/';
+  let stuff ='https://testwallet.bcbchain.io'+(isApi?"/api/v1/":"/");
   // let stuff ='https://www.blockwallet.pro/api/v1/';
   return stuff+path;
 }
@@ -85,5 +85,10 @@ export default {
   getContract(coinType,contractAddr){
     return axios.get(getUrl(`contract/${coinType}/${contractAddr}`))
       .then(result=>common.unwrapHttp__(result));
+  },
+  /*获取远端html文档*/
+  getHtml(url){
+    return axios.get(getUrl(url,false))
+      .then(result=>result.data);
   }
 }
