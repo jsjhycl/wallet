@@ -248,7 +248,7 @@
       <!--<p class='text-right marT2'>北京创世智链信息技术研究院</p>-->
     <!--</article>-->
   <!--</div>-->
-  <div v-html="html"></div>
+  <div v-html="html" class="remote_resource_html"></div>
 </template>
 
 <script>
@@ -264,6 +264,5 @@
     }
 </script>
 
-<style scoped>
-
+<style>
 </style>

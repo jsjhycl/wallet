@@ -56,28 +56,36 @@
         this.init();
         //done refresh
         this.$bindRefresh('init');
+        this.$bindUpload('upload');
       },
       methods:{
+        upload(url){
+          if(url.includes('/assets/')){
+            console.log("trigger:",url);
+            this.$storage.prepareAsset(this.currentWallet.type,true,false).then(()=>{
+              this.loadAssets();
+            })
+          }
+        },
         loadAssets(){
           let resources =this.currentWallet.resources||[];
           this.assets =this.$storage.getAssets()
-            .filter(m=>m.coinType===this.currentWallet.type)
+            .filter(m=>m.coinType===this.currentWallet.type&&(m.from===1||m.wallet_address===this.currentWallet.address))
             .map(item=>{
-              item.state=resources.some(m=>m.contractAddr===item.conAddr);
+              item.state=resources.some(m=>m.contractAddr===item.conAddr&&m.state===true);
               return item;
             });
-          console.log('this.assets:',this.assets);
           if(this.assets.length>0) this.asset =this.assets[0];
         },
         init:function(){
-          this.$storage.prepareAsset(this.currentWallet.type).then(()=>{
+          this.$storage.prepareAsset(this.currentWallet.type,true,true).then(()=>{
            this.loadAssets();
           })
         },
         setResources:function () {
           // let resources = this.assets.filter(m=>m.state).map(m=>({name:m.symbol,desc:m.name,img:m.coinIcon,contractAddr:m.conAddr}));
-          let resources = this.assets.filter(m=>m.state).map(m=>m.conAddr);//字符串数组
-          console.log(resources,'.....save resource');
+          // let resources = this.assets.filter(m=>m.state).map(m=>m.conAddr);//字符串数组
+          let resources = this.assets.map(m=>({conAddr:m.conAddr,state:m.state}));//字符串数组
           this.$storage.setResourceForWallet(this.$route.params.id,resources);
           this.$router.replace({name:'wallet',params:this.$route.params.id});
         },
@@ -88,6 +96,7 @@
           this.asset.coinIcon ='./static/defaultcoin.png';
           this.asset.from=0;
           this.dialogFormShow=true;
+          this.asset.wallet_address=this.currentWallet.address;
         },
         /*保存资产*/
         save:function () {
@@ -101,6 +110,10 @@
         },
         /*删除资产*/
         doneDelete(){
+          if(!this.asset){
+            this.$message({message:'请选择要删除的资产！',type:"warn"})
+            return;
+          }
           this.$confirm('你确定要资产：'+this.asset.name+'吗？','确认')
             .then(()=>{
               this.$storage.removeAsset(this.asset);

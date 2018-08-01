@@ -8,7 +8,7 @@
         </div>
         <div class="text-right">
           <!--<button class="btn btn-sm add-currency-button" @click="dialogs.six=true">转移代币拥有者</button>-->
-          <button v-if="!isBasicCoin" class="btn btn-success" @click="dialogs.six=true">转移代币拥有者</button>
+          <button v-if="showProxy" class="btn btn-success" @click="dialogs.six=true">转移代币拥有者</button>
         </div>
       </div>
       <!--<chart class="tranImg"  :options="assets"></chart>-->
@@ -79,7 +79,7 @@
             <span>{{scope.row.timeStamp|d2s(true)}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="memo"  label="摘要"></el-table-column>
+        <!--<el-table-column prop="memo"  label="摘要"></el-table-column>-->
         <el-table-column  label="交易状态">
           <template slot-scope="scope">
             <span :class="scope.row.isSuccess?'success':'error'">{{scope.row.strStatus}}</span>
@@ -87,15 +87,15 @@
         </el-table-column>
         <el-table-column label="">
           <template slot-scope="scope">
-            <span v-if="!scope.row.isSuccess" @click="refreshHandler(scope.row)"  class="glyphicon glyphicon-refresh text-success" ></span>
+            <span v-if="!scope.row.isSuccess" @click="refreshHandler(scope.row)"  class="glyphicon glyphicon-refresh text-success" v-loading="isRefresh" ></span>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="btnGroupSm" style="min-width: 765px">
-      <button class="btn btn-success btnStyle" @click="dialogs.three=true">燃料价格</button>
-      <button class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃烧</button>
-      <button class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>
+      <!--<button class="btn btn-success btnStyle" @click="dialogs.three=true">燃料价格</button>-->
+      <button v-if="showProxy&&contract.burnEnabled" class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃烧</button>
+      <button v-if="showProxy&&contract.addSupplyEnabled" class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>
       <button class="btn btn-primary btnStyle marRL" @click="openTransferWin">转账</button>
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
     </div>
@@ -130,7 +130,7 @@
             </div>
             <div class="modalTF marT">
               <p>可用余额 <span>{{currentAsset.balance}}</span></p>
-              <!--<p>网络手续费 <span class="colorFF9191">{{serviceCharge}}</span></p>-->
+              <p v-if="isBasicCoin">网络手续费 <span class="colorFF9191">{{serviceCharge}}</span></p>
             </div>
           </li>
           <li>
@@ -168,7 +168,7 @@
       <supply-set @close="dialogs.five=false" :contract="contract" :wallet="wallet" :asset="currentAsset"></supply-set>
     </el-dialog>
     <!--转移代币拥有者-->
-    <el-dialog title="转移代币拥有着" width="550px"  :visible.sync="dialogs.six">
+    <el-dialog title="转移代币拥有者" width="550px"  :visible.sync="dialogs.six">
       <set-owner @close="dialogs.six=false" :wallet="wallet" :asset="currentAsset" :users="users"></set-owner>
     </el-dialog>
   </div>
@@ -189,12 +189,13 @@
       },
       name: "WalletDetails",
       data: () => ({
+        isRefresh:false,
         isLoading: false,
         isPaying: false,
         wallet: {},
         currentAsset: {},
         users: [],
-        serviceCharge: 0.01,//需配置
+        serviceCharge: 0.00125,//需配置
         transferInfo: {},
         transactions: [],
         dialogs: {one: false, two: false, three: false,four:false,five:false,six:false},
@@ -219,20 +220,39 @@
               color: 'aliceblue'
             }
           }]
-        })
+        }),
+        showProxy(){
+          if (this.contract&&this.contract.owner && this.currentAsset)
+            return this.contract.owner.toLocaleLowerCase() === this.wallet.address.toLocaleLowerCase();
+          else return false;
+        }
       },
       created: function () {
         this.init();
         this.$bindRefresh('init');
+        this.$bindUpload('update');
       },
       methods: {
+        update(url){
+          if(url.includes('transactions/')&&url.includes(this.wallet.address)){
+            console.log("trigger:",url);
+            this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20,true,false)
+              .then(result => {
+                this.transactions = result.records;
+                this.isLoading = false;
+              }).catch(err => {
+              this.$alert('出现错误：' + err, '错误');
+              this.isLoading = false;
+            });
+          }
+        },
         init() {
           this.wallet = this.$route.params.wallet;
           this.currentAsset = this.$route.params.currentAsset;
           this.isBasicCoin =this.currentAsset.name.toLowerCase()==="bcb"||this.currentAsset.name.toLowerCase()==="bcbt";
           //获取交易记录
           this.isLoading = true;
-          this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20)
+          this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20,true,true)
             .then(result => {
               this.transactions = result.records;
               this.isLoading = false;
@@ -278,7 +298,7 @@
               }).catch(err=>this.isPaying=false)
           } catch (e) {
             console.log(e);
-            this.$message({message: e, type: 'error', 'showClose': true, 'duration': 0});
+            this.$message({message: e, type: 'error'});
             this.isPaying = false;
           }
         },
@@ -288,7 +308,7 @@
         },
         //设置所有金额
         setAllHandler: function () {
-          this.transferInfo.amount = this.currentAsset.balance;
+          this.transferInfo.amount = this.currentAsset.balance - (this.isBasicCoin?this.serviceCharge:0);
         },
         //设置转账金额
         editAmountHandler: function (e) {
@@ -308,20 +328,21 @@
         },
         //  刷新
         refreshHandler: function (transItem) {
-          this.isLoading = true;
+          this.isRefresh = true;
           this.$storage.getTransactionByTxhash(this.wallet.type, [transItem.txHash])
             .then(results => {
               if (results.length > 0) {
                 transItem.complexByHashData(results[0]);
-                if(!transItem.isSuccess) setTimeout(this.refreshHandler,1000,transItem);
+                // this.$storage.removeLocalTransfers(transItem);
+                //if(!transItem.isSuccess) setTimeout(this.refreshHandler,1000,transItem);
               }
-              this.isLoading = false;
+              this.isRefresh = false;
             })
             .catch(err => {
               console.log('出现错误：',err);
-              setTimeout(this.refreshHandler,1000,transItem);
+              setTimeout(this.refreshHandler,5000,transItem);
               //this.$alert('出现错误：' + err, '错误');
-              this.isLoading = false;
+              this.isRefresh = false;
             })
         },
         //自动刷新
@@ -345,7 +366,7 @@
   .demo-table-expand .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
-    width: 50%;
+    width: 100%;
   }
   .tool-right-input{
     display: flex;

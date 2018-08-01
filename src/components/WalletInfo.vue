@@ -19,35 +19,28 @@
           <span class="arrowRIcon glyphicon glyphicon-menu-right"></span>
         </router-link>
       </li>
-      <!--<li>-->
-        <!--<a class="walletInfoA" href="#">-->
-          <!--<span>版本日志</span>-->
-          <!--<span class="arrowRIcon glyphicon glyphicon-menu-right"></span>-->
-        <!--</a>-->
-      <!--</li>-->
-      <!--<li>-->
-        <!--<a class="walletInfoA" href="#">-->
-          <!--<span>产品向导</span>-->
-          <!--<span class="arrowRIcon glyphicon glyphicon-menu-right"></span>-->
-        <!--</a>-->
-      <!--</li>-->
-      <!--<li>-->
-        <!--<a class="walletInfoA" href="#">-->
-          <!--<span>检测新版</span>-->
-          <!--<span class="arrowRIcon glyphicon glyphicon-menu-right"></span>-->
-        <!--</a>-->
-      <!--</li>-->
+      <li>
+        <a class="walletInfoA" href="javascript:void(0)">
+          <span>版本信息</span>
+          <span>{{current}}-><i style="color: red">{{$root.Bus.updateInfo.version}}</i></span>
+          <a class="btn btn-success" href="https://testwallet.bcbchain.io/public/wallet/wallet-windows/package.zip" target="_blank" v-if="current!=$root.Bus.updateInfo.version">升级</a>
+        </a>
+      </li>
     </ul>
     <div class="walletCopy">
-      <p>Copyright 2016 ConsonLabs</p>
+      <p>Copyright 2018 ConsonLabs</p>
       <p>All right reserved</p>
     </div>
   </div>
 </template>
 
 <script>
+  import version from './../utils/version';
     export default {
-        name: "WalletInfo"
+      name: "WalletInfo",
+      data: () => ({
+        current: version.version
+      })
     }
 </script>
 

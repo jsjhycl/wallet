@@ -39,6 +39,9 @@ export class TransferItem {
     if (this.amount <= 0) {
       throw "转账金额必须大于0"
     }
+    if(this.amount<0.000000001){
+      throw "转账金额小于0.000000001！"
+    }
   }
 }
 
@@ -152,5 +155,6 @@ export class Asset {
   "config";
   "modifyTime";
   "from";
+  "wallet_address";
 }
 

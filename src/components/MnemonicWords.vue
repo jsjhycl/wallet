@@ -27,10 +27,8 @@
             .then(result=>{
               this.keywords=result.mnemonicWords.split(' ')
             });
-          // todo 需删除
-          // this.keywords = this.$lpc__.decMnemonicWords(wallet.type, wallet.encMnemonicWords, result)
-          //   .mnemonicWords
-          //   .split(' ');
+        }).catch(err=>{
+          this.$emit('added', this.id);
         });
       },
       methods:{

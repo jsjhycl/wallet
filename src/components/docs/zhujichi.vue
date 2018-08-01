@@ -9,7 +9,7 @@
       <!--<p>PS: 用户可以使用备份的助记词, 重新导入 imToken , 用新的密码生成一个新的 Keystore, 用这种方法来修改钱包密码。</p>-->
     <!--</article>-->
   <!--</div>-->
-  <div v-html="html"></div>
+  <div v-html="html" class="remote_resource_html"></div>
 </template>
 
 <script>

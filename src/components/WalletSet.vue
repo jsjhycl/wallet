@@ -1,12 +1,12 @@
 <template>
   <div class="walletRightCenter">
     <ul class="walletSetList list-unstyled">
-      <!--<li>-->
-        <!--<router-link class="disBlock" to="/records">-->
-          <!--<img class="walletSetImg" src="../assets/img/transactionRecord.png">-->
-          <!--<p>交易记录</p>-->
-        <!--</router-link>-->
-      <!--</li>-->
+      <li>
+        <router-link class="disBlock" to="/records">
+          <img class="walletSetImg" src="../assets/img/transactionRecord.png">
+          <p>交易记录</p>
+        </router-link>
+      </li>
       <li>
         <router-link class="disBlock" to="/users">
           <img class="walletSetImg" src="../assets/img/contacts.png">

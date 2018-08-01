@@ -39,8 +39,8 @@
         </label>
       </li>
       <li class="marT2">
-        <input v-model="currencyItem.gasPrice" class="foundLiInput" type="number" placeholder="燃料价格(单位：KCong)">
-        <span class="description">KCong=(10^3Cong)</span>
+        <input v-model="currencyItem.gasPrice" class="foundLiInput" type="number" placeholder="燃料价格(单位：Cong)">
+        <!--<span class="description">KCong=(10^3Cong)</span>-->
       </li>
     </ul>
     <label class="select padding-l">
@@ -59,6 +59,7 @@
 </template>
 
 <script>
+  import validator from './../utils/validator';
     export default {
       name: "ProxyCurrency",
       data: () => ({
@@ -80,7 +81,8 @@
         },
         isRead: false,
         wallet: null,
-        showAgreement:false
+        showAgreement:false,
+        // isSaveing:false
       }),
       created() {
         this.wallet = this.$storage.getWalletById(this.$route.params.id);
@@ -90,23 +92,28 @@
       },
       methods: {
         createCoin() {
-          let pattern=/^[a-zA-Z]{1,20}$/;
+          let pattern = /^[a-zA-Z]{1,40}$/;
           if (!this.currencyItem.check()) {
             return this.$message({message: '请填写必要的数据！', type: 'error'});
           }
-          if(Math.pow(10,9)*this.currencyItem.initSupply<1||Math.pow(10,3)*this.currencyItem.gasPrice<1){
-            return this.$message({message:'代币发行值/燃料值不能小于1！',type:'error'});
+          if (Math.pow(10, 9) * this.currencyItem.initSupply < 1) {
+            return this.$message({message: '代币发行值不能小于1！', type: 'error'});
           }
-          if(!(pattern.test(this.currencyItem.name)&&pattern.test(this.currencyItem.symbol))){
-            return this.$message({message:'名称/符号必须是英文，并在1-20字符之间！',type:'error'});
+          if (!/^\d+$/.test(this.currencyItem.gasPrice.toString()) || this.currencyItem.gasPrice < 2500) {
+            return this.$message({message: '燃料价格需大于等于2500Cong,且为整数！', type: 'error'});
+          }
+          if (this.currencyItem.initSupply > 999999999999 || this.currencyItem.gasPrice > 999999999999) {
+            return this.$message({message: '代币发行值/燃料值不能大于999999999999！', type: 'error'});
+          }
+          if (!(pattern.test(this.currencyItem.name) && pattern.test(this.currencyItem.symbol))) {
+            return this.$message({message: '名称/符号必须是字母，并在1-40字符之间！', type: 'error'});
           }
           if (!this.isRead) return this.$message({message: '请认真阅读并同意协议!', type: 'error'});
-          console.log('curencyItem:',this.currencyItem);
-          this.$checkPassword(this.wallet.id,false).then(password => {
+          this.$checkPassword(this.wallet.id, false).then(password => {
             this.currencyItem.password = password;
             this.$lpc__.createCoin(this.currencyItem)
-              .then(ret=>{
-                if(ret) this.$router.push({
+              .then(ret => {
+                if (ret) this.$router.push({
                   name: 'wallet',
                   params: {id: this.wallet.id}
                 });

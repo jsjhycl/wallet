@@ -10,7 +10,8 @@
           <input v-model="wallet.name" class="foundLiInput" type="text" placeholder="钱包名称">
         </li>
         <li>
-          <input v-model="wallet.password" class="foundLiInput" type="password" placeholder="密码">
+          <!--<input v-model="wallet.password"  class="foundLiInput" type="password" placeholder="密码">-->
+          <input v-model="wallet.password"  class="foundLiInput" type="password" placeholder="密码">
         </li>
         <li>
           <input v-model="repeatPassword" class="foundLiInput" type="password" placeholder="重复密码">
@@ -50,6 +51,8 @@
       created: function () {
         this.walletTypes = this.$storage.getWalletTypes();
         this.wallet = {id:uuid(),type: '0x1001', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
+      },
+      computed:{
       },
       methods: {
         createWallet: function () {

@@ -1,25 +1,60 @@
 import axios from 'axios'
 import common from './common'
+import lpc from './lpchelper'
 function getUrl(path,isApi=true) {
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='https://wallet.bcbchain.io/api/v1/';
   let stuff ='https://testwallet.bcbchain.io'+(isApi?"/api/v1/":"/");
+  // let stuff ='https://wallet.bcbchain.io'+(isApi?"/api/v1/":"/");
   // let stuff ='https://www.blockwallet.pro/api/v1/';
   return stuff+path;
 }
+function getExchangeUrl(path) {
+  let exchangeUrl='https://bcbexchange.bcbchain.io/api/v1/';
+  return exchangeUrl+path;
+}
+
+function doneCache(url,data,useCache=false) {
+  // console.log(url,data);
+  if (useCache)
+    common.SaveCache(url, data);
+  return data;
+}
+
 export default {
   /*获取资产列表*/
-  getAssets(type = '0x3') {
-    return axios.get(getUrl(`assets/${type}`))
+  // getAssets(type = '0x3',useCache=false) {
+  //   let url =getUrl(`assets/${type}`), data;
+  //   if(useCache&&(data=common.GetCacheData(url))){
+  //     // console.log('from cache:',url,data)
+  //     return Promise.resolve(data);
+  //   }
+  //   return axios.get(url)
+  //     .then(result => {
+  //       return doneCache(url,common.unwrapHttp__(result));
+  //     })
+  // },
+  getAssets(type = '0x3',useCache=false,useTri=true) {
+    let url =getUrl(`assets/${type}`), data;
+    if(useCache&&(data=common.GetCacheData(url,useTri))){
+      // console.log('from cache:',url,data)
+      return Promise.resolve(data);
+    }
+    return axios.get(url)
       .then(result => {
-        return common.unwrapHttp__(result);
+        return doneCache(url,common.unwrapHttp__(result),useCache);
       })
   },
   /*获取原始汇率素组*/
-  getExchanges(coinType='0x3') {
-    return axios.get(getUrl(`exchanges/${coinType}`))
-      .then(result => common.unwrapHttp__(result));
+  getExchanges(coinType='0x3',useCache=false,useTri=true) {
+    let url=getUrl(`exchanges/${coinType}`),data;
+    if(useCache&&(data=common.GetCacheData(url,useTri))){
+      // console.log('from cache:',url,data)
+      return Promise.resolve(data);
+    }
+    return axios.get(url)
+      .then(result =>doneCache(url,common.unwrapHttp__(result),useCache))
   },
   /*获取资金&余额信息*/
   getBalanceInfo(coinType, contractAddr, address) {
@@ -27,8 +62,8 @@ export default {
       .then(result =>parseFloat(common.unwrapHttp__(result).balance))
   },
   /*获取完整的汇率对象*/
-  getExchangesObj(coinType) {
-    return this.getExchanges(coinType)
+  getExchangesObj(coinType,useCache=false,useTri=true) {
+    return this.getExchanges(coinType,useCache,useTri)
       .then(result => {
         return result.reduce((obj, item) => {
           obj[item.symbol] = item.price;
@@ -39,9 +74,14 @@ export default {
       });
   },
   /*获取交易记录*/
-  getTransactions(coinType,address,contractAddr,page=1,count=20) {
-    return axios.get(getUrl(`addrs/transactions/${coinType}/${address}?conAddr=${contractAddr}&page=${page}&count=${count}`))
-      .then(data => common.unwrapHttp__(data))
+  getTransactions(coinType,address,contractAddr,page=1,count=20,useCache=false,useTri=true) {
+    let url =getUrl(`addrs/transactions/${coinType}/${address}?conAddr=${contractAddr}&page=${page}&count=${count}`),data;
+    if(useCache&&(data=common.GetCacheData(url,useTri))){
+      // console.log('from cache:',url,data)
+      return Promise.resolve(data);
+    }
+    return axios.get(url)
+      .then(data =>doneCache(url,common.unwrapHttp__(data),useCache));
   },
   /*注册新钱包地址*/
   registerAddress(coinType,address,isNew){
@@ -59,18 +99,28 @@ export default {
       .then(result=>common.unwrapHttp__(result));
   },
   /*获取本地余额*/
-  getBasicCoin(coinType,addr){
-    return axios.get(getUrl(`addrs/balance/${coinType}/${addr}`))
-      .then(result=>common.unwrapHttp__(result));
+  getBasicCoin(coinType,addr,useCache=false,useTri=true){
+    let url=getUrl(`addrs/balance/${coinType}/${addr}`),data;
+    if(useCache&&(data=common.GetCacheData(url,useTri))){
+      // console.log('from cache:',url,data)
+      return Promise.resolve(data);
+    }
+    return axios.get(url)
+      .then(result=>doneCache(url,common.unwrapHttp__(result),useCache));
   },
   /*获取所有代币余额*/
-  getAllProxyCoin(coinType,addr){
-    return axios.get(getUrl(`addrs/token_balance/all/${coinType}/${addr}`))
-      .then(result=>common.unwrapHttp__(result));
+  getAllProxyCoin(coinType,addr,useCache=false,useTri=true){
+    let url=getUrl(`addrs/token_balance/all/${coinType}/${addr}`),data;
+    if(useCache&&(data=common.GetCacheData(url,useTri))){
+      // console.log('from cache:',url,data)
+      return Promise.resolve(data);
+    }
+    return axios.get(url)
+      .then(result=>doneCache(url,common.unwrapHttp__(result),useCache));
   },
   /*获取所有币余额*/
-  getAllCoin(coinType,addr){
-    let gets =coinType!='0x1001'?[this.getAllProxyCoin(coinType,addr),this.getBasicCoin(coinType,addr)]:[this.getAllProxyCoin(coinType,addr)];
+  getAllCoin(coinType,addr,useCache=false,useTri=true){
+    let gets =coinType!='0x1001'?[this.getAllProxyCoin(coinType,addr,useCache,useTri),this.getBasicCoin(coinType,addr,useCache,useTri)]:[this.getAllProxyCoin(coinType,addr,useCache,useTri)];
     return Promise.all(gets)
       .then(datas=>{
         return datas.length>1? [...datas[0],datas[1]]:datas[0];
@@ -90,5 +140,36 @@ export default {
   getHtml(url){
     return axios.get(getUrl(url,false))
       .then(result=>result.data);
+  },
+  /* 获取转币地址*/
+  async gen_bcbethaddr(addr){
+    let strData =JSON.stringify({
+      bcbMainAddr:addr,
+      timestamp:Date.now()
+    });
+    let result =await lpc.bcb_calcChecksum(strData);
+    return axios.post(getExchangeUrl(`addr/gen-bcbethaddr?checksum=${result.checkSum}`),strData)
+      .then(result=>common.unwrapHttp__(result));
+  },
+  /* 获取换币记录*/
+  async get_ethrecord(bcbETHAddr){
+    return axios.get(getExchangeUrl(`addr/ethrecord/${bcbETHAddr}`))
+      .then(result=>common.unwrapHttp__(result));
+  },
+  /* 通用get接口*/
+  async doneGet(url){
+    return axios.get(url)
+      .then(result=>common.unwrapHttp__(result));
+  },
+  /*获取更新信息*/
+  async getUpdateInfo(){
+    let url='https://testwallet.bcbchain.io/public/wallet/wallet-windows/update.json';
+    let updateInfo =(await axios.get(url)).data;
+    return updateInfo;
+    // return Promise.resolve({
+    //     "version":"1.0.1",
+    //     "must":true
+    //   }
+    // );
   }
 }

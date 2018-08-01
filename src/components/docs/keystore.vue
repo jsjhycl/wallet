@@ -25,7 +25,7 @@
       <!--<p>PS: Keystore 的密码是唯一、不可更改的, 如果想更改钱包密码需要使用助记词或明文私钥重新导入钱包, 并使用新密码加密, 生成新的 Keystore。</p>-->
     <!--</article>-->
   <!--</div>-->
-  <div v-html="html"></div>
+  <div v-html="html" class="remote_resource_html"></div>
 </template>
 
 <script>

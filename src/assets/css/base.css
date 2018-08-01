@@ -3,6 +3,9 @@
     padding: 0;
     box-sizing: border-box;
 }
+i{
+    font-style: normal;
+}
 a,a:hover,a:active,a:focus{
     color: inherit;
     text-decoration: none;
@@ -19,6 +22,11 @@ h1,h2,h3,h4,h5,h6,p,ul,ol{
 .disFlex{
     display: flex;
 }
+.dis-flex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .disBlock{
     display: block;
 }
@@ -33,6 +41,12 @@ h1,h2,h3,h4,h5,h6,p,ul,ol{
 }
 .colorFE7F7F{
     color: #FE7F7F;
+}
+.colorF79825{
+    color: #F79825;
+}
+.colora9a9a9{
+    color: #A9A9A9;
 }
 .color49E28C{
     color: #49E28C;
@@ -49,12 +63,11 @@ h1,h2,h3,h4,h5,h6,p,ul,ol{
 .color4AC390{
     color: #4AC390;
 }
-
 .marRL{
     margin: 0 20px;
 }
-.padT{
-    padding: 45px 0 0 0 !important;
+div.padT{
+    padding: 45px 0 0 0;
 }
 .padding-l{
     padding-left: 55px;
@@ -64,6 +77,9 @@ h1,h2,h3,h4,h5,h6,p,ul,ol{
 }
 .marT{
     margin-top: 10px;
+}
+.margin-top06{
+    margin-top: 6px;
 }
 .marT2{
     margin-top: 20px;
@@ -172,10 +188,10 @@ h1,h2,h3,h4,h5,h6,p,ul,ol{
 .walletBtn{
     padding: 8px 16px 8px 45px;
     font-size: 16px;
-    color: #949494;
+    color: white;
     border: 1px solid #f1f1f1;
     border-radius: 5px;
-    background: url(../img/walletImg.png) no-repeat 15px center;
+    /*background: url(../img/walletImg.png) no-repeat 15px center;*/
 }
 .walletBtn:first-child{
     margin:0 15px;
@@ -279,7 +295,7 @@ h1,h2,h3,h4,h5,h6,p,ul,ol{
     content: "";
     position: absolute;
     left: 4px;
-    top: 5.5px;
+    top: 6.8px;
     display: none;
     width: 10px;
     height: 10px;
@@ -599,4 +615,61 @@ span.spanSel:after{
 }
 .sed-main h3{
     font-size: 19px;
+}
+/*modal*/
+.header-style{
+    padding: 20px 0 10px 40px;
+}
+.modal-body-title{
+    font-size: 17px;
+    font-weight: 700;
+}
+.modalEwm{
+    width: 150px;
+    height: 150px;
+}
+.see-list{
+    display: block;
+    margin:14px 0 15px 0;
+    font-size: 15px;
+    color: #2e6da4;
+}
+.modal-li{
+    padding: 15px 0 10px 0;
+    border-bottom: 1px solid #EBEBEB;
+}
+.modal-li:last-child{
+    border-bottom: none;
+}
+.change-tips{
+    padding-right: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+.date-style{
+    font-size: 13px;
+    color: #D7D7D7;
+}
+
+.remote_resource_html h4,
+.remote_resource_html h3,
+.remote_resource_html b{
+  color: #000;
+  font-weight: 700;
+}
+.remote_resource_html h4{
+  margin: 1.33em 0;
+  line-height: normal;
+  font-size: 14px;
+}
+.remote_resource_html p,
+.remote_resource_html h3{
+  margin: 1em 0;
+}
+.remote_resource_html h3{
+  font-size: 1.17em;
+}
+.remote_resource_html p{
+  color: #070707;
 }

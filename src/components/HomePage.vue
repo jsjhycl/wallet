@@ -29,6 +29,7 @@
 
 <script>
   import moment from 'moment'
+  import spark from 'spark-md5'
   // import FileSaver from 'file-saver'
   // import axios from 'axios'
   export default {
@@ -106,6 +107,8 @@
       //   .then(result=>console.log(result))
       //   .catch(err=>console.log(err))
       // this.now=moment(1521439283000).fromNow()
+      console.log(moment('18-7-14 上午11:27:51','YY-M-DD 上午HH:mm:ss').format('YYYY-MM-DD HH:mm:ss'))
+      console.log(spark.hash('ycl'))
     },
     methods:{
       testSave(){

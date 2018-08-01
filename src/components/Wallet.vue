@@ -8,7 +8,8 @@
             <img @click="onEdit=true" class="walletUserEdit" src="../assets/img/edit.png">
           </template>
           <input class="user-edit" v-else @keyup.enter="editHandler" @blur="editHandler"  v-focus type="text" v-model="wallet.name" />
-          <router-link :to="`/addcurrency/${wallet.id}`" type="button" class="btn  btn-sm operationBtn pull-right add-currency-button">代币发行</router-link>
+          <router-link :to="`/addcurrency/${wallet.id}`" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 12px;">代币发行</router-link>
+          <button @click="dialogs.huanbi=true" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 8px">一键换币</button>
         </div>
         <div class="userAssetsWrap">
           <div v-loading="isLoading">
@@ -31,14 +32,16 @@
     <!--资产区域-->
       <div class="clearfix">
         <ul class="resource-list list-unstyled pull-left">
-          <li v-for="item in wallet.resources||[]" class="pull-left" v-loading="isLoading">
+          <li v-for="item in wallet.resources||[]" v-if="item.state" class="pull-left" v-loading="isLoading">
             <router-link class="assetsLi" :to="{name:'details',params:{wallet:wallet,currentAsset:item}}">
               <div>
                 <img class="assetsLiImg" :src="item.img">
                 <span class="assetsLiTitle">{{item.name}}</span>
               </div>
               <div class="assetsInfor">
-                <p style="text-align: left;overflow: hidden;text-overflow: ellipsis;white-space: nowrap">{{item.contractAddr}}</p>
+                <el-tooltip :content="item.contractAddr" placement="top" effect="light">
+                  <p style="text-align: left;overflow: hidden;text-overflow: ellipsis;white-space: nowrap">{{item.contractAddr}}</p>
+                </el-tooltip>
                 <p class="assetsMoney">{{item.balance|tofix($root.Bus.config.coinFractionLen)}}</p>
                 <p class="colorFFF"><span style="letter-spacing: 4px">≈{{$root.Bus.config.currency|coin-symbol}}</span><span style="letter-spacing: 1px">{{item.money|tofix($root.Bus.config.lawCoinFractionLen)}}</span></p>
               </div>
@@ -63,7 +66,7 @@
             <input v-model="mods.newPassword" class="modalInput" type="password">
           </li>
           <li class="resetPsw">
-            <p>重置密码</p>
+            <p>重复密码</p>
             <input v-model="mods.resetPassword" class="modalInput" type="password">
           </li>
         </ul>
@@ -136,12 +139,25 @@
         <button  v-clipboard:copy="wallet.address" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制收款地址</button>
       </div>
     </el-dialog>
+    <!--换币窗口-->
+    <!--<el-dialog width="450px" :visible.sync="dialogs.huanbi" :close-on-click-modal="false">-->
+      <!--<huanbi @showListEvent="openHuanbiList"></huanbi>-->
+    <!--</el-dialog>-->
+    <el-dialog :width="huanbi.width" :visible.sync="dialogs.huanbi" :close-on-click-modal="false" @close="doneSwitchWin(0)">
+      <huanbi v-if="huanbi.show===0" @showHuanbiEvent="doneSwitchWin"></huanbi>
+      <huanbi-done :bcbETHAddr="huanbi.bcbETHAddr" v-else-if="huanbi.show===1" @showHuanbiEvent="doneSwitchWin"></huanbi-done>
+      <change-list :bcbETHAddr="huanbi.bcbETHAddr" v-else></change-list>
+    </el-dialog>
     </div>
 </template>
 
 <script>
+  import huanbi from './common/huanbi';
+  import changeList from './common/changeList';
+  import huanbiDone from './common/huanbiDone'
     export default {
       name: "Wallet",
+      components: {huanbi, changeList, huanbiDone},
       data: () => ({
         isLoading: false,
         wallet: {},
@@ -158,10 +174,16 @@
         outPrivateKey: '',//导出的明文私钥
         outkeyStore: '',//导出的keystore
         onEdit: false,
-        dialogs: {one: false, two: false, three: false, four: false}
+        dialogs: {one: false, two: false, three: false, four: false, huanbi: false, showList: false},
+        huanbi: {
+          show: 0,
+          width: '450px',
+          bcbETHAddr:''
+        }
+
       }),
       beforeRouteUpdate(to, from, next) {
-        console.log('beforeRouteUpdate:', to, from);
+        // console.log('beforeRouteUpdate:', to, from);
         this.wallet = this.$storage.getWalletById(to.params.id);
         this.init();
         next();
@@ -170,6 +192,7 @@
         this.wallet = this.$storage.getWalletById(this.$route.params.id);
         this.init();
         this.$bindRefresh('init');
+        this.$bindUpload('upload');
       },
       computed: {
         totalMoney: function () {
@@ -184,14 +207,15 @@
         }
       },
       methods: {
+        upload(url){
+          if(url.includes('exchanges/')||url.includes(this.wallet.address)){
+            console.log("trigger:",url);
+            this.doneDataByCoins(true,false);
+          }
+        },
         init() {
-          //执行初始化资产
-          this.$storage.initAssetAndResources(this.wallet.id)
-            .then(wallet => {
-              //重新获取钱包明细
-              this.wallet = this.$storage.getWalletById(this.wallet.id);
-              this.getServerDatas();
-            })
+          this.huanbi.bcbETHAddr='';//防止数据污染
+          this.doneDataByCoins(true,true);
         },
         /*备份助记词*/
         backupWords: function () {
@@ -207,16 +231,16 @@
             this.$message({message: '密码未输入/两次密码输入不一致', type: 'error'});
             return;
           }
-          if(this.mods.newPassword===this.mods.oldPassword){
-            this.$message({message: '新密码不能和老密码相同！', type: 'error'});
+          if (this.mods.newPassword === this.mods.oldPassword) {
+            this.$message({message: '新密码不能与旧密码相同！', type: 'error'});
             return;
           }
-          let ret=this.$validator__.checkPassword(this.mods.newPassword);
-          if(ret!==true){
+          let ret = this.$validator__.checkPassword(this.mods.newPassword);
+          if (ret !== true) {
             return this.$message({message: ret, type: 'error'});
           }
           this.$lpc__.changePwd(this.wallet.type, this.wallet.privateKey, this.mods.oldPassword, this.mods.newPassword, this.wallet.encMnemonicWords || '')
-            .then(ret=>{
+            .then(ret => {
               this.$storage.updateWallet(this.wallet.id, {
                 privateKey: ret.encPrivateKey,
                 encMnemonicWords: ret.encMnemonicWords
@@ -232,8 +256,8 @@
           this.$checkPassword(this.wallet.id).then(result => {
             this.dialogs.two = true;
             this.$lpc__.outputPrivateKey(this.wallet.type, this.wallet.privateKey, result)
-              .then(ret=>{
-                this.outPrivateKey =ret.privateKey;
+              .then(ret => {
+                this.outPrivateKey = ret.privateKey;
               })
           }).catch((err) => {
             console.log(err)
@@ -248,8 +272,8 @@
           this.$checkPassword(this.wallet.id).then((result => {
             this.dialogs.three = true;
             this.$lpc__.outputKeyStore(this.wallet.type, this.wallet.privateKey, result)
-              .then(ret=>{
-                this.outkeyStore =ret.keystore;
+              .then(ret => {
+                this.outkeyStore = ret.keystore;
               })
           }))
             .catch((err) => {
@@ -258,10 +282,12 @@
         },
         /*删除钱包*/
         deleteWallet: function () {
-          this.$checkPassword(this.wallet.id).then((result => {
-            this.$storage.removeWalletById(this.wallet.id);
-            this.$emit('remove');
-          }))
+          this.$checkPassword(this.wallet.id)
+            .then(result => this.$confirm(`您确定要删除钱包：${this.wallet.name}吗？`, '钱包删除确认'))
+            .then((result => {
+              this.$storage.removeWalletById(this.wallet.id);
+              this.$emit('remove');
+            }))
             .catch((err) => {
               console.log(err)
             });
@@ -272,7 +298,7 @@
         },
         /*修改*/
         editHandler: function () {
-          if(this.wallet.name.length<1 || this.wallet.name.length>20){
+          if (this.wallet.name.length < 1 || this.wallet.name.length > 20) {
             return this.$message({message: "钱包名称需1-20字符！", type: 'error'});
           }
           //执行保存
@@ -280,10 +306,10 @@
           this.$emit('modify', this.$route.params.id, {name: this.wallet.name});
           this.onEdit = false;
         },
-        /*获取服务端资产相关数据*/
+        /*获取服务端资产相关数据 todo 可删除 ob*/
         getServerDatas: function () {
           this.isLoading = true;
-          this.$storage.getServerMultiResourceInfo(this.wallet.type, this.wallet.resources, this.wallet.address,this.$root.Bus.config.currency)
+          this.$storage.getServerMultiResourceInfo(this.wallet.type, this.wallet.resources, this.wallet.address, this.$root.Bus.config.currency)
             .then(results => {
               this.wallet.resources.forEach(item => {
                 let fitem = results.find(m => m.contractAddr.toLocaleLowerCase() === item.contractAddr.toLocaleLowerCase());
@@ -294,15 +320,86 @@
               })
               this.isLoading = false;
             }).catch(err => {
-              console.log(err,'getServerDatas:');
+            console.log(err, 'getServerDatas:');
             this.$alert(err.toString(), '错误');
             this.isLoading = false;
           });
         },
+        /* 获取所有币种信息：初始化资产，组织显示数据，完善资产表*/
+        async doneDataByCoins(useCache=true,useTri=true) {
+          try {
+            this.isLoading = true;
+            // 获取指定钱包的所有币和汇率
+            let [coins, exchangeObj] = await Promise.all([this.$rpc__.getAllCoin(this.wallet.type, this.wallet.address,useCache,useTri),
+              this.$rpc__.getExchangesObj(this.wallet.type,useCache,useTri)]);
+            // console.log('find coins:', coins);
+            // 更新资产表
+            this.$storage.updateAssetsByCoins(coins, this.wallet);
+            // 钱包绑定资产
+            let resources = this.$storage.getAssetsByCommonAndWallet(this.wallet.address).reduce((arr, item) => {
+              let fitem = arr.find(m => m.conAddr.toLocaleLowerCase() === item.conAddr.toLocaleLowerCase());
+              if (!fitem) arr.push({conAddr: item.conAddr, state: true});
+              return arr;
+            }, this.wallet.resources.map(n => ({conAddr: n.contractAddr, state: n.state})) || []);
+            if (resources.length != this.wallet.resources.length) {
+              this.$storage.updateWallet(this.wallet.id, {resources: resources});
+              this.wallet = this.$storage.getWalletById(this.wallet.id);
+              // console.log('update resource:', resources, this.wallet);
+            }
+            // 获取服务端数据
+            this.wallet.resources.forEach(resource => {
+              let item = coins.find(m => m.conAddr === resource.contractAddr);
+              if (item) {
+                resource.balance = item.balance,
+                  resource.money = this.$root.Bus.config.currency != '美元' ? (item.balance * exchangeObj[item.conAddr || item.symbol] || 0) * exchangeObj['CNY'] || 0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0;
+              }
+            });
+            this.isLoading = false;
+          }
+          catch (e) {
+            this.$message({message: '出现错误：' + e.toString(), type: 'error'});
+            this.isLoading = false;
+          }
+        },
         /* 打开修改密码*/
-        openModpassword:function () {
+        openModpassword: function () {
           this.mods.reset();
-          this.dialogs.one=true;
+          this.dialogs.one = true;
+        },
+        /*打开换币记录*/
+        async doneSwitchWin(e) {
+          try {
+            // console.log('查询换币地址....',e,this.huanbi);
+            // if(e!=2) this.huanbi.show=e;
+            if (e === 2) {
+              if(!this.huanbi.bcbETHAddr){
+                let result = await this.$rpc__.gen_bcbethaddr(this.wallet.address);
+                this.huanbi.bcbETHAddr = result.bcbETHAddr;
+                this.huanbi.show = e;
+                this.huanbi.width="1000px";
+              }else{
+                this.huanbi.show = e;
+                this.huanbi.width="1000px";
+              }
+            }
+            else if (e === 1) {
+              if(!this.huanbi.bcbETHAddr){
+                let result = await this.$rpc__.gen_bcbethaddr(this.wallet.address);
+                this.huanbi.bcbETHAddr = result.bcbETHAddr;
+                this.huanbi.show=e;
+                this.huanbi.width = '450px';
+              }else{
+                this.huanbi.show=e;
+                this.huanbi.width = '450px';
+              }
+            }
+            else {
+              this.huanbi.show=e;
+              this.huanbi.width = '450px';
+            }
+          } catch (e) {
+            this.$message({"message": e.toString(), type: "error"});
+          }
         }
       }
     }
@@ -317,9 +414,7 @@
     background: transparent;
   }
   .add-currency-button{
-    margin-right: 13px;
-    width: 120px;
-    background-color: #82ADE6;
+    background-color: #F79825;
     color: white
   }
 </style>

@@ -4,7 +4,7 @@
     <div class="walletLeftWrap">
       <div class="walletLeftLogo">
         <img class="logoImg" src="./assets/img/logo.png">
-        <p class="walletLeftTitle">BCB Wallet<span class="small">(v1.0.1)</span></p>
+        <p class="walletLeftTitle">BCB Wallet<span class="small">(v{{current}})</span></p>
       </div>
       <div>
         <div class="searchFrame">
@@ -31,8 +31,8 @@
         </div>
       </div>
       <div class="walletBtnWrap clearfix">
-        <router-link class="walletBtn pull-left" to="/add">创建钱包</router-link>
-        <router-link class="walletBtn pull-left" to="/import">导入钱包</router-link>
+        <router-link class="walletBtn pull-left create" to="/add">创建钱包</router-link>
+        <router-link class="walletBtn pull-left import" to="/import">导入钱包</router-link>
       </div>
     </div>
     <!--右边区域-->
@@ -40,8 +40,8 @@
       <!--工具条-->
       <div class="walletToolBar clearfix">
         <div class="pull-left">
-          <button @click="donePrevious" class="btn-link"><span class="glyphicon glyphicon-menu-left"></span></button >
-          <button @click="doneNext" class="btn-link"><span class="glyphicon glyphicon-menu-right"></span></button>
+          <!--<button @click="donePrevious" class="btn-link"><span class="glyphicon glyphicon-menu-left"></span></button >-->
+          <!--<button @click="doneNext" class="btn-link"><span class="glyphicon glyphicon-menu-right"></span></button>-->
           <button @click="doneRefresh" class="btn-link"><span class="glyphicon glyphicon-repeat"></span></button>
         </div>
         <div class="pull-right">
@@ -58,15 +58,26 @@
 </template>
 
 <script>
+  import version from './utils/version';
 export default {
   name: 'App',
   data: () => ({
     wallets: [],
     selectWallet:{},
     searchText:'',
-    currentTool:''
+    currentTool:'',
+    current:version.version
   }),
-  created: function () {
+  created:async function () {
+    let pu= this.$rpc__.getUpdateInfo();
+    let updateInfo = await pu;
+    this.$root.Bus.updateInfo=updateInfo;
+    //判断版本
+    if(updateInfo.version!==this.current&&updateInfo.must){
+      this.$alert('程序需要升级，请升级.');
+      return this.$router.push("/about");
+    }
+    // if(this.$root.bus.updateInfo);
     this.wallets = this.$storage.getWallets();
     if(this.wallets.length>0){
       this.selectWallet =this.wallets[0];
@@ -140,5 +151,15 @@ export default {
   @import "./assets/css/base.css";
   .active-tool{
     color: steelblue;
+  }
+  .create{
+    background: url(./assets/img/walletImg_create.png) no-repeat 15px center;
+    background-size: 24px;
+    background-color: #5DA7FF;
+  }
+  .import{
+    background: url(./assets/img/walletImg_import.png) no-repeat 15px center;
+    background-size: 24px;
+    background-color: #797CE3;
   }
 </style>

@@ -11,7 +11,7 @@
       <!--<p>PS: 用户可以使用明文私钥导入 imToken , 用新的密码生成一个新的 Keystore (记得要将旧的 Keystore 删除), 用这种方法来修改钱包密码。</p>-->
     <!--</article>-->
   <!--</div>-->
-  <div v-html="html"></div>
+  <div v-html="html" class="remote_resource_html"></div>
 </template>
 
 <script>

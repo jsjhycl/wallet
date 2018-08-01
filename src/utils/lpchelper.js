@@ -105,7 +105,8 @@ export default {
         initSupply: (obj.initSupply*Math.pow(10,9)).toString(),
         addSupplyEnabled: obj.addSupplyEnabled,
         burnEnabled: obj.burnEnabled,
-        gasPrice: (obj.gasPrice*Math.pow(10,3)).toString(),
+        // gasPrice: (obj.gasPrice*Math.pow(10,3)).toString(),
+        gasPrice: (obj.gasPrice).toString(),
         gasLimit: obj.gasLimit,
         note: obj.note
       }
@@ -121,7 +122,8 @@ export default {
       "coinParam":
         {
           "contractAddr": contractAddr,
-          "note":"hello_for_newcoin",
+          // "note":"hello_for_newcoin",
+          "note":"",
           "gasLimit": gasLimit.toString(),
           "gasPrice": (gasPrice*1000).toString()
         }
@@ -136,7 +138,8 @@ export default {
       "coinParam":
         {
           "contractAddr": contractAddr,
-          "note":"hello_for_newcoin",
+          // "note":"hello_for_newcoin",
+          "note":"",
           "gasLimit": gasLimit.toString(),
           "value": value.toString()
         }
@@ -151,7 +154,8 @@ export default {
       "coinParam":
         {
           "contractAddr": contractAddr,
-          "note":"hello_for_newcoin",
+          // "note":"hello_for_newcoin",
+          "note":"",
           "gasLimit": gasLimit.toString(),
           "value": value.toString()
         }
@@ -166,10 +170,30 @@ export default {
       "coinParam":
         {
           "contractAddr": contractAddr,
-          "note":"hello_for_newcoin",
+          // "note":"hello_for_newcoin",
+          "note":"",
           "gasLimit": gasLimit.toString(),
           "toAddr": address
         }
+    },false)
+  },
+  /* 16 6.1	bcb_calcChecksum*/
+  bcb_calcChecksum(str){
+    let hexstring =strToHexCharCode(str);
+    return common.excute('bcb_calcChecksum', {
+      "tbcData":hexstring
     })
   }
+}
+
+//目前是按照utf8编码
+function strToHexCharCode(str) {
+  if(str === "")
+    return "";
+  var hexCharCode = [];
+  hexCharCode.push("0x");
+  for(var i = 0; i < str.length; i++) {
+    hexCharCode.push((str.charCodeAt(i)).toString(16));
+  }
+  return hexCharCode.join("");
 }

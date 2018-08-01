@@ -3,11 +3,12 @@ import rpc from './rpchelper'
 import {transaction,TransferItem,Config} from "./models";
 export  default Storage= {
   initData: function (data) {
+    console.log('get local data:',data);
     Object.keys(data).forEach(key => {
       localStorage.setItem(key, JSON.stringify(data[key]));
     })
   },
-  getLocalData: function () {
+  getLocalData: function (key) {
     let obj = {
       "bcb_wallets": this.getWallets(),
       "bcb_users": this.getUsers(),
@@ -15,7 +16,7 @@ export  default Storage= {
       "bcb_config": this.getConfig(),
       "bcb_assets": this.getAssets()
     }
-    return obj;
+    return key?obj[key]: obj;
   },
   /*获取用户的本地钱包*/
   getWallets: function () {
@@ -23,7 +24,7 @@ export  default Storage= {
     let wallets= JSON.parse(strWallets);
     wallets.forEach((w,index)=>{
       w.resources=w.resources||[];
-      if(w.resources.length>0 && (typeof w.resources[0])!="string") w.resources=[];
+      // if(w.resources.length>0 && (typeof w.resources[0])!="string") w.resources=[];
       w.head='head_'+index%12+'.png';
     })
     return wallets;
@@ -32,17 +33,26 @@ export  default Storage= {
   getWalletTypes: function () {
     // return ['ETH', 'BCB', 'TOT'];
     // return [{"name": "BCBMainNet", "value": "0x1000"}]
-    // return [{"name": "BCB", "value": "0x1002"}]
+    // return [{"name": "BCB", "value": "0x1001"}]
     return [{"name": "bcbtest", "value": "0x1001"}]
     // return [{"name": "ETH", "value": "0x3"},{"name": "BCBMainNet", "value": "0x10000"}]
+  },
+  /*根据地址判断钱包是否存在*/
+  isExsitWallet(address) {
+    let wallets = this.getWallets();
+    return wallets.find(m => m.address === address) ? true : false;
   },
   /*保存钱包*/
   insertWallet: function (wallet) {
     let wallets = this.getWallets();
-    if(wallets.find(m=>m.address===wallet.address)) throw '不能重复创建钱包';
+    let findIndex =wallets.findIndex(m=>m.address===wallet.address);
+    if(findIndex>=0){
+      wallets.splice(findIndex, 1);
+    }
+    // if(wallets.find(m=>m.address===wallet.address)) throw '不能重复创建钱包';
     wallets.push(wallet);
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
-    this._Save();
+    this._Save('bcb_wallets');
   },
   updateWallet: function (id, obj,checkKey=true) {
     let wallets = this.getWallets();
@@ -52,7 +62,7 @@ export  default Storage= {
         if (checkKey && key in item) item[key] = obj[key];
         else item[key] =obj[key];
         localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
-        this._Save();
+        this._Save('bcb_wallets');
       })
     }
     return item;
@@ -71,10 +81,11 @@ export  default Storage= {
   getWalletById: function (id) {
     let wallet = this.getWallets().find(m => m.id === id);
     wallet.resources = wallet.resources || [];
-    //返回wallet里面的资产试图
-    wallet.resources =wallet.resources.map(conAddr=>{
-      let assetItem=this.getAssetByConAddr(conAddr);
-      return {name:assetItem.symbol,desc:assetItem.name,img:assetItem.coinIcon,contractAddr:assetItem.conAddr,balance:0,money:0};
+    //返回wallet里面的资产试图 todo 此算法不好可能回有bug
+    // wallet.resources =wallet.resources.filter(m=>m.state).map(m=>{
+    wallet.resources =wallet.resources.map(m=>{
+      let assetItem=this.getAssetByConAddr(m.conAddr);
+      return {name:assetItem.symbol,desc:assetItem.name,img:assetItem.coinIcon,contractAddr:assetItem.conAddr,balance:0,money:0,state:m.state};
     })
     return wallet;
   },
@@ -121,8 +132,8 @@ export  default Storage= {
       })
   },
   //返回资产列表
-  prepareAsset: function (coinType) {
-    return rpc.getAssets(coinType).then(items => {
+  prepareAsset: function (coinType,useCache=true,useTri=true) {
+    return rpc.getAssets(coinType,useCache,useTri).then(items => {
       items.forEach(item => item.from = 1);
       this.saveAssets(items);
     })
@@ -133,6 +144,7 @@ export  default Storage= {
         let items=[];
         datas.forEach(item=>items.push(...item));
         items.forEach(item => item.from = 1);
+        // console.log('main created...',items)
         this.saveAssets(items);
       })
   },
@@ -140,6 +152,10 @@ export  default Storage= {
   getAssets() {
     let strAssets = localStorage.getItem("bcb_assets") || '[]';
     return JSON.parse(strAssets);
+  },
+  getAssetsByCommonAndWallet(addr){
+    let assets =this.getAssets();
+    return assets.filter(m=>m.from===1||m.wallet_address===addr);
   },
   //根据合约地址获取指定资产
   getAssetByConAddr(conAddr){
@@ -151,19 +167,21 @@ export  default Storage= {
     if (!Array.isArray(items)) items = [items];
     let assets = this.getAssets();
     for (let item of items) {
-      let findItem = assets.find(m => m.conAddr.toLocaleLowerCase() === item.conAddr.toLocaleLowerCase());
+      let findItem = assets.find(m => m.conAddr.toLocaleLowerCase() === item.conAddr.toLocaleLowerCase()&&(item.from===1||item.wallet_address===m.wallet_address));
       if (!findItem) assets.push(item);
       else findItem = item;
     }
     localStorage.setItem('bcb_assets', JSON.stringify(assets));
+    this._Save('bcb_assets');
     return assets;
   },
 //  删除资产
   removeAsset(item) {
     let assets = this.getAssets();
-    let index = assets.findIndex(m => m.conAddr === item.conAddr);
+    let index = assets.findIndex(m => m.conAddr === item.conAddr&&m.wallet_address===item.wallet_address);
     if (index >= 0) assets.splice(index, 1);
     localStorage.setItem('bcb_assets', JSON.stringify(assets));
+    this._Save('bcb_assets');
   },
 //  设置资源
   setResourceForWallet: function (walletId, resources) {
@@ -171,26 +189,44 @@ export  default Storage= {
     let current = wallets.find(m => m.id === walletId);
     current.resources = resources || [];
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
-    this._Save();
+    this._Save('bcb_wallets');
+  },
+  //根据钱包所具有的币更新资产表
+  updateAssetsByCoins(coins,wallet) {
+    let assets = this.getAssets();
+    let newCoins = coins.filter(m => m.name &&
+      m.symbol &&
+      !assets.find(asset => asset.conAddr.toLocaleLowerCase() === m.conAddr.toLocaleLowerCase() && (asset.wallet_address === wallet.address || asset.from === 1)));
+    let newAssets = newCoins.map(n => ({
+      coinType: wallet.type,
+      name: n.name,
+      symbol: n.symbol,
+      conAddr: n.conAddr,
+      coinIcon: n.coinIcon || './static/defaultcoin.png',
+      from: 0,
+      wallet_address: wallet.address
+    }));
+    // console.log('update by coins:', newAssets);
+    this.saveAssets(newAssets);
   },
   //删除钱包
   removeWalletById: function (id) {
     let wallets = this.getWallets();
     wallets.splice(wallets.findIndex(m => m.id === id), 1);
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
-    this._Save();
+    this._Save('bcb_wallets');
   },
   //删除钱包中的特定资产
   removeAssetInWallet(conAddr) {
     let wallets = this.getWallets();
     for (let wallet of wallets) {
       let resources = wallet.resources || [];
-      let findIndex = resources.findIndex(m => m.contractAddr === conAddr);
+      let findIndex = resources.findIndex(m => m.conAddr === conAddr);
       if (findIndex >= 0)
         resources.splice(findIndex, 1)
     }
     localStorage.setItem('bcb_wallets', JSON.stringify(wallets));
-    this._Save();
+    this._Save('bcb_wallets');
   },
   /*获取联系人*/
   getUsers: function () {
@@ -202,13 +238,14 @@ export  default Storage= {
     let users = this.getUsers();
     users.push(user);
     localStorage.setItem('bcb_users', JSON.stringify(users));
+    this._Save('bcb_users')
   },
 //  删除用户
   removeUser: function (user) {
     let users = this.getUsers();
     users.splice(users.findIndex(m => m.id === user.id), 1);
     localStorage.setItem('bcb_users', JSON.stringify(users));
-    this._Save();
+    this._Save('bcb_users');
     return users;
   },
   getUserById: function (id) {
@@ -222,7 +259,7 @@ export  default Storage= {
       if (key in current) current[key] = user[key];
     })
     localStorage.setItem('bcb_users', JSON.stringify(users));
-    this._Save();
+    this._Save('bcb_users');
   },
   //获取本地交易明细
   getLocalTransfers: function () {
@@ -230,16 +267,10 @@ export  default Storage= {
     return JSON.parse(strTransfers);
   },
   //获取交易明细(含本地和服务端);翻页时会一直显示本地交易数据
-  getAllTransactions: function (coinType, address, contractAddr, page, count) {
-    return rpc.getTransactions(coinType, address, contractAddr, page, count)
+  getAllTransactions: function (coinType, address, contractAddr, page, count,useCache,useTri) {
+    return rpc.getTransactions(coinType, address, contractAddr, page, count,useCache,useTri)
       .then(result => {
-        let datas = [], items = result.records;
-        //获取本地数据(根据合约号过滤)
-        let localsTransactions = this.getLocalTransfers().filter(m => m.conAddr === contractAddr);
-        localsTransactions.forEach(litem => {
-          let findItem = items.find(m => m.txHash == litem.sessionId);
-          if (!findItem) datas.unshift(new transaction().fromLocalByObj(address, litem));
-        });
+        let datas = [], items = result.records.sort((a, b) => b.timeStamp - a.timeStamp);
         items.forEach(item => datas.push(new transaction().fromServer(item)));
         result.records = datas;
         return result;
@@ -250,6 +281,7 @@ export  default Storage= {
     let transfers = this.getLocalTransfers();
     transfers.push(obj);
     localStorage.setItem('bcb_transfers', JSON.stringify(transfers));
+    this._Save('bcb_transfers');
   },
   removeLocalTransfers: function (objs) {
     let transfers = this.getLocalTransfers();
@@ -259,6 +291,7 @@ export  default Storage= {
       transfers.splice(index, 1);
     }
     localStorage.setItem('bcb_transfers', JSON.stringify(transfers));
+    this._Save('bcb_transfers');
     return transfers;
   },
 //  获取交易记录
@@ -283,7 +316,7 @@ export  default Storage= {
   /*设置配置列表*/
   saveConfig(obj) {
     localStorage.setItem('bcb_config', JSON.stringify(obj));
-    this._Save();
+    this._Save('bcb_config');
   },
   /*初始化钱包资产，以及资产配置*/
   initAssetAndResources(walletId) {
@@ -319,10 +352,11 @@ export  default Storage= {
     })
   },
   //保存数据到本地
-  _Save(){
+  _Save(fileName){
+    fileName=fileName||'data.json';
     if(Vue.$isLocal){
-      let obj= this.getLocalData();
-      bindObject.Save('data.json',JSON.stringify(obj));
+      let obj= this.getLocalData(fileName);
+      bindObject.Save(fileName,JSON.stringify(obj));
     }
   }
 }

@@ -494,7 +494,7 @@
       <!--</ol>-->
     <!--</article>-->
   <!--</div>-->
-  <div v-html="html"></div>
+  <div v-html="html" class="remote_resource_html"></div>
 </template>
 
 <script>

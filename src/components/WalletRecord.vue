@@ -8,7 +8,7 @@
         </label>
         <div class="noticeLiText">
           <!--<img class="outInImg" :src="'/static/'+(item.action=='卖'?'out.png':'in.png')">-->
-          <img class="outInImg" :src="'/static/out.png'">
+          <img class="outInImg" :src="'./static/out.png'">
           <div>
             <p>{{item.to}}</p>
             <p class="noticeLiAcceptor">{{item.timeStamp}}</p>
@@ -62,7 +62,7 @@
           this.$storage.getTransactionsByOrders(this.orders)
             .then(trans => {
               trans.forEach(tran=>{
-                let findItem =this.orders.find(m=>m.txHash===tran.hash);
+                let findItem =this.orders.find(m=>m.txHash===tran.txHash);
                 if(findItem){
                   findItem.complexByHashData(tran);
                 }
