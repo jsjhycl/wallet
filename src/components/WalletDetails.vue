@@ -39,7 +39,9 @@
                 <span>{{ props.row.timeStamp|d2s }}</span>
               </el-form-item>
               <el-form-item class="text-danger" label="摘要">
-                <span>{{ props.row.memo }}</span>
+                <el-tooltip :content="props.row.memo"  effect="light">
+                  <span class="over-hidden">{{ props.row.memo }}</span>
+                </el-tooltip>
               </el-form-item>
               <el-form-item label="合约地址">
                 <span>{{ props.row.conAddr }}</span>
@@ -92,7 +94,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="btnGroupSm" style="min-width: 765px">
+    <div class="btnGroupSm" style="min-width: 765px;z-index: 100">
       <!--<button class="btn btn-success btnStyle" @click="dialogs.three=true">燃料价格</button>-->
       <button v-if="showProxy&&contract.burnEnabled" class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃烧</button>
       <button v-if="showProxy&&contract.addSupplyEnabled" class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>
@@ -378,5 +380,15 @@
     width: 120px;
     background-color: #82ADE6;
     color: white
+  }
+  .text-danger >>> .el-form-item__content{
+    width: calc(100% - 100px);
+  }
+  .over-hidden{
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>

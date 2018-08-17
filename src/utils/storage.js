@@ -33,8 +33,8 @@ export  default Storage= {
   getWalletTypes: function () {
     // return ['ETH', 'BCB', 'TOT'];
     // return [{"name": "BCBMainNet", "value": "0x1000"}]
-    // return [{"name": "BCB", "value": "0x1001"}]
-    return [{"name": "bcbtest", "value": "0x1001"}]
+    // return [{"name": "BCB", "value": "0x1002"}]
+    return [{"name": "bcb", "value": "0x1002"}]
     // return [{"name": "ETH", "value": "0x3"},{"name": "BCBMainNet", "value": "0x10000"}]
   },
   /*根据地址判断钱包是否存在*/
@@ -138,7 +138,7 @@ export  default Storage= {
       this.saveAssets(items);
     })
   },
-  prepareAllAssets: function (coinTypes=['0x3','0x1001']) {
+  prepareAllAssets: function (coinTypes=['0x3','0x1002']) {
     Promise.all(coinTypes.map(c=>rpc.getAssets(c)))
       .then(datas=>{
         let items=[];
@@ -305,7 +305,7 @@ export  default Storage= {
   },
   /*根据交易对象获取交易状态{type:'':txHash:''}*/
   getTransactionsByOrders(trans){
-    let reqs =trans.map(item=>rpc.getTransactionByTxhash(item.type||'0x1001',item.txHash));
+    let reqs =trans.map(item=>rpc.getTransactionByTxhash(item.type||'0x1002',item.txHash));
     return Promise.all(reqs);
   },
   /*获取配置列表*/

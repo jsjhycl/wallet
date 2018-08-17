@@ -1,5 +1,5 @@
 <template>
-  <div class="indexWrap">
+  <div class="indexWrap" v-loading="isLoading" element-loading-text="拼命加载中" element-loading-background="rgba(0, 0, 0, 0.5)">
     <!--左边栏（钱包）-->
     <div class="walletLeftWrap">
       <div class="walletLeftLogo">
@@ -24,7 +24,7 @@
                     </p>
                   </div>
                 </div>
-                <button class="btn-link" style="color: red;padding-right: 16px" v-if="!item.isBackup" @click="doneBack">请备份</button>
+                <button class="btn-link" style="color: red;width: 56px" v-if="!item.isBackup" @click="doneBack">请备份</button>
               </router-link>
             </li>
           </ul>
@@ -59,90 +59,92 @@
 
 <script>
   import version from './utils/version';
-export default {
+  export default {
   name: 'App',
   data: () => ({
     wallets: [],
-    selectWallet:{},
-    searchText:'',
-    currentTool:'',
-    current:version.version
+    selectWallet: {},
+    searchText: '',
+    currentTool: '',
+    current: version.version,
+    isLoading:true
   }),
-  created:async function () {
-    let pu= this.$rpc__.getUpdateInfo();
+  created: async function () {
+    let pu = this.$rpc__.getUpdateInfo();
     let updateInfo = await pu;
-    this.$root.Bus.updateInfo=updateInfo;
+    this.$root.Bus.updateInfo = updateInfo;
     //判断版本
-    if(updateInfo.version!==this.current&&updateInfo.must){
+    if (updateInfo.version !== this.current && updateInfo.must) {
       this.$alert('程序需要升级，请升级.');
       return this.$router.push("/about");
     }
     // if(this.$root.bus.updateInfo);
     this.wallets = this.$storage.getWallets();
-    if(this.wallets.length>0){
-      this.selectWallet =this.wallets[0];
-      this.$router.push('/wallet/'+this.wallets[0].id);
+    if (this.wallets.length > 0) {
+      this.selectWallet = this.wallets[0];
+      this.$router.push('/wallet/' + this.wallets[0].id);
     }
+    this.isLoading=false;
   },
-  methods:{
-    doneBack:function(){
+  methods: {
+    doneBack: function () {
       this.$alert('请执行备份操作，备份Keystore/助记词！');
     },
     //增加完钱包时回调
-    addWalletHandler:function (arg) {
+    addWalletHandler: function (arg) {
       this.wallets = this.$storage.getWallets();
-      this.selectWallet =this.wallets.find(item=>item.id===arg);
-      this.$router.push('/wallet/'+this.selectWallet.id);
+      this.selectWallet = this.wallets.find(item => item.id === arg);
+      this.$router.push('/wallet/' + this.selectWallet.id);
     },
     //删除钱包回调
-    removeWalletHandler:function (arg) {
+    removeWalletHandler: function (arg) {
       this.wallets = this.$storage.getWallets();
       this.$router.push('/index');
     },
     //修改钱包回掉
-    modifyWalletHandler:function(id,updates){
-      let item  =this.wallets.find(m=>m.id==id);
-      if(!item) return;
-      Object.keys(updates).forEach(key=>{
-        if(key in item) item[key]=updates[key];
+    modifyWalletHandler: function (id, updates) {
+      let item = this.wallets.find(m => m.id == id);
+      if (!item) return;
+      Object.keys(updates).forEach(key => {
+        if (key in item) item[key] = updates[key];
       })
     },
     //设置当前选中钱包
-    setSelectHandler:function (wallet) {
-      this.selectWallet =wallet;
+    setSelectHandler: function (wallet) {
+      this.selectWallet = wallet;
     },
     //搜索
-    doneSearch:function () {
-      this.wallets =this.$storage.getWallets().filter(m=>m.name.includes(this.searchText));
+    doneSearch: function () {
+      this.wallets = this.$storage.getWallets().filter(m => m.name.includes(this.searchText));
     },
     //工具条联动显示
-    setToolbarSelect:function (e) {
-      this.currentTool=e;
+    setToolbarSelect: function (e) {
+      this.currentTool = e;
     },
     //上一页
-    donePrevious:function (e) {
+    donePrevious: function (e) {
       this.$router.back();
     },
     //下一页
-    doneNext:function (e) {
+    doneNext: function (e) {
       this.$router.go(1);
     },
     //刷新
-    doneRefresh:function (e) {
-      this.$root.$emit('refresh','123')
+    doneRefresh: function (e) {
+      this.$root.$emit('refresh', '123')
       // this.$message({message:'暂不支持',type:'info'});
     },
-  //  关闭窗口
-  //   closeWin:function () {
-  //     try{
-  //       let localStrData=JSON.stringify(this.$storage.getLocalData());
-  //       console.log(localStrData,'localStrData');
-  //       bindObject.SaveJson(localStrData);
-  //       bindObject.CloseWindow();
-  //     }catch(e){
-  //       this.$alert('此环境不支持关闭.')
-  //     }
-  //   }
+    //  关闭窗口
+    //   closeWin:function () {
+    //     try{
+    //       let localStrData=JSON.stringify(this.$storage.getLocalData());
+    //       console.log(localStrData,'localStrData');
+    //       bindObject.SaveJson(localStrData);
+    //       bindObject.CloseWindow();
+    //     }catch(e){
+    //       this.$alert('此环境不支持关闭.')
+    //     }
+    //   }
   }
 }
 </script>
