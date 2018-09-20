@@ -356,7 +356,8 @@ export  default Storage= {
     fileName=fileName||'data.json';
     if(Vue.$isLocal){
       let obj= this.getLocalData(fileName);
-      bindObject.Save(fileName,JSON.stringify(obj));
+      Vue.localExcute('saveData',{'key':fileName,'jsonData':JSON.stringify(obj)})
+      //bindObject.Save(fileName,JSON.stringify(obj));
     }
   }
 }

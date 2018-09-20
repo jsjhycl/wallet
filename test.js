@@ -20,4 +20,16 @@
 // let arr =[5,3,7,1,2]
 // console.log(arr.sort());
 // console.log(arr)
-console.log(0.000000001*Math.pow(10,9));//n20180919
+// console.log(0.000000001*Math.pow(10,9));//n20180919
+// [1,2,3].forEach(function (item) {
+//   setTimeout(function () {
+//     console.log(item);
+//   },1000)
+// })
+
+  [1,2,3].forEach(m=> {
+      setTimeout(function () {
+    console.log(m);
+  },1000)
+
+  })

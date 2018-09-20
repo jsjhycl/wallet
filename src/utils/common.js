@@ -58,7 +58,8 @@ export default {
     }
   },
   excute(method,obj){
-    if(Vue.$isLocal) return this.excute_local(method,obj);
+    // if(Vue.$isLocal) return this.excute_local(method,obj);
+    if(Vue.$isLocal) return this.excute_local_mac(method,obj);
     else return this.excute_web(method,obj);
   },
   excute_web(method,obj) {
@@ -81,6 +82,27 @@ export default {
         console.log('local result(error):', e);
         Vue.prototype.$message({"message": "出现错误：" + e, "type": "error"});
         throw '-*-'+e;
+      })
+  },
+
+  excute_local_mac(method,obj,usedefault){
+    usedefault=usedefault===undefined?true:false;
+    let opt = {
+      "jsonrpc": "2.0",
+      "method": method,
+      "params": usedefault? Object.assign(
+        {
+          coinType: '0x3'
+        }, obj):{},
+      "id": ""
+    };
+    console.log("excute:",opt);
+    /*执行本地调用*/
+    return Vue.localExcute('urlRequest',opt)
+      .then(result=>{
+        let ret= this.unwrap__(JSON.parse(result));
+        Vue.prototype.$message({"message":"result："+JSON.stringify(ret),"type":"success"});
+        return ret;
       })
   },
 

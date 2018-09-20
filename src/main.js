@@ -96,22 +96,49 @@ Vue.use(VueClipboard);
 Vue.use(VueQriously);
 Vue.component("agreement",Agreement);
 // Vue.component("chart",ECharts);
-try{
-  CefSharp.BindObjectAsync("bindObject", "bindObject");
-  let data ={};
-  ["bcb_wallets","bcb_users","bcb_transfers","bcb_config","bcb_assets"].forEach(fileName=>{
-    let item=JSON.parse(bindObject.Read(fileName,fileName==="bcb_config"?'{}':'[]'));
-    data[fileName]=item;
-  })
-  // let data =JSON.parse(bindObject.LoadJson()||'{}');
-  Vue.prototype.$storage.initData(data);
-  Vue.$isLocal=true;
-}catch (e) {
-  Vue.$isLocal=false;
-  console.log('调用本地接口错误：',e);
-  // Vue.prototype.$message({'message':'无本地运行环境，无法调用本地接口.','type':'error'})
-}
-console.log('is local :',Vue.$isLocal);
+Vue.$isLocal=false;
+setupWebViewJavascriptBridge(function(bridge) {
+  let data={};
+  let ps =["bcb_wallets","bcb_users","bcb_transfers","bcb_config","bcb_assets"].map(m=>Vue.localExcute('getData',{'key':m,'default':m==="bcb_config"?'{}':'[]'}));
+  Promise.all(ps)
+    .then(results=>{
+      ["bcb_wallets","bcb_users","bcb_transfers","bcb_config","bcb_assets"].forEach((key,index)=>{
+        data[key]=JSON.parse(results[index]);
+      });
+      Vue.prototype.$message({'message':'promise:'+JSON.stringify(data),'type':'success'});
+      Vue.prototype.$storage.initData(data);
+      Bus.config=storage.getConfig();
+      Vue.$isLocal=true;
+    })
+    .catch(err=>{
+      Vue.prototype.$message({'message':'promise:'+err,'type':'error'});
+    })
+});
+// try{
+//   //注册mac
+//   // setTimeout(function () {
+//   //   Vue.prototype.$message({'message':'WebViewJavascriptBridge in timeout :'+window.WebViewJavascriptBridge,'type':'error'})
+//   // })
+//   // Vue.prototype.$message({'message':'WebViewJavascriptBridge:'+window.WebViewJavascriptBridge,'type':'error'})
+//   let data ={};
+//   ["bcb_wallets","bcb_users","bcb_transfers","bcb_config","bcb_assets"].forEach(fileName=>{
+//     window.WebViewJavascriptBridge.callHandler('getData',{'key':fileName,'default':fileName==="bcb_config"?'{}':'[]'},function(response) {
+//       data[fileName]=item;
+//       Vue.prototype.$message({'message':item,'type':'error'})
+//       Vue.prototype.$storage.initData(data);
+//     });
+//     // let item=JSON.parse(bindObject.Read(fileName,fileName==="bcb_config"?'{}':'[]'));
+//   })
+//   // let data =JSON.parse(bindObject.LoadJson()||'{}');
+//   // Vue.prototype.$storage.initData(data);
+//   Vue.$isLocal=true;
+// }catch (e) {
+//   Vue.$isLocal=false;
+//   console.log('调用本地接口错误：',e);
+//   // Vue.prototype.$message({'message':'无本地运行环境，无法调用本地接口.'+e.toString(),'type':'error'})
+// }
+// Vue.prototype.$message({'message':'isLocal:'+Vue.$isLocal.toString(),'type':'success'})
+
 Bus.config=storage.getConfig();
 
 new Vue({
@@ -140,4 +167,36 @@ new Vue({
 //     //excute();
 //   },1000)
 // })()
+
+// async function init() {
+//   await
+// }
+
+function setupWebViewJavascriptBridge(callback) {
+  if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+  if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+  window.WVJBCallbacks = [callback];
+  var WVJBIframe = document.createElement('iframe');
+  WVJBIframe.style.display = 'none';
+  WVJBIframe.src = 'wvjbscheme://__BRIDGE_LOADED__';
+  document.documentElement.appendChild(WVJBIframe);
+  setTimeout(function() {
+    document.documentElement.removeChild(WVJBIframe) }, 0)
+}
+
+Vue.localExcute=function (method,params,bridge=window.WebViewJavascriptBridge) {
+  bridge=bridge||WebViewJavascriptBridge;
+  return new Promise(function (resolve, reject) {
+    try{
+      bridge.callHandler(method,params,function(response) {
+        resolve(response);
+      });
+    }
+    catch (e) {
+      reject('excute mac api:'+e);
+    }
+  })
+}
+
+
 
