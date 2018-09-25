@@ -105,7 +105,6 @@ setupWebViewJavascriptBridge(function(bridge) {
       ["bcb_wallets","bcb_users","bcb_transfers","bcb_config","bcb_assets"].forEach((key,index)=>{
         data[key]=JSON.parse(results[index]);
       });
-      Vue.prototype.$message({'message':'promise:'+JSON.stringify(data),'type':'success'});
       Vue.prototype.$storage.initData(data);
       Bus.config=storage.getConfig();
       Vue.$isLocal=true;
@@ -148,7 +147,7 @@ new Vue({
     Bus
   },
   async created(){
-    this.$storage.prepareAllAssets(['0x1002']);//初始化资产列表[0x3,0x10000]
+    this.$storage.prepareAllAssets(['0x1001']);//初始化资产列表[0x3,0x10000]
   },
   components: { App },
   template: '<App/>'

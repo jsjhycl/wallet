@@ -27,9 +27,20 @@
 //   },1000)
 // })
 
-  [1,2,3].forEach(m=> {
-      setTimeout(function () {
-    console.log(m);
-  },1000)
+  // [1,2,3].forEach(m=> {
+  //     setTimeout(function () {
+  //   console.log(m);
+  // },1000)
+  //
+  // })
 
-  })
+let a=1.1234;
+
+// let parts =a.toString().split('.');
+// let pos =Math.max(parts.length==2?parts[1].length:0,5);
+// console.log(a.toFixed(pos),pos);
+// console.log((0.3-0.2).toFixed(2));
+
+//
+
+console.log(/^0x[0-9,a-f]{64}$/.test('0x642F36E732BB13737B681B56F21C4C39B9E56EE36C75E96CE41BAF6A421EE3Ab'.toLocaleLowerCase()))

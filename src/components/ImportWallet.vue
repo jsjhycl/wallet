@@ -153,6 +153,7 @@
   import zhuJiChi from './docs/zhujichi'
   import PrivateKey from './docs/PrivateKey'
   import validator from '../utils/validator'
+  import helpWords from '../utils/helpwords'
   //初始化导入参数
   function initParams(index) {
     index = index || 0;
@@ -166,6 +167,17 @@
         check:function () {
           if(!this.type||!this.encMnemonicWords||!this.password){
             throw '请填写必要信息';
+          }
+          let words =this.encMnemonicWords.split(' ');
+          let message='';
+          if(words.some(item=>{
+            if(!helpWords.includes('\n'+item+'\n')){
+              message =item;
+              return true;
+            }
+            else return false;
+          })) {
+            throw `助记词 ${message} 不合法`;
           }
           if(this.password!=this.repeatPassword){
             throw '密码不一致';
@@ -194,6 +206,9 @@
           if(!this.type||!this.privateKey||!this.password){
             throw '请填写必要信息';
           }
+          if(!/^0x[0-9,a-f]{64}$/.test(this.privateKey.toLocaleLowerCase())){
+            throw '私钥格式不规范';
+          }
           if(this.password!=this.repeatPassword){
             throw '密码不一致';
           }
@@ -206,7 +221,7 @@
       }
     }
     return Object.assign({
-      type: '0x1002',
+      type: '0x1001',
       isRead: false
     },params[index]);
   }
@@ -224,6 +239,7 @@
         dialogs:{keystore:false,zhujichi:false,privateKey:false,arguments:false}
       }),
       created: function () {
+        console.log('helpwords:',helpWords)
         this.walletTypes = this.$storage.getWalletTypes();
       },
       mounted:function(){

@@ -283,7 +283,7 @@
         /*删除钱包*/
         deleteWallet: function () {
           this.$checkPassword(this.wallet.id)
-            .then(result => this.$confirm(`您确定要删除钱包：${this.wallet.name}吗？`, '钱包删除确认'))
+            // .then(result => this.$confirm(`您确定要删除钱包：${this.wallet.name}吗？`, '钱包删除确认'))
             .then((result => {
               this.$storage.removeWalletById(this.wallet.id);
               this.$emit('remove');

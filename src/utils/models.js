@@ -128,7 +128,7 @@ export class transaction {
 /*配置对象实体*/
 export class Config {
   language='中文';//语言
-  coinFractionLen=4;//比小数位
+  coinFractionLen=9;//比小数位
   lawCoinFractionLen=3;//法币小数位
   currency='美元';//币种
   formObj(obj){
@@ -136,7 +136,7 @@ export class Config {
       if(key in this) this[key]=obj[key];
     });
     this.language=this.language||'中文';
-    this.coinFractionLen=this.coinFractionLen||4;
+    this.coinFractionLen=this.coinFractionLen||9;
     this.lawCoinFractionLen=this.lawCoinFractionLen||3;
     return this;
   }

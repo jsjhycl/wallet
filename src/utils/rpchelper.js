@@ -5,8 +5,8 @@ function getUrl(path,isApi=true) {
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='https://wallet.bcbchain.io/api/v1/';
-  // let stuff ='https://testwallet.bcbchain.io'+(isApi?"/api/v1/":"/");
-  let stuff ='https://wallet.bcbchain.io'+(isApi?"/api/v1/":"/");
+  let stuff ='https://testwallet.bcbchain.io'+(isApi?"/api/v1/":"/");
+  // let stuff ='https://wallet.bcbchain.io'+(isApi?"/api/v1/":"/");
   // let stuff ='https://www.blockwallet.pro/api/v1/';
   return stuff+path;
 }
@@ -120,7 +120,7 @@ export default {
   },
   /*获取所有币余额*/
   getAllCoin(coinType,addr,useCache=false,useTri=true){
-    let gets =coinType!='0x1002'?[this.getAllProxyCoin(coinType,addr,useCache,useTri),this.getBasicCoin(coinType,addr,useCache,useTri)]:[this.getAllProxyCoin(coinType,addr,useCache,useTri)];
+    let gets =coinType!='0x1001'?[this.getAllProxyCoin(coinType,addr,useCache,useTri),this.getBasicCoin(coinType,addr,useCache,useTri)]:[this.getAllProxyCoin(coinType,addr,useCache,useTri)];
     return Promise.all(gets)
       .then(datas=>{
         return datas.length>1? [...datas[0],datas[1]]:datas[0];

@@ -16,12 +16,12 @@
         <span>代币是否支持增发？</span>
         <label  class="select label-style">
           是
-          <input v-model="currencyItem.addSupplyEnabled" value="true" type="radio" name="radioName" class="chk_1">
+          <input v-model="currencyItem.addSupplyEnabled" :value="true" type="radio" name="radioName" class="chk_1">
           <span class="sel"></span>
         </label>
         <label class="select label-style">
           否
-          <input v-model="currencyItem.addSupplyEnabled" value="false" type="radio" name="radioName" class="chk_1">
+          <input v-model="currencyItem.addSupplyEnabled" :value="false" type="radio" name="radioName" class="chk_1">
           <span class="sel"></span>
         </label>
       </li>
@@ -29,12 +29,12 @@
         <span>代币是否支持燃烧？</span>
         <label class="select label-style">
           是
-          <input v-model="currencyItem.burnEnabled" value="true" type="radio" name="radioName1" class="chk_1">
+          <input v-model="currencyItem.burnEnabled" :value="true" type="radio" name="radioName1" class="chk_1">
           <span class="sel"></span>
         </label>
         <label class="select label-style">
           否
-          <input v-model="currencyItem.burnEnabled" value="false" type="radio" name="radioName1" class="chk_1">
+          <input v-model="currencyItem.burnEnabled" :value="false" type="radio" name="radioName1" class="chk_1">
           <span class="sel"></span>
         </label>
       </li>
@@ -73,7 +73,7 @@
           addSupplyEnabled: false,
           burnEnabled: false,
           gasPrice: '',
-          gasLimit: '',
+          gasLimit: '72000',
           note: '',
           check: function () {
             return this.name && this.symbol && this.initSupply && this.gasPrice;

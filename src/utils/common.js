@@ -101,7 +101,6 @@ export default {
     return Vue.localExcute('urlRequest',opt)
       .then(result=>{
         let ret= this.unwrap__(JSON.parse(result));
-        Vue.prototype.$message({"message":"result："+JSON.stringify(ret),"type":"success"});
         return ret;
       })
   },
@@ -136,11 +135,12 @@ export default {
     let cache = this.GetCache();
     cache[key] = data;
     // console.log("save cache:",url,data)
-    if (Vue.$isLocal) {
-      bindObject.Save('cache.json',JSON.stringify(cache));
-    } else {
+    // if (Vue.$isLocal) {
+    //   // bindObject.Save('cache.json',JSON.stringify(cache));
+    //   Vue.localExcute('saveData',{'key':'cache.json','jsonData':JSON.stringify(cache)})
+    // } else {
       localStorage.setItem('__wallet_cache',JSON.stringify(cache));
-    }
+    // }
   },
   GetCacheData(url,useTri=true) {
     let key = spark.hash(url);
@@ -151,11 +151,15 @@ export default {
   },
   GetCache(){
     let cache={};
-    if(Vue.$isLocal){
-      cache =JSON.parse(bindObject.Read('cache.json','{}'));
-    }else{
+    // if(Vue.$isLocal){
+    //   // cache =JSON.parse(bindObject.Read('cache.json','{}'));
+    //   Vue.localExcute('getData',{'key':'cache.json','default':'{}'})
+    //     .then(ret=>{
+    //       cache=ret;
+    //     })
+    // }else{
       cache =JSON.parse(localStorage.getItem('__wallet_cache')||'{}') ;
-    }
+    // }
     return cache;
   },
   reFetchCache(url){
