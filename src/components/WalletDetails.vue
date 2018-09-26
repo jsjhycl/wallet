@@ -237,7 +237,7 @@
       methods: {
         update(url){
           if(url.includes('transactions/')&&url.includes(this.wallet.address)){
-            console.log("trigger:",url);
+            console.log("trigg er:",url);
             this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20,true,false)
               .then(result => {
                 console.log('trigger result:',result);
