@@ -166,8 +166,8 @@ export default {
     setTimeout(async ()=> {
       let data =await rpc.doneGet(url);
       //  判断数据是否有更新，触发事件
+      this.SaveCache(url,data);//位置依赖
       Vue.Bus.$emit('upload',url,data);
-      this.SaveCache(url,data);
     },500)
   }
 }

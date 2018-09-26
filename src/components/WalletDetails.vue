@@ -240,6 +240,7 @@
             console.log("trigger:",url);
             this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20,true,false)
               .then(result => {
+                console.log('trigger result:',result);
                 this.transactions = result.records;
                 this.isLoading = false;
               }).catch(err => {
