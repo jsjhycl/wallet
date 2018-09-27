@@ -208,7 +208,7 @@
       },
       methods: {
         upload(url){
-          if(url.includes('exchanges/')||url.includes(this.wallet.address)){
+          if(url.includes('addrs/balance/')||url.includes(this.wallet.address)){
             console.log("trigger:",url);
             this.doneDataByCoins(true,false);
           }
@@ -306,33 +306,16 @@
           this.$emit('modify', this.$route.params.id, {name: this.wallet.name});
           this.onEdit = false;
         },
-        /*获取服务端资产相关数据 todo 可删除 ob*/
-        getServerDatas: function () {
-          this.isLoading = true;
-          this.$storage.getServerMultiResourceInfo(this.wallet.type, this.wallet.resources, this.wallet.address, this.$root.Bus.config.currency)
-            .then(results => {
-              this.wallet.resources.forEach(item => {
-                let fitem = results.find(m => m.contractAddr.toLocaleLowerCase() === item.contractAddr.toLocaleLowerCase());
-                if (fitem) {
-                  item.balance = fitem.balance;
-                  item.money = fitem.money;
-                }
-              })
-              this.isLoading = false;
-            }).catch(err => {
-            console.log(err, 'getServerDatas:');
-            this.$alert(err.toString(), '错误');
-            this.isLoading = false;
-          });
-        },
         /* 获取所有币种信息：初始化资产，组织显示数据，完善资产表*/
         async doneDataByCoins(useCache=true,useTri=true) {
           try {
             this.isLoading = true;
             // 获取指定钱包的所有币和汇率
-            let [coins, exchangeObj] = await Promise.all([this.$rpc__.getAllCoin(this.wallet.type, this.wallet.address,useCache,useTri),
-              this.$rpc__.getExchangesObj(this.wallet.type,useCache,useTri)]);
-            // console.log('find coins:', coins);
+            // let [coins, exchangeObj] = await Promise.all([this.$rpc__.getAllCoin(this.wallet.type, this.wallet.address,useCache,useTri),
+            //   this.$rpc__.getExchangesObj(this.wallet.type,useCache,useTri)]);
+            // use V2
+            let coins =await  this.$rpc__.getAllCoinV2(this.wallet.type,this.wallet.address,this.$root.Bus.config.currency === '美元'?'USD':'CNY',useCache,useTri);
+            console.log('find v2 coins:', coins);
             // 更新资产表
             this.$storage.updateAssetsByCoins(coins, this.wallet);
             // 钱包绑定资产
@@ -351,7 +334,8 @@
               let item = coins.find(m => m.conAddr === resource.contractAddr);
               if (item) {
                 resource.balance = item.balance,
-                  resource.money = this.$root.Bus.config.currency != '美元' ? (item.balance * exchangeObj[item.conAddr || item.symbol] || 0) * exchangeObj['CNY'] || 0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0;
+                  resource.money =item.legalValue
+                  // resource.money = this.$root.Bus.config.currency != '美元' ? (item.balance * exchangeObj[item.conAddr || item.symbol] || 0) * exchangeObj['CNY'] || 0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0;
               }
             });
             this.isLoading = false;

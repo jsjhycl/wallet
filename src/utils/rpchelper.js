@@ -1,12 +1,12 @@
 import axios from 'axios'
 import common from './common'
 import lpc from './lpchelper'
-function getUrl(path,isApi=true) {
+function getUrl(path,isApi=true,version='v1') {
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='https://wallet.bcbchain.io/api/v1/';
   // let stuff ='https://testwallet.bcbchain.io'+(isApi?"/api/v1/":"/");
-  let stuff ='https://wallet.bcbchain.io'+(isApi?"/api/v1/":"/");
+  let stuff ='https://wallet.bcbchain.io'+(isApi?`/api/${version}/`:"/");
   // let stuff ='https://www.blockwallet.pro/api/v1/';
   return stuff+path;
 }
@@ -172,5 +172,14 @@ export default {
     //     "must":true
     //   }
     // );
+  },
+  /* 9.21	获取指定地址全部资产余额*/
+  async getAllCoinV2(coinType,addr,LEGAL_MONEY='USD',useCache=false,useTri=true){
+    let url=getUrl(`addrs/balance/${coinType}/${addr}/${LEGAL_MONEY}`,true,'v2'),data;
+    if(useCache&&(data=common.GetCacheData(url,useTri))){
+      return Promise.resolve(data);
+    }
+    return axios.get(url)
+      .then(result=>doneCache(url,common.unwrapHttp__(result),useCache));
   }
 }
