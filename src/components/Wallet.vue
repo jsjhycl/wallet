@@ -245,7 +245,7 @@
                 privateKey: ret.encPrivateKey,
                 encMnemonicWords: ret.encMnemonicWords
               })
-              this.wallet = this.$storage.getWalletById(this.wallet.id);
+              // this.wallet = this.$storage.getWalletById(this.wallet.id);
               //重置输入域
               this.mods.reset();
               this.dialogs.one = false;
