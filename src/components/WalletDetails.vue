@@ -102,7 +102,7 @@
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
     </div>
     <!--转账-->
-    <el-dialog :title="wallet.name" width="560px" :visible.sync="dialogs.two" :close-on-click-modal="false">
+    <el-dialog :title="'钱包名称:'+wallet.name" width="560px" :visible.sync="dialogs.two" :close-on-click-modal="false">
       <div class="modal-body">
         <ul class="modalList list-unstyled">
           <li>
@@ -237,7 +237,7 @@
       methods: {
         update(url){
           if(url.includes('transactions/')&&url.includes(this.wallet.address)){
-            console.log("trigg er:",url);
+            console.log("trigger:",url);
             this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20,true,false)
               .then(result => {
                 console.log('trigger result:',result);
