@@ -330,9 +330,11 @@
           try {
             this.isLoading = true;
             // 获取指定钱包的所有币和汇率
-            let [coins, exchangeObj] = await Promise.all([this.$rpc__.getAllCoin(this.wallet.type, this.wallet.address,useCache,useTri),
-              this.$rpc__.getExchangesObj(this.wallet.type,useCache,useTri)]);
-            // console.log('find coins:', coins);
+            // let [coins, exchangeObj] = await Promise.all([this.$rpc__.getAllCoin(this.wallet.type, this.wallet.address,useCache,useTri),
+            //   this.$rpc__.getExchangesObj(this.wallet.type,useCache,useTri)]);
+            // use V2
+            let coins =await  this.$rpc__.getAllCoinV2(this.wallet.type,this.wallet.address,this.$root.Bus.config.currency === '美元'?'USD':'CNY',useCache,useTri);
+            console.log('find v2 coins:', coins);
             // 更新资产表
             this.$storage.updateAssetsByCoins(coins, this.wallet);
             // 钱包绑定资产
@@ -351,7 +353,8 @@
               let item = coins.find(m => m.conAddr === resource.contractAddr);
               if (item) {
                 resource.balance = item.balance,
-                  resource.money = this.$root.Bus.config.currency != '美元' ? (item.balance * exchangeObj[item.conAddr || item.symbol] || 0) * exchangeObj['CNY'] || 0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0;
+                  resource.money =item.legalValue
+                // resource.money = this.$root.Bus.config.currency != '美元' ? (item.balance * exchangeObj[item.conAddr || item.symbol] || 0) * exchangeObj['CNY'] || 0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0;
               }
             });
             this.isLoading = false;
