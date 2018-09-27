@@ -102,7 +102,7 @@
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
     </div>
     <!--转账-->
-    <el-dialog :title="wallet.name" width="560px" :visible.sync="dialogs.two" :close-on-click-modal="false">
+    <el-dialog :title="'钱包名称:'+wallet.name" width="560px" :visible.sync="dialogs.two" :close-on-click-modal="false">
       <div class="modal-body">
         <ul class="modalList list-unstyled">
           <li>
