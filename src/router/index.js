@@ -119,6 +119,11 @@ export default new Router({
       component:ProxyCurrency
     },
     {
+      path:"/addcurrency3/:id",
+      name:"addcurrency3",
+      component:ProxyCurrency
+    },
+    {
       path:"/doc",
       name:"doc",
       component:DocWin

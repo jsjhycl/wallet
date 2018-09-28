@@ -51,3 +51,50 @@
   /*outline: 1px solid #eee;*/
   box-shadow: -5px 5px 10px steelblue;
 }
+/* 代币发行*/
+.modal-content-style{
+  width: 396px;
+  height: 440px;
+  margin: 280px auto 0;
+  border-radius: 2px;
+}
+.close-btn{
+  float: right;
+  width: 10px;
+  height: 10px;
+  border: 0;
+  background: transparent;
+}
+.modal-body-style{
+  padding: 20px 53px 40px;
+
+}
+.modal-text-title{
+  margin-bottom: 24px;
+  font-family: MicrosoftYaHei-Bold;
+  font-weight: 700;
+  font-size: 16px;
+  color: rgb(82,86,89);
+  text-align: center;
+}
+.modal-text{
+  font-family: MicrosoftYaHei;
+  font-size: 12px;
+  color: rgb(107,107,107);
+  line-height: 22px;
+}
+.isson-btn{
+  width: 230px;
+  height: 36px;
+  font-family: MicrosoftYaHei;
+  font-size: 14px;
+  color: rgb(255,255,255);
+  text-align: center;
+  border: none;
+  border-radius: 4px;
+  background: rgb(121,124,227);
+}
+.isson-btn:first-child{
+  margin-bottom: 30px;
+  background: rgb(93,167,255);
+}

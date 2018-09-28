@@ -8,7 +8,8 @@
             <img @click="onEdit=true" class="walletUserEdit" src="../assets/img/edit.png">
           </template>
           <input class="user-edit" v-else @keyup.enter="editHandler" @blur="editHandler"  v-focus type="text" v-model="wallet.name" />
-          <router-link :to="`/addcurrency/${wallet.id}`" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 12px;">代币发行</router-link>
+          <!--<router-link :to="`/addcurrency/${wallet.id}`" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 12px;">代币发行</router-link>-->
+          <button @click="dialogs.createCoin=true" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 12px;">代币发行</button>
           <button @click="dialogs.huanbi=true" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 8px">一键换币</button>
         </div>
         <div class="userAssetsWrap">
@@ -139,14 +140,21 @@
         <button  v-clipboard:copy="wallet.address" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制收款地址</button>
       </div>
     </el-dialog>
-    <!--换币窗口-->
-    <!--<el-dialog width="450px" :visible.sync="dialogs.huanbi" :close-on-click-modal="false">-->
-      <!--<huanbi @showListEvent="openHuanbiList"></huanbi>-->
-    <!--</el-dialog>-->
     <el-dialog :width="huanbi.width" :visible.sync="dialogs.huanbi" :close-on-click-modal="false" @close="doneSwitchWin(0)">
       <huanbi v-if="huanbi.show===0" @showHuanbiEvent="doneSwitchWin"></huanbi>
       <huanbi-done :bcbETHAddr="huanbi.bcbETHAddr" v-else-if="huanbi.show===1" @showHuanbiEvent="doneSwitchWin"></huanbi-done>
       <change-list :bcbETHAddr="huanbi.bcbETHAddr" v-else></change-list>
+    </el-dialog>
+    <!--代币发行新版-->
+    <el-dialog :visible.sync="dialogs.createCoin" width="396px">
+        <div class="modal-body modal-body-style">
+          <h4 class="modal-text-title">代币发行</h4>
+          <p class="modal-text">2.0代币，用户在交易过程中，需以BCB作为手续费；3.0代币，发行方可设置手续费由用户支付或发行方预先垫付，也可以设置收取发行的代币作为手续费。</p>
+        </div>
+        <div class="text-center">
+          <router-link :to="`/addcurrency/${wallet.id}`" class="isson-btn btn">2.0代币发行</router-link>
+          <router-link :to="`/addcurrency3/${wallet.id}`" class="isson-btn btn">3.0代币发行</router-link>
+        </div>
     </el-dialog>
     </div>
 </template>
@@ -174,7 +182,7 @@
         outPrivateKey: '',//导出的明文私钥
         outkeyStore: '',//导出的keystore
         onEdit: false,
-        dialogs: {one: false, two: false, three: false, four: false, huanbi: false, showList: false},
+        dialogs: {one: false, two: false, three: false, four: false, huanbi: false, showList: false,createCoin:false},
         huanbi: {
           show: 0,
           width: '450px',
@@ -246,6 +254,8 @@
                 encMnemonicWords: ret.encMnemonicWords
               })
               // this.wallet = this.$storage.getWalletById(this.wallet.id);
+              this.wallet.privateKey=ret.encPrivateKey;
+              this.wallet.encMnemonicWords=ret.encMnemonicWords;
               //重置输入域
               this.mods.reset();
               this.dialogs.one = false;
