@@ -246,9 +246,9 @@ export default {
               "type":"uint64",
               "value":obj.gasPrice.toString()
             }
-          ]
-      },
-      "methodRet":"(smc.Address,smc.Address,smc.Error)"
+          ],
+        "methodRet":"(smc.Address,smc.Address,smc.Error)"
+      }
     }
     return common.excute('bcb_commonPay', sender);
   },
