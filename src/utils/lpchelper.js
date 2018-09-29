@@ -183,8 +183,77 @@ export default {
     return common.excute('bcb_calcChecksum', {
       "tbcData":hexstring
     })
+  },
+  /* 8.20	bcb_newToken*/
+  createCoin3(obj) {
+    let sender= {
+      coinType: obj.coinType,
+      encPrivateKey: obj.encPrivateKey,
+      password:obj.password,
+      coinParam: {
+        contractAddr:'bcbtestGbVExQNicpNd6FH6gWdoip6xH5GMG2XxG',
+        name: obj.name,
+        symbol: obj.symbol,
+        initSupply: (obj.initSupply*Math.pow(10,9)).toString(),
+        addSupplyEnabled: obj.addSupplyEnabled,
+        burnEnabled: obj.burnEnabled,
+        // gasPrice: (obj.gasPrice*Math.pow(10,3)).toString(),
+        gasPrice: (obj.gasPrice).toString(),
+        gasLimit: obj.gasLimit,
+        note: obj.note
+      }
+    }
+    return common.excute('bcb_newToken', sender);
+  },
+  /* 8.21	bcb_setFee*/
+  bcb_setFee(obj,coinType,encPrivateKey,password){
+    let sender= {
+      coinType: coinType,
+      encPrivateKey: encPrivateKey,
+      password:password,
+      coinParam: {
+        contractAddr:obj.contractAddr,
+        ratio:obj.ratio,
+        maxFee:obj.maxFee,
+        minFee:obj.minFee,
+        gasLimit:obj.gasLimit,
+        note:obj.note
+      }
+    }
+    return common.excute('bcb_setFee', sender);
+  },
+  /* 8.22	bcb_setGasPayer*/
+  bcb_setGasPayer(obj,coinType,encPrivateKey,password){
+    let sender= {
+      coinType: coinType,
+      encPrivateKey: encPrivateKey,
+      password:password,
+      coinParam: {
+        contractAddr:obj.contractAddr,
+        payer:obj.payer,
+        gasLimit:obj.gasLimit,
+        note:obj.note
+      }
+    }
+    return common.excute('bcb_setGasPayer', sender);
+  },
+  /* 8.23	bcb_withdraw*/
+  bcb_withdraw(obj,coinType,encPrivateKey,password){
+    let sender= {
+      coinType: coinType,
+      encPrivateKey: encPrivateKey,
+      password:password,
+      coinParam: {
+        contractAddr:obj.contractAddr,
+        payer:obj.payer,
+        gasLimit:obj.gasLimit,
+        note:obj.note
+      }
+    }
+    return common.excute('bcb_withdraw', sender);
   }
 }
+
 
 //目前是按照utf8编码
 function strToHexCharCode(str) {

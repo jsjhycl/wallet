@@ -5,12 +5,12 @@ function getUrl(path,isApi=true,version='v1') {
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='http://114.242.31.175:8443/api/v1/';
   // let stuff ='https://wallet.bcbchain.io/api/v1/';
+  // let stuff ='https://testwallet.bcbchain.io'+(isApi?"/api/v1/":"/");
+  // let stuff ='https://wallet.bcbchain.io'+(isApi?`/api/${version}/`:"/");
   let stuff ='https://testwallet.bcbchain.io'+(isApi?`/api/${version}/`:"/");
-  // let stuff ='https://wallet.bcbchain.io'+(isApi?"/api/v1/":"/");
   // let stuff ='https://www.blockwallet.pro/api/v1/';
   return stuff+path;
 }
-
 function getExchangeUrl(path) {
   let exchangeUrl='https://bcbexchange.bcbchain.io/api/v1/';
   return exchangeUrl+path;
