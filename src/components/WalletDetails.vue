@@ -337,7 +337,9 @@
         },
         //设置所有金额
         setAllHandler: function () {
-          this.transferInfo.amount = this.currentAsset.balance - (this.isBasicCoin?this.serviceCharge:0);
+          let parts =this.currentAsset.balance.toString().split('.');
+          let pos =Math.max(parts.length==2?parts[1].length:0,this.isBasicCoin?5:0);
+          this.transferInfo.amount = (this.currentAsset.balance - (this.isBasicCoin?this.serviceCharge:0)).toFixed(pos);
         },
         //设置转账金额
         editAmountHandler: function (e) {
