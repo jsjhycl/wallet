@@ -8,7 +8,8 @@
             <img @click="onEdit=true" class="walletUserEdit" src="../assets/img/edit.png">
           </template>
           <input class="user-edit" v-else @keyup.enter="editHandler" @blur="editHandler"  v-focus type="text" v-model="wallet.name" />
-          <router-link :to="`/addcurrency/${wallet.id}`" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 12px;">代币发行</router-link>
+          <!--<router-link :to="`/addcurrency/${wallet.id}`" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 12px;">代币发行</router-link>-->
+          <button @click="dialogs.createCoin=true" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 12px;">代币发行</button>
           <button @click="dialogs.huanbi=true" type="button" class="btn btn-sm operationBtn pull-right add-currency-button" style="margin-right: 8px">一键换币</button>
         </div>
         <div class="userAssetsWrap">
@@ -139,14 +140,21 @@
         <button  v-clipboard:copy="wallet.address" v-clipboard:success="copyToClipboard" type="button" class="btn btn-primary">复制收款地址</button>
       </div>
     </el-dialog>
-    <!--换币窗口-->
-    <!--<el-dialog width="450px" :visible.sync="dialogs.huanbi" :close-on-click-modal="false">-->
-      <!--<huanbi @showListEvent="openHuanbiList"></huanbi>-->
-    <!--</el-dialog>-->
     <el-dialog :width="huanbi.width" :visible.sync="dialogs.huanbi" :close-on-click-modal="false" @close="doneSwitchWin(0)">
       <huanbi v-if="huanbi.show===0" @showHuanbiEvent="doneSwitchWin"></huanbi>
       <huanbi-done :bcbETHAddr="huanbi.bcbETHAddr" v-else-if="huanbi.show===1" @showHuanbiEvent="doneSwitchWin"></huanbi-done>
       <change-list :bcbETHAddr="huanbi.bcbETHAddr" v-else></change-list>
+    </el-dialog>
+    <!--代币发行新版-->
+    <el-dialog :visible.sync="dialogs.createCoin" width="396px">
+        <div class="modal-body modal-body-style">
+          <h4 class="modal-text-title">代币发行</h4>
+          <p class="modal-text">2.0代币，用户在交易过程中，需以BCB作为手续费；3.0代币，发行方可设置手续费由用户支付或发行方预先垫付，也可以设置收取发行的代币作为手续费。</p>
+        </div>
+        <div class="text-center">
+          <router-link :to="`/addcurrency/${wallet.id}`" class="isson-btn btn">2.0代币发行</router-link>
+          <router-link :to="`/addcurrency3/${wallet.id}`" class="isson-btn btn">3.0代币发行</router-link>
+        </div>
     </el-dialog>
     </div>
 </template>
@@ -174,7 +182,7 @@
         outPrivateKey: '',//导出的明文私钥
         outkeyStore: '',//导出的keystore
         onEdit: false,
-        dialogs: {one: false, two: false, three: false, four: false, huanbi: false, showList: false},
+        dialogs: {one: false, two: false, three: false, four: false, huanbi: false, showList: false,createCoin:false},
         huanbi: {
           show: 0,
           width: '450px',
@@ -208,7 +216,7 @@
       },
       methods: {
         upload(url){
-          if(url.includes('exchanges/')||url.includes(this.wallet.address)){
+          if(url.includes('addrs/balance/')||url.includes(this.wallet.address)){
             console.log("trigger:",url);
             this.doneDataByCoins(true,false);
           }
@@ -285,7 +293,7 @@
         /*删除钱包*/
         deleteWallet: function () {
           this.$checkPassword(this.wallet.id)
-            // .then(result => this.$confirm(`您确定要删除钱包：${this.wallet.name}吗？`, '钱包删除确认'))
+            //.then(result => this.$confirm(`您确定要删除钱包：${this.wallet.name}吗？`, '钱包删除确认'))
             .then((result => {
               this.$storage.removeWalletById(this.wallet.id);
               this.$emit('remove');
@@ -307,25 +315,6 @@
           this.$storage.updateWallet(this.$route.params.id, {name: this.wallet.name});
           this.$emit('modify', this.$route.params.id, {name: this.wallet.name});
           this.onEdit = false;
-        },
-        /*获取服务端资产相关数据 todo 可删除 ob*/
-        getServerDatas: function () {
-          this.isLoading = true;
-          this.$storage.getServerMultiResourceInfo(this.wallet.type, this.wallet.resources, this.wallet.address, this.$root.Bus.config.currency)
-            .then(results => {
-              this.wallet.resources.forEach(item => {
-                let fitem = results.find(m => m.contractAddr.toLocaleLowerCase() === item.contractAddr.toLocaleLowerCase());
-                if (fitem) {
-                  item.balance = fitem.balance;
-                  item.money = fitem.money;
-                }
-              })
-              this.isLoading = false;
-            }).catch(err => {
-            console.log(err, 'getServerDatas:');
-            this.$alert(err.toString(), '错误');
-            this.isLoading = false;
-          });
         },
         /* 获取所有币种信息：初始化资产，组织显示数据，完善资产表*/
         async doneDataByCoins(useCache=true,useTri=true) {
@@ -356,7 +345,7 @@
               if (item) {
                 resource.balance = item.balance,
                   resource.money =item.legalValue
-                // resource.money = this.$root.Bus.config.currency != '美元' ? (item.balance * exchangeObj[item.conAddr || item.symbol] || 0) * exchangeObj['CNY'] || 0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0;
+                  // resource.money = this.$root.Bus.config.currency != '美元' ? (item.balance * exchangeObj[item.conAddr || item.symbol] || 0) * exchangeObj['CNY'] || 0 : item.balance * exchangeObj[item.conAddr||item.symbol]||0;
               }
             });
             this.isLoading = false;

@@ -36,16 +36,16 @@
     margin: 20px 0 0 40px;
     color: #999CA2;
 }
-.modalInput,
-.modalInpStyle::placeholder{
-    color: #A6D5F9;
-}
-.modalInpStyle{
-    width: 80%;
-    color: #A6D5F9;
-    border: none;
-    background: transparent;
-}
+/*.modalInput,*/
+/*.modalInpStyle::placeholder{*/
+    /*color: #A6D5F9;*/
+/*}*/
+/*.modalInpStyle{*/
+    /*width: 80%;*/
+    /*color: #A6D5F9;*/
+    /*border: none;*/
+    /*background: transparent;*/
+/*}*/
 .modalTF{
     display: flex;
     justify-content: space-between;

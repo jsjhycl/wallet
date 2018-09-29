@@ -499,6 +499,16 @@ span.spanSel:after{
     margin: 40px auto 30px;
     text-align: center;
 }
+.modalInput,
+.modalInpStyle::placeholder{
+  color: #A6D5F9;
+}
+.modalInpStyle{
+  width: 80%;
+  color: #A6D5F9;
+  border: none;
+  background: transparent;
+}
 .modalFooter button{
     width: 180px;
     padding: 8px;

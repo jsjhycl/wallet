@@ -8,7 +8,7 @@
         </div>
         <div class="text-right">
           <!--<button class="btn btn-sm add-currency-button" @click="dialogs.six=true">转移代币拥有者</button>-->
-          <button v-if="showProxy" class="btn btn-success" @click="dialogs.six=true">转移代币拥有者</button>
+          <!--<button v-if="showProxy" class="btn btn-success" @click="dialogs.six=true">转移代币拥有者</button>-->
         </div>
       </div>
       <!--<chart class="tranImg"  :options="assets"></chart>-->
@@ -95,9 +95,24 @@
       </el-table>
     </div>
     <div class="btnGroupSm" style="min-width: 765px;z-index: 100">
+      <el-dropdown @command="doneMenuCommand" trigger="click">
+        <el-button type="primary">
+          代币设置<i class="el-icon-arrow-down el-icon--right"></i>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="withDraw">提现</el-dropdown-item>
+          <el-dropdown-item command="four">代币燃烧</el-dropdown-item>
+          <el-dropdown-item command="five">代币增发</el-dropdown-item>
+          <el-dropdown-item command="six">转移代币拥有着</el-dropdown-item>
+          <el-dropdown-item command="fee">设置转账手续费</el-dropdown-item>
+          <el-dropdown-item command="payer">设置网络手续费支付者</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <!--<button v-if="showProxy" class="btn btn-success btnStyle" @click="dialogs.fee=true">设置转账手续费</button>-->
+      <!--<button v-if="showProxy" class="btn btn-success btnStyle" @click="dialogs.payer=true">设置网络手续费支付者</button>-->
       <!--<button class="btn btn-success btnStyle" @click="dialogs.three=true">燃料价格</button>-->
-      <button v-if="showProxy&&contract.burnEnabled" class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃烧</button>
-      <button v-if="showProxy&&contract.addSupplyEnabled" class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>
+      <!--<button v-if="showProxy&&contract.burnEnabled" class="btn btn-success btnStyle" @click="dialogs.four=true">代币燃烧</button>-->
+      <!--<button v-if="showProxy&&contract.addSupplyEnabled" class="btn btn-success btnStyle" @click="dialogs.five=true">代币增发</button>-->
       <button class="btn btn-primary btnStyle marRL" @click="openTransferWin">转账</button>
       <button class="btn btn-primary btnStyle marRL" @click="dialogs.one=true">收款</button>
     </div>
@@ -173,6 +188,14 @@
     <el-dialog title="转移代币拥有者" width="550px"  :visible.sync="dialogs.six">
       <set-owner @close="dialogs.six=false" :wallet="wallet" :asset="currentAsset" :users="users"></set-owner>
     </el-dialog>
+    <!--设置转账手续费-->
+    <el-dialog title="设置转账手续费" :visible.sync="dialogs.fee" width="450px">
+      <set-fee @close="dialogs.fee=false" :wallet="wallet" :asset="currentAsset"></set-fee>
+    </el-dialog>
+    <!-- 设置网络手续费支付者-->
+    <el-dialog title="设置网络手续费支付者" :visible.sync="dialogs.payer" width="450px">
+      <set-payer @close="dialogs.payer=false" :wallet="wallet" :asset="currentAsset"></set-payer>
+    </el-dialog>
   </div>
 </template>
 
@@ -182,12 +205,16 @@
   import SupplySet from './common/SupplySet';
   import BurnSet from './common/BurnSet';
   import SetOwner from './common/SetOwner';
+  import SetFee from './common/SetFee';
+  import SetPayer from './common/SetPayer'
     export default {
       components:{
         GasPriceSet,
         SupplySet,
         BurnSet,
-        SetOwner
+        SetOwner,
+        SetFee,
+        SetPayer
       },
       name: "WalletDetails",
       data: () => ({
@@ -200,7 +227,7 @@
         serviceCharge: 0.00125,//需配置
         transferInfo: {},
         transactions: [],
-        dialogs: {one: false, two: false, three: false,four:false,five:false,six:false},
+        dialogs: {one: false, two: false, three: false,four:false,five:false,six:false,fee:false,payer:false},
         labelWidth: '140px',
         isBasicCoin:false,
         contract:{}
@@ -240,7 +267,6 @@
             console.log("trigger:",url);
             this.$storage.getAllTransactions(this.wallet.type, this.wallet.address, this.currentAsset.contractAddr, 1, 20,true,false)
               .then(result => {
-                console.log('trigger result:',result);
                 this.transactions = result.records;
                 this.isLoading = false;
               }).catch(err => {
@@ -353,6 +379,25 @@
         //自动刷新
         autoRefresh:function (tranItem) {
 
+        },
+        async doneMenuCommand(e){
+          try{
+            if(e=='withDraw'){
+              let password= await this.$checkPassword(this.wallet.id,false);
+              let obj ={
+                contractAddr:this.currentAsset.contractAddr,
+                gasLimit:'100000',
+                note:''
+              };
+              let ret = await this.$lpc__.bcb_withdraw(obj,this.wallet.type,this.wallet.privateKey,password)
+              console.log('提现:',ret);
+            }
+            this.dialogs[e]=true;
+          }
+          catch (e) {
+            if(e==='cancel') return;
+            this.$message({message:e.toString(),type:'error'});
+          }
         }
       }
     }
