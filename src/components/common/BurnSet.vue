@@ -37,6 +37,7 @@
           this.$message({message: '设置成功！', type: 'success'});
           this.$emit('close');
         } catch (e) {
+          this.$message({message: e.toString(), type: 'error'});
         }
         // this.$checkPassword(this.wallet.id, false)
         //   .then(password => {
