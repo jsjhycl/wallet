@@ -185,72 +185,188 @@ export default {
     })
   },
   /* 8.20	bcb_newToken*/
+  // createCoin3(obj) {
+  //   let sender= {
+  //     coinType: obj.coinType,
+  //     encPrivateKey: obj.encPrivateKey,
+  //     password:obj.password,
+  //     coinParam: {
+  //       contractAddr:'bcbtestGbVExQNicpNd6FH6gWdoip6xH5GMG2XxG',
+  //       name: obj.name,
+  //       symbol: obj.symbol,
+  //       initSupply: (obj.initSupply*Math.pow(10,9)).toString(),
+  //       addSupplyEnabled: obj.addSupplyEnabled,
+  //       burnEnabled: obj.burnEnabled,
+  //       // gasPrice: (obj.gasPrice*Math.pow(10,3)).toString(),
+  //       gasPrice: (obj.gasPrice).toString(),
+  //       gasLimit: obj.gasLimit,
+  //       note: obj.note
+  //     }
+  //   }
+  //   return common.excute('bcb_newToken', sender);
+  // },
+
   createCoin3(obj) {
     let sender= {
       coinType: obj.coinType,
       encPrivateKey: obj.encPrivateKey,
       password:obj.password,
-      coinParam: {
-        contractAddr:'bcbtestGbVExQNicpNd6FH6gWdoip6xH5GMG2XxG',
-        name: obj.name,
-        symbol: obj.symbol,
-        initSupply: (obj.initSupply*Math.pow(10,9)).toString(),
-        addSupplyEnabled: obj.addSupplyEnabled,
-        burnEnabled: obj.burnEnabled,
-        // gasPrice: (obj.gasPrice*Math.pow(10,3)).toString(),
-        gasPrice: (obj.gasPrice).toString(),
-        gasLimit: obj.gasLimit,
-        note: obj.note
-      }
+      walletCall:{
+        "conAddr":'bcbtestGbVExQNicpNd6FH6gWdoip6xH5GMG2XxG',
+        "methodName":"NewToken",
+        "methodParam":
+          [
+            {
+              "name":"_name",
+              "type":"string",
+              "value":obj.name
+            },
+            {
+              "name":"_symbol",
+              "type":"string",
+              "value":obj.symbol
+            },
+            {
+              "name":"_totalSupply",
+              "type":"big.Int",
+              "value":(obj.initSupply*Math.pow(10,9)).toString()
+            },
+            {
+              "name":"_addSupplyEnabled",
+              "type":"bool",
+              "value":obj.addSupplyEnabled.toString()
+            },
+            {
+              "name":"_burnEnabled",
+              "type":"bool",
+              "value":obj.burnEnabled.toString()
+            },
+            {
+              "name":"_gasPrice",
+              "type":"uint64",
+              "value":obj.gasPrice.toString()
+            }
+          ]
+      },
+      "methodRet":"(smc.Address,smc.Address,smc.Error)"
     }
-    return common.excute('bcb_newToken', sender);
+    return common.excute('bcb_commonPay', sender);
   },
   /* 8.21	bcb_setFee*/
+  // bcb_setFee(obj,coinType,encPrivateKey,password){
+  //   let sender= {
+  //     coinType: coinType,
+  //     encPrivateKey: encPrivateKey,
+  //     password:password,
+  //     coinParam: {
+  //       contractAddr:obj.contractAddr,
+  //       ratio:obj.ratio,
+  //       maxFee:obj.maxFee,
+  //       minFee:obj.minFee,
+  //       gasLimit:obj.gasLimit,
+  //       note:obj.note
+  //     }
+  //   }
+  //   return common.excute('bcb_setFee', sender);
+  // },
   bcb_setFee(obj,coinType,encPrivateKey,password){
     let sender= {
       coinType: coinType,
       encPrivateKey: encPrivateKey,
-      password:password,
-      coinParam: {
-        contractAddr:obj.contractAddr,
-        ratio:obj.ratio,
-        maxFee:obj.maxFee,
-        minFee:obj.minFee,
-        gasLimit:obj.gasLimit,
-        note:obj.note
-      }
+      password: password,
+      "walletCall":
+        {
+          "conAddr": obj.contractAddr,
+          "methodName": "SetFee",
+          "methodParam":
+            [
+              {
+                "name": "_ratio",
+                "type": "uint64",
+                "value": obj.ratio.toString()
+              },
+              {
+                "name": "_maxFee",
+                "type": "uint64",
+                "value": obj.maxFee.toString()
+              },
+              {
+                "name": "_minFee",
+                "type": "uint64",
+                "value": obj.minFee.toString()
+              }
+            ],
+          "methodRet": "smc.Error"
+        }
     }
-    return common.excute('bcb_setFee', sender);
+    return common.excute('bcb_commonPay', sender);
   },
   /* 8.22	bcb_setGasPayer*/
+  // bcb_setGasPayer(obj,coinType,encPrivateKey,password){
+  //   let sender= {
+  //     coinType: coinType,
+  //     encPrivateKey: encPrivateKey,
+  //     password:password,
+  //     coinParam: {
+  //       contractAddr:obj.contractAddr,
+  //       payer:obj.payer,
+  //       gasLimit:obj.gasLimit,
+  //       note:obj.note
+  //     }
+  //   }
+  //   return common.excute('bcb_setGasPayer', sender);
+  // },
   bcb_setGasPayer(obj,coinType,encPrivateKey,password){
     let sender= {
       coinType: coinType,
       encPrivateKey: encPrivateKey,
-      password:password,
-      coinParam: {
-        contractAddr:obj.contractAddr,
-        payer:obj.payer,
-        gasLimit:obj.gasLimit,
-        note:obj.note
-      }
+      password: password,
+      "walletCall":
+        {
+          "conAddr": obj.contractAddr,
+          "methodName": "SetGasPayer",
+          "methodParam":
+            [
+              {
+                "name": "_payer",
+                "type": "string",
+                "value": obj.payer
+              }
+            ],
+          "methodRet": "smc.Error"
+        }
     }
-    return common.excute('bcb_setGasPayer', sender);
+    return common.excute('bcb_commonPay', sender);
   },
   /* 8.23	bcb_withdraw*/
+  // bcb_withdraw(obj,coinType,encPrivateKey,password){
+  //   let sender= {
+  //     coinType: coinType,
+  //     encPrivateKey: encPrivateKey,
+  //     password:password,
+  //     coinParam: {
+  //       contractAddr:obj.contractAddr,
+  //       payer:obj.payer,
+  //       gasLimit:obj.gasLimit,
+  //       note:obj.note
+  //     }
+  //   }
+  //   return common.excute('bcb_withdraw', sender);
+  // }
   bcb_withdraw(obj,coinType,encPrivateKey,password){
     let sender= {
       coinType: coinType,
       encPrivateKey: encPrivateKey,
       password:password,
-      coinParam: {
-        contractAddr:obj.contractAddr,
-        payer:obj.payer,
-        gasLimit:obj.gasLimit,
-        note:obj.note
-      }
+      "walletCall":
+        {
+          "conAddr":obj.contractAddr,
+          "methodName":"Withdraw",
+          "methodParam":[],
+          "methodRet":"smc.Error"
+        }
     }
-    return common.excute('bcb_withdraw', sender);
+    return common.excute('bcb_commonPay', sender);
   }
 }
 
