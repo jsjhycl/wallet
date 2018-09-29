@@ -23,23 +23,35 @@
     data: () => ({
       value: 0
     }),
-    props:['wallet','asset','contract'],
-    methods:{
-      submit(){
-        this.$checkPassword(this.wallet.id, false)
-          .then(password => {
-            this.$lpc__.bcb_burn(this.wallet.type,
-              this.wallet.privateKey,
-              password,
-              this.asset.contractAddr,
-              undefined,
-              this.value)
-              .then(ret => {
-                //返回txhash不需要处理
-                this.$message({message:'设置成功！',type:'success'});
-                this.$emit('close');
-              })
-          })
+    props: ['wallet', 'asset', 'contract'],
+    methods: {
+      async submit() {
+        try {
+          let password = await this.$checkPassword(this.wallet.id, false);
+          let ret = await this.$lpc__.bcb_burn(this.wallet.type,
+            this.wallet.privateKey,
+            password,
+            this.asset.contractAddr,
+            undefined,
+            this.value);
+          this.$message({message: '设置成功！', type: 'success'});
+          this.$emit('close');
+        } catch (e) {
+        }
+        // this.$checkPassword(this.wallet.id, false)
+        //   .then(password => {
+        //     this.$lpc__.bcb_burn(this.wallet.type,
+        //       this.wallet.privateKey,
+        //       password,
+        //       this.asset.contractAddr,
+        //       undefined,
+        //       this.value)
+        //       .then(ret => {
+        //         //返回txhash不需要处理
+        //         this.$message({message:'设置成功！',type:'success'});
+        //         this.$emit('close');
+        //       })
+        //   })
       }
     }
   }
