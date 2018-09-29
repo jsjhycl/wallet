@@ -191,7 +191,7 @@ export default {
       encPrivateKey: obj.encPrivateKey,
       password:obj.password,
       coinParam: {
-        contractAddr:'0x9F138D5D9e24186eC96B35e5B5530C907860A78d',
+        contractAddr:'bcbtestGbVExQNicpNd6FH6gWdoip6xH5GMG2XxG',
         name: obj.name,
         symbol: obj.symbol,
         initSupply: (obj.initSupply*Math.pow(10,9)).toString(),
@@ -212,7 +212,7 @@ export default {
       encPrivateKey: encPrivateKey,
       password:password,
       coinParam: {
-        contractAddr:'0x9F138D5D9e24186eC96B35e5B5530C907860A78d',
+        contractAddr:obj.contractAddr,
         ratio:obj.ratio,
         maxFee:obj.maxFee,
         minFee:obj.minFee,
@@ -229,13 +229,28 @@ export default {
       encPrivateKey: encPrivateKey,
       password:password,
       coinParam: {
-        contractAddr:'0x9F138D5D9e24186eC96B35e5B5530C907860A78d',
+        contractAddr:obj.contractAddr,
         payer:obj.payer,
         gasLimit:obj.gasLimit,
         note:obj.note
       }
     }
     return common.excute('bcb_setGasPayer', sender);
+  },
+  /* 8.23	bcb_withdraw*/
+  bcb_withdraw(obj,coinType,encPrivateKey,password){
+    let sender= {
+      coinType: coinType,
+      encPrivateKey: encPrivateKey,
+      password:password,
+      coinParam: {
+        contractAddr:obj.contractAddr,
+        payer:obj.payer,
+        gasLimit:obj.gasLimit,
+        note:obj.note
+      }
+    }
+    return common.excute('bcb_withdraw', sender);
   }
 }
 

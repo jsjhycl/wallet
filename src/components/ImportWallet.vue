@@ -206,7 +206,7 @@
       }
     }
     return Object.assign({
-      type: '0x1002',
+      type: '0x1001',
       isRead: false
     },params[index]);
   }

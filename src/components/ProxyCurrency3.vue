@@ -111,7 +111,7 @@
           if (!this.isRead) return this.$message({message: '请认真阅读并同意协议!', type: 'error'});
           this.$checkPassword(this.wallet.id, false).then(password => {
             this.currencyItem.password = password;
-            this.$lpc__.createCoin(this.currencyItem)
+            this.$lpc__.createCoin3(this.currencyItem)
               .then(ret => {
                 if (ret) this.$router.push({
                   name: 'wallet',

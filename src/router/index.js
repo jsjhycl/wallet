@@ -18,6 +18,7 @@ import AddAssets from '@/components/AddAssets'
 import WalletDetails from '@/components/WalletDetails'
 import BuildUser from '@/components/BuildUser'
 import ProxyCurrency from '@/components/ProxyCurrency.vue'
+import ProxyCurrency3 from '@/components/ProxyCurrency3.vue'
 import DocWin from './../components/DocWin'
 
 
@@ -121,7 +122,7 @@ export default new Router({
     {
       path:"/addcurrency3/:id",
       name:"addcurrency3",
-      component:ProxyCurrency
+      component:ProxyCurrency3
     },
     {
       path:"/doc",

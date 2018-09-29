@@ -121,7 +121,7 @@ new Vue({
     Bus
   },
   async created(){
-    this.$storage.prepareAllAssets(['0x1002']);//初始化资产列表[0x3,0x10000]
+    this.$storage.prepareAllAssets(['0x1001']);//初始化资产列表[0x3,0x10000]
   },
   components: { App },
   template: '<App/>'

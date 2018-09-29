@@ -50,7 +50,7 @@
       }),
       created: function () {
         this.walletTypes = this.$storage.getWalletTypes();
-        this.wallet = {id:uuid(),type: '0x1002', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
+        this.wallet = {id:uuid(),type: '0x1001', name: '', password: '', passwordInfo: '',head:'headImg.png',privateKey:'',encMnemonicWords:'',address:'',isBackup:false};
       },
       computed:{
       },

@@ -100,6 +100,7 @@
           代币设置<i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="withDraw">提现</el-dropdown-item>
           <el-dropdown-item command="four">代币燃烧</el-dropdown-item>
           <el-dropdown-item command="five">代币增发</el-dropdown-item>
           <el-dropdown-item command="six">转移代币拥有着</el-dropdown-item>
@@ -188,12 +189,12 @@
       <set-owner @close="dialogs.six=false" :wallet="wallet" :asset="currentAsset" :users="users"></set-owner>
     </el-dialog>
     <!--设置转账手续费-->
-    <el-dialog title="设置转账手续费" :visible.sync="dialogs.fee">
-      <set-fee :wallet="wallet"></set-fee>
+    <el-dialog title="设置转账手续费" :visible.sync="dialogs.fee" width="450px">
+      <set-fee @close="dialogs.fee=false" :wallet="wallet" :asset="currentAsset"></set-fee>
     </el-dialog>
     <!-- 设置网络手续费支付者-->
-    <el-dialog title="设置网络手续费支付者" :visible.sync="dialogs.payer">
-      <set-payer :wallet="wallet"></set-payer>
+    <el-dialog title="设置网络手续费支付者" :visible.sync="dialogs.payer" width="450px">
+      <set-payer @close="dialogs.payer=false" :wallet="wallet" :asset="currentAsset"></set-payer>
     </el-dialog>
   </div>
 </template>
@@ -377,8 +378,24 @@
         autoRefresh:function (tranItem) {
 
         },
-        doneMenuCommand(e){
-          this.dialogs[e]=true;
+        async doneMenuCommand(e){
+          try{
+            if(e=='withDraw'){
+              let password= await this.$checkPassword(this.wallet.id,false);
+              let obj ={
+                contractAddr:this.currentAsset.contractAddr,
+                gasLimit:'100000',
+                note:''
+              };
+              let ret = await this.$lpc__.bcb_withdraw(obj,this.wallet.type,this.wallet.privateKey,password)
+              console.log('提现:',ret);
+            }
+            this.dialogs[e]=true;
+          }
+          catch (e) {
+            if(e==='cancel') return;
+            this.$message({message:e.toString(),type:'error'});
+          }
         }
       }
     }

@@ -24,20 +24,32 @@
       <ul class="modalList list-unstyled">
         <li>
           <p>手续费</p>
-          <input v-model="feeobj.ratio" class="modalInput" type="text">
+          <!--<input v-model="feeobj.ratio" class="modalInput" type="text">-->
+          <div class="modalInput tool-right-input">
+            <input v-model="feeobj.ratio" type="text" class="modalInpStyle" placeholder="请输入转账交易额占比">
+            <span class="color64AFEA" style="margin-right: 5px;">万分比</span>
+          </div>
         </li>
         <li>
           <p>最大手续费</p>
-          <input v-model="feeobj.maxFee" class="modalInput" type="text">
+          <!--<input v-model="feeobj.maxFee" class="modalInput" type="text">-->
+          <div class="modalInput tool-right-input">
+            <input v-model="feeobj.maxFee" type="text" class="modalInpStyle">
+            <span class="color64AFEA" style="margin-right: 5px;">BCB</span>
+          </div>
         </li>
         <li>
           <p>最小手续费</p>
-          <input v-model="feeobj.minFee" class="modalInput" type="text">
+          <!--<input v-model="feeobj.minFee" class="modalInput" type="text">-->
+          <div class="modalInput tool-right-input">
+            <input v-model="feeobj.minFee" type="text" class="modalInpStyle">
+            <span class="color64AFEA" style="margin-right: 5px;">BCB</span>
+          </div>
         </li>
       </ul>
     </div>
     <div class="modalFooter">
-      <button type="button" class="btn btn-primary" @click="done">转移</button>
+      <button v-loading="isLoading" :disabled="isLoading" type="button" class="btn btn-primary" @click="done">转移</button>
     </div>
   </div>
 </template>
@@ -48,7 +60,9 @@
     export default {
       name: "SetFee",
       data:()=>({
+        isLoading:false,
         feeobj:{
+          contractAddr:'',
           ratio:'',
           maxFee:'',
           minFee:'',
@@ -64,19 +78,24 @@
           }
         }
       }),
-      props:["wallet"],
+      props:["wallet","asset"],
       methods:{
         async done(){
           try{
+            this.isLoading=true;
             this.feeobj.check();//直接通过throw控制
+            this.feeobj.contractAddr=this.asset.contractAddr;//具有位置依赖
             let password =await this.$checkPassword(this.wallet.id, false);
-            console.log(password);
             let result =await this.$lpc__.bcb_setFee(this.feeobj,this.wallet.type,this.wallet.privateKey,password);
             console.log('set fee result:',result);
             //清空值
             this.feeobj.clear();
+            this.isLoading=false;
+            this.$emit('close');
           }
           catch (e) {
+            this.isLoading=false;
+            if(e==="cancel") return;
             console.log('设置转账手续费错误：',e);
             this.$message({message:e,type:'error'});
           }
