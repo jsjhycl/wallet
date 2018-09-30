@@ -49,7 +49,7 @@
       </ul>
     </div>
     <div class="modalFooter">
-      <button v-loading="isLoading" :disabled="isLoading" type="button" class="btn btn-primary" @click="done">转移</button>
+      <button v-loading="isLoading" :disabled="isLoading" type="button" class="btn btn-primary" @click="done">确定</button>
     </div>
   </div>
 </template>

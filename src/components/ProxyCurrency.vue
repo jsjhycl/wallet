@@ -92,7 +92,7 @@
       },
       methods: {
         createCoin() {
-          let pattern = /^[a-zA-Z]{1,40}$/;
+          let pattern = /^[a-zA-Z]{1}[a-z,A-Z,0-9]{1,39}$/;
           if (!this.currencyItem.check()) {
             return this.$message({message: '请填写必要的数据！', type: 'error'});
           }
@@ -106,7 +106,7 @@
             return this.$message({message: '代币发行值/燃料值不能大于999999999999！', type: 'error'});
           }
           if (!(pattern.test(this.currencyItem.name) && pattern.test(this.currencyItem.symbol))) {
-            return this.$message({message: '名称/符号必须是字母，并在1-40字符之间！', type: 'error'});
+            return this.$message({message: '名称/符号：必须以字母开头;长度不超过40的字母或数字！', type: 'error'});
           }
           if (!this.isRead) return this.$message({message: '请认真阅读并同意协议!', type: 'error'});
           this.$checkPassword(this.wallet.id, false).then(password => {
