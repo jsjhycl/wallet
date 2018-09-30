@@ -103,7 +103,7 @@
           <el-dropdown-item command="withDraw">提现</el-dropdown-item>
           <el-dropdown-item command="four">代币燃烧</el-dropdown-item>
           <el-dropdown-item command="five">代币增发</el-dropdown-item>
-          <el-dropdown-item command="six">转移代币拥有着</el-dropdown-item>
+          <el-dropdown-item command="six">转移代币拥有者</el-dropdown-item>
           <el-dropdown-item command="fee">设置转账手续费</el-dropdown-item>
           <el-dropdown-item command="payer">设置网络手续费支付者</el-dropdown-item>
         </el-dropdown-menu>
