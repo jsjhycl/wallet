@@ -4,10 +4,10 @@
       <!--<span>代币初始供应量：</span><span></span>-->
     <!--</p>-->
     <p>
-      <span>当前代币数量：</span><span>{{contract.totalSupply}}</span>
+      <span>当前代币数量：</span><span>{{contract.totalSupply|coin-trans('G')}} (GCong)</span>
     </p>
     <el-form>
-      <el-form-item label="增发代币数量(单位：Cong)">
+      <el-form-item label="增发代币数量(单位：GCong)">
         <el-input v-model="value" type="number"></el-input>
       </el-form-item>
     </el-form>
