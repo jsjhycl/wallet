@@ -12,7 +12,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer" style="text-align: center">
-      <button @click="submit" class="btn btn-primary">提交</button>
+      <button v-loading="isLoading" :disabled="isLoading" @click="submit" class="btn btn-primary">提交</button>
     </div>
   </div>
 </template>
@@ -21,12 +21,14 @@
     export default {
       name: "SupplySet",
       data: () => ({
+        isLoading:false,
         value: 0
       }),
       props: ['wallet', 'asset', 'contract'],
       methods: {
         async submit() {
           try {
+            this.isLoading=true;
             let password = await this.$checkPassword(this.wallet.id, false);
             let ret = await this.$lpc__.bcb_addSupply(this.wallet.type,
               this.wallet.privateKey,
@@ -36,7 +38,10 @@
               this.value);
             this.$message({message: '设置成功！', type: 'success'});
             this.$emit('close');
+            this.isLoading=false;
           } catch (e) {
+            this.isLoading=false;
+            if(e==="cancel") return;
             this.$message({message: e.toString(), type: 'error'});
           }
 

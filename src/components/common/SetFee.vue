@@ -35,7 +35,7 @@
           <!--<input v-model="feeobj.maxFee" class="modalInput" type="text">-->
           <div class="modalInput tool-right-input">
             <input v-model="feeobj.maxFee" type="text" class="modalInpStyle">
-            <span class="color64AFEA" style="margin-right: 5px;">BCB</span>
+            <!--<span class="color64AFEA" style="margin-right: 5px;">BCB</span>-->
           </div>
         </li>
         <li>
@@ -43,7 +43,7 @@
           <!--<input v-model="feeobj.minFee" class="modalInput" type="text">-->
           <div class="modalInput tool-right-input">
             <input v-model="feeobj.minFee" type="text" class="modalInpStyle">
-            <span class="color64AFEA" style="margin-right: 5px;">BCB</span>
+            <!--<span class="color64AFEA" style="margin-right: 5px;">BCB</span>-->
           </div>
         </li>
       </ul>
