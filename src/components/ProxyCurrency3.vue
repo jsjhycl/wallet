@@ -40,7 +40,7 @@
       </li>
       <li class="marT2">
         <input v-model="currencyItem.gasPrice" class="foundLiInput" type="number" placeholder="燃料价格(单位：Cong)">
-        <!--<span class="description">KCong=(10^3Cong)</span>-->
+        <span class="description">>=2500</span>
       </li>
     </ul>
     <label class="select padding-l">

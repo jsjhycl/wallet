@@ -18,9 +18,15 @@
     border-radius: 50%;
 }
 .assetsLiTitle {
-    margin-left: 5px;
-    font-size: 18px;
-    color: #354D6F;
+  margin-left: 5px;
+  font-size: 18px;
+  color: #354D6F;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+  display: inline-block;
+  width: 150px;
+  vertical-align: middle;
 }
 .assetsInfor{
     margin-top: 10px;

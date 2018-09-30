@@ -16,12 +16,12 @@
         <span>代币是否支持增发？</span>
         <label  class="select label-style">
           是
-          <input v-model="currencyItem.addSupplyEnabled" value="true" type="radio" name="radioName" class="chk_1">
+          <input v-model="currencyItem.addSupplyEnabled" :value="true" type="radio" name="radioName" class="chk_1">
           <span class="sel"></span>
         </label>
         <label class="select label-style">
           否
-          <input v-model="currencyItem.addSupplyEnabled" value="false" type="radio" name="radioName" class="chk_1">
+          <input v-model="currencyItem.addSupplyEnabled" :value="false" type="radio" name="radioName" class="chk_1">
           <span class="sel"></span>
         </label>
       </li>
@@ -29,18 +29,18 @@
         <span>代币是否支持燃烧？</span>
         <label class="select label-style">
           是
-          <input v-model="currencyItem.burnEnabled" value="true" type="radio" name="radioName1" class="chk_1">
+          <input v-model="currencyItem.burnEnabled" :value="true" type="radio" name="radioName1" class="chk_1">
           <span class="sel"></span>
         </label>
         <label class="select label-style">
           否
-          <input v-model="currencyItem.burnEnabled" value="false" type="radio" name="radioName1" class="chk_1">
+          <input v-model="currencyItem.burnEnabled" :value="false" type="radio" name="radioName1" class="chk_1">
           <span class="sel"></span>
         </label>
       </li>
       <li class="marT2">
         <input v-model="currencyItem.gasPrice" class="foundLiInput" type="number" placeholder="燃料价格(单位：Cong)">
-        <!--<span class="description">KCong=(10^3Cong)</span>-->
+        <span class="description">>=2500</span>
       </li>
     </ul>
     <label class="select padding-l">
@@ -73,7 +73,7 @@
           addSupplyEnabled: false,
           burnEnabled: false,
           gasPrice: '',
-          gasLimit: '',
+          gasLimit: '72000',
           note: '',
           check: function () {
             return this.name && this.symbol && this.initSupply && this.gasPrice;
@@ -92,6 +92,7 @@
       },
       methods: {
         createCoin() {
+          // let pattern = /^[a-zA-Z]{1,40}$/;
           let pattern = /^[a-zA-Z]{1}[a-z,A-Z,0-9]{1,39}$/;
           if (!this.currencyItem.check()) {
             return this.$message({message: '请填写必要的数据！', type: 'error'});
@@ -100,13 +101,13 @@
             return this.$message({message: '代币发行值不能小于1！', type: 'error'});
           }
           if (!/^\d+$/.test(this.currencyItem.gasPrice.toString()) || this.currencyItem.gasPrice < 2500) {
-            return this.$message({message: '燃料价格需大于等于2500Cong,且为整数！', type: 'error'});
+            return this.$message({message: '名称/符号：必须以字母开头;长度不超过40的字母或数字！', type: 'error'});
           }
           if (this.currencyItem.initSupply > 999999999999 || this.currencyItem.gasPrice > 999999999999) {
             return this.$message({message: '代币发行值/燃料值不能大于999999999999！', type: 'error'});
           }
           if (!(pattern.test(this.currencyItem.name) && pattern.test(this.currencyItem.symbol))) {
-            return this.$message({message: '名称/符号：必须以字母开头;长度不超过40的字母或数字！', type: 'error'});
+            return this.$message({message: '名称/符号必须是字母，并在1-40字符之间！', type: 'error'});
           }
           if (!this.isRead) return this.$message({message: '请认真阅读并同意协议!', type: 'error'});
           this.$checkPassword(this.wallet.id, false).then(password => {

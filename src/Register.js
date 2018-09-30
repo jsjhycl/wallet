@@ -43,3 +43,10 @@ Vue.filter('exchange-time',function (value,fromFormat,toFormat) {
   toFormat=toFormat||'YYYY-MM-DD HH:mm:ss';
   return moment(value,fromFormat).format(toFormat);
 })
+
+Vue.filter('coin-trans',function (value, unit = "G") {
+  if(unit==="G") return +value/Math.pow(10,9);
+  if(unit==="K") return +value/Math.pow(10,3);
+  if(unit==="M") return +value/Math.pow(10,6);
+  else return +value;
+})
